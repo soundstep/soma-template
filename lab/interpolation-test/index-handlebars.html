@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+		.boldclass {
+			font-weight: bold;
+		}
+		.myClass {
+			color: #B06E00;
+		}
+		.myClass2 {
+			color: #A60B60;
+		}
+		.myClass3 {
+			color: #0B41A6;
+		}
+		.myClass4 {
+			color: #85A907;
+		}
+		.myClass5 {
+			color: #B00B00;
+		}
+		.myClass6 {
+			color: #26988B;
+		}
+		.list0 {
+			color: #266498;
+		}
+		.list1 {
+			color: #8C2698;
+		}
+		.list2 {
+			color: #BE2E00;
+		}
+	</style>
+</head>
+<body>
+
+<button class="switch">switch data</button>
+<div class="time"></div>
+
+<hr>
+
+<div id="ct"></div>
+
+<script id="tpl" type="text/x-handlebars-template">
+	<p class="boldclass {{cl}}">class on div + text {{test1}} dummy{{test2}}dummy</p>
+	<p class="{{cl2}}">class on div + text {{test1}}</p>
+	<p>do a interpolation skip here: <span data-skip>{{test1}}</span> but not here: {{test1}}</p>
+	checked attribute on an input from boolean: <input type="checkbox" {{checked}}><br/>
+	<p><img src="assets/img0.jpg" width="60" height="60"></p>
+	<p data-hide="{{hideValue}}">HIDE ON VALUE, THIS SHOULD NOT APPEAR!!</p>
+	<p style="display:none" data-show="{{showValue}}">show on value, this should appear</p>
+	<a data-href="http://{{link}}" target="_blank">This is link</a>
+	<div>
+		<div>
+			<div>
+				<p class="{{test3.obj.cl}}">deep div with deep data {{test3.obj.val}}</p>
+			</div>
+		</div>
+	</div>
+	<ul>
+		<li>repeat image with index:</li>
+		{{#each imgrep}}
+		<li data-repeat="img in imgrep">
+			assets/{{this}}{{@index}}.jpg<br/>
+			<img src="assets/img0.jpg" width="60" height="60">
+		</li>
+		{{/each}}
+	</ul>
+	<ul>
+		<li>repeat on array:</li>
+		{{#each arr}}
+		<li data-repeat="item in arr">
+			<div class="list{{@index}}">[{{@index}}] - {{this}}</div>
+		</li>
+		{{/each}}
+	</ul>
+	<ul>
+		<li>repeat on array containing object:</li>
+		{{#each items}}
+		<li data-repeat="item in items">
+			<div class="list{{@index}}">[{{@index}}] - {{this.name}} {{this.deep.other}}</div>
+		</li>
+		{{/each}}
+	</ul>
+	<ul>
+		<li>repeat on object:</li>
+		{{#each obj}}
+		<li data-repeat="o in obj">
+			<div>
+				{{this.title}}
+				<ul data-repeat="arr in o.data">
+					{{#each this.data}}
+					<li>{{this}}</li>
+					{{/each}}
+				</ul>
+			</div>
+		</li>
+		{{/each}}
+	</ul>
+	<ul>
+		{{#each l0}}
+		<li data-repeat="l1 in l0">
+			<strong>Level 1, index {{@index}}:</strong>
+			<ul>
+				{{#each this}}
+				<li data-repeat="l2 in l1">
+					<strong>Level 2, index {{@index}}:</strong>
+					<ul>
+						{{#each this}}
+						<li data-repeat="l3 in l2">
+							<strong>Level 3, index {{@index}}:</strong> {{this}}
+						</li>
+						{{/each}}
+					</ul>
+				</li>
+				{{/each}}
+			</ul>
+		</li>
+		{{/each}}
+	</ul>
+</script>
+
+<div id="target"></div>
+
+<script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="js/handlebars-1.0.rc.1.js"></script>
+<script type="text/javascript">
+
+	Handlebars.registerHelper('list', function(context, options) {
+		var out = "<ul>", data;
+
+		for (var i=0; i<context.length; i++) {
+			if (options.data) { data = Handlebars.createFrame(options.data); }
+			out += "<li>" + options.fn(context[i], { data: data }) + "</li>";
+		}
+
+		out += "</ul>";
+		return out;
+	});
+
+	var obj1 = {
+		img: "assets/img0.jpg",
+		imgrep: [
+			"img",
+			"img"
+		],
+		hideValue: true,
+		showValue: true,
+		link: "www.google.com",
+		test1:"String 1 [v1]",
+		test2:"String 2 [v1]",
+		test3: {
+			obj: {
+				val: "val3 [v1]",
+				cl: "myClass3"
+			}
+		},
+		params: {
+			param1: "p1.p1",
+			param2: "p2.p2"
+		},
+		functions: {
+			getClass: function(){ return "myClass4"; },
+			getClassParam: function(p1, p2){ return p1 === "p1.p1" && p2 === "p2.p2" ? "myClass5" : undefined; },
+			fn1: function(){ return "fn string returned [v1]"; },
+			fn2: function(p1, p2){ return "fn string returned with: " + p1 + " " + p2 + " [v1]"; },
+			fnParam: function(p1, p2){ return p1 === "p1.p1" && p2 === "p2.p2" ? "fn value [v1]" : undefined; },
+			checked: function() { return "checked"; },
+			hideFn: function(){ return true; },
+			showFn: function(){ return true; }
+		},
+		cl:"myClass",
+		cl2:"myClass2",
+		checked: 'checked',
+		items: [{name:"zero [v1]", deep:{other:"1 [v1]"}}, {name:"one [v1]", deep:{other:"2 [v1]"}}, {name:"two [v1]", deep:{other:"3 [v1]"}}],
+		arr:["zero [v1]", "one [v1]", "two [v1]"],
+		obj: {
+			title: "object containing arrays",
+			data: [1, 2, 3]
+		},
+		l0: [
+			[
+				["0-0-1 [v1]", "0-0-1 [v1]", "0-0-2 [v1]"],
+				["0-1-1 [v1]", "0-1-1 [v1]", "0-1-2 [v1]"],
+				["0-2-1 [v1]", "0-2-1 [v1]", "0-2-2 [v1]"]
+			],
+			[
+				["1-0-1 [v1]", "1-0-1 [v1]", "1-0-2 [v1]"],
+				["1-1-1 [v1]", "1-1-1 [v1]", "1-1-2 [v1]"],
+				["1-2-1 [v1]", "1-2-1 [v1]", "1-2-2 [v1]"]
+			],
+			[
+				["2-0-1 [v1]", "2-0-1 [v1]", "2-0-2 [v1]"],
+				["2-1-1 [v1]", "2-1-1 [v1]", "2-1-2 [v1]"],
+				["2-2-1 [v1]", "2-2-1 [v1]", "2-2-2 [v1]"]
+			]
+		]
+	};
+
+	var obj2 = {
+		img: "assets/img1.jpg",
+		imgrep: [
+			"img",
+			"img"
+		],
+		hideValue: true,
+		showValue: true,
+		link: "http://www.google.com/",
+		test1:"String 1 [v2]",
+		test2:"String 2 [v2]",
+		test3: {
+			obj: {
+				val: "val3 [v2]",
+				cl: "myClass3"
+			}
+		},
+		params: {
+			param1: "p1.p1",
+			param2: "p2.p2"
+		},
+		functions: {
+			getClass: function(){ return "myClass4"; },
+			getClassParam: function(p1, p2){ return p1 === "p1.p1" && p2 === "p2.p2" ? "myClass6" : undefined; },
+			fn1: function(){ return "fn string returned [v2]"; },
+			fn2: function(p1, p2){ return "fn string returned with: " + p1 + " " + p2 + " [v2]"; },
+			fnParam: function(p1, p2){ return p1 === "p1.p1" && p2 === "p2.p2" ? "fn value [v2]" : undefined; },
+			checked: function() { return "checked"; },
+			hideFn: function(){ return true; },
+			showFn: function(){ return true; }
+		},
+		cl:"myClass",
+		cl2:"myClass2",
+		checked: "checked",
+		items: [{name:"zero [v2]", deep:{other:"1 [v2]"}}, {name:"one [v2]", deep:{other:"2 [v2]"}}, {name:"two [v2]", deep:{other:"3 [v2]"}}],
+		arr:["zero [v2]", "one [v2]", "two [v2]"],
+		obj: {
+			title: "object containing arrays",
+			data: [1, 2, 3]
+		},
+		l0: [
+			[
+				["0-0-1 [v2]", "0-0-1 [v2]", "0-0-2 [v2]"],
+				["0-1-1 [v2]", "0-1-1 [v2]", "0-1-2 [v2]"],
+				["0-2-1 [v2]", "0-2-1 [v2]", "0-2-2 [v2]"]
+			],
+			[
+				["1-0-1 [v2]", "1-0-1 [v2]", "1-0-2 [v2]"],
+				["1-1-1 [v2]", "1-1-1 [v2]", "1-1-2 [v2]"],
+				["1-2-1 [v2]", "1-2-1 [v2]", "1-2-2 [v2]"]
+			],
+			[
+				["2-0-1 [v2]", "2-0-1 [v2]", "2-0-2 [v2]"],
+				["2-1-1 [v2]", "2-1-1 [v2]", "2-1-2 [v2]"],
+				["2-2-1 [v2]", "2-2-1 [v2]", "2-2-2 [v2]"]
+			]
+		]
+	};
+
+	var obj;
+
+	var template = Handlebars.compile($('#tpl').html());
+
+	function compile() {
+		obj = obj === obj1 ? obj2 : obj1;
+		var time = new Date().getTime();
+		console.log(template);
+		$('#ct').html(template(obj));
+		$('.time').html("Time elapsed: " + (new Date().getTime() - time) + " ms");
+	}
+
+	compile();
+
+	$('.switch').click(compile);
+
+</script>
+
+
+</body>
+</html>

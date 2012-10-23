@@ -1,5 +1,3 @@
-console.log(soma);
-
 var obj1 = {
 	img: "assets/img0.jpg",
 	imgrep: [
@@ -33,7 +31,7 @@ var obj1 = {
 	},
 	cl:"myClass",
 	cl2:"myClass2",
-	checked: "checked",
+	checked: 'checked',
 	items: [{name:"zero [v1]", deep:{other:"1 [v1]"}}, {name:"one [v1]", deep:{other:"2 [v1]"}}, {name:"two [v1]", deep:{other:"3 [v1]"}}],
 	arr:["zero [v1]", "one [v1]", "two [v1]"],
 	obj: {
@@ -118,7 +116,7 @@ var obj2 = {
 	]
 };
 
-var obj = obj1;
+var obj;
 
 var template = new soma.Template(document.getElementById('ct'));
 
@@ -132,6 +130,9 @@ function compile() {
 compile();
 
 $('.switch').click(compile);
+$('.switchtouch').bind('touchstart', function() {
+	compile();
+});
 
 // string
 new soma.Template('<p>{{name}}</p>')

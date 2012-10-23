@@ -16,8 +16,10 @@
 		end:"}}"
 	};
 	var regex = settings.regex = {
+		attrs: new RegExp("([-A-Za-z0-9" + tokens.start + tokens.end + "(())._]+)(?:\s*=\s*(?:(?:\"((?:\\.|[^\"])*)\")|(?:'((?:\\.|[^'])*)')|([^>\u0020|\u0009]+)))?", "g"),
 		pattern:new RegExp(tokens.start + "(.*?)" + tokens.end, "gm"),
 		path:new RegExp(tokens.start + "|" + tokens.end, "gm"),
+		node: /<(.|\n)*?>/gi,
 		repeat:/(.*)\s+in\s+(.*)/,
 		findFunction:/(.*)\((.*)\)/,
 		findParams:/,\s+|,|\s+,\s+/,
@@ -25,6 +27,7 @@
 		findDoubleQuote:/\"/g,
 		findSingleQuote:/\'/g
 	};
+
 	var attributes = settings.attrs = {
 		skip:"data-skip"
 	};
@@ -33,7 +36,7 @@
 	};
 
 	var isArray = function(value) {
-		return toString.apply(value) === '[object Array]';
+		return Object.prototype.toString.apply(value) === '[object Array]';
 	};
 
 	var isObject = function(value) {
@@ -45,6 +48,7 @@
 	};
 
 	var getValue = function(obj, val) {
+//		var t = new Date().getTime();
 		var fnParts = val.match(regex.findFunction);
 		var parts;
 		if (fnParts) {
@@ -56,14 +60,16 @@
 			parts = val.split('.');
 		}
 		var val = obj;
-		for (var i=0; i<parts.length; i++) {
+		var i = -1;
+		var il = parts.length;
+		while (++i < il) {
 			var fp = parts[i].match(regex.findFunction);
 			if (fp) {
 				var f = fp[1];
 				var p = fp[2];
+				var params = [];
 				if (typeof val[f] !== 'function') return undefined;
 				if (p && p !== "") {
-					var params = [];
 					if (p.match(regex.findString)) {
 						// string
 						p = p.replace(regex.findDoubleQuote, "");
@@ -78,7 +84,7 @@
 						}
 					}
 				}
-				var fnVal = val[f].apply(this, params);
+				var fnVal = val[f].apply(null, params);
 				if (!fnVal) return undefined;
 				return fnVal;
 			}
@@ -87,6 +93,7 @@
 				val = val[parts[i]];
 			}
 		}
+//		console.log(">> VALUE", new Date().getTime() - t, val);
 		return val;
 	};
 
@@ -102,7 +109,9 @@
 		var str = value;
 		var matches = str.match(regex.pattern);
 		if (matches) {
-			for (var i = 0; i < matches.length; i++) {
+			var i = -1;
+			var il = matches.length;
+			while (++i < il) {
 				var path = matches[i].replace(regex.path, "");
 				var val = getValue(obj, path);
 				if (val) str = str.replace(matches[i], val);
@@ -119,19 +128,28 @@
 	};
 
 	var applyTemplate = function (el, obj, index) {
-		var matches, path, val;
+		var matches, path, val, isRepeater = false;
 		// comment
-		if (el.nodeName === "#comment") return;
+		if (el.nodeType === 8) return;
 		// skip
 		if (el.getAttribute && el.getAttribute(attributes.skip) !== null) return;
 		// node value
 		replaceNodeValue(el, obj, index);
+		// comment
+		if (el.nodeType === 3) return;
 		// attributes
-		if (el.attributes) {
-			for (var attr, i = 0, attrs = el.attributes, l = attrs.length; i < l; i++) {
-				attr = attrs.item(i);
-				var nn = attr.nodeName;
-				var nv = attr.nodeValue;
+		var node = el.outerHTML.match(regex.node)[0];
+		var attrs = node.match(regex.attrs);
+		attrs.shift();
+		if (attrs.length > 0) {
+			for (var i=0; i<attrs.length; i++) {
+				var nParts = attrs[i].split('=');
+				var nn = nParts[0];
+				var nv = nParts[1];
+				if (nv) {
+					nv = nv.replace(regex.findDoubleQuote, "");
+					nv = nv.replace(regex.findSingleQuote, "");
+				}
 				if (nn === "data-repeat") {
 					// repeat attribute
 					matches = nv.match(regex.repeat);
@@ -143,25 +161,35 @@
 						var itPath = matches[2];
 						var itSource = getValue(obj, itPath);
 						if (isArray(itSource)) {
-							for (var k = 0; k < itSource.length; k++) {
-								var o1 = {};
+							isRepeater = true;
+							el.removeAttribute('data-repeat');
+							var fragment1 = document.createDocumentFragment();
+							var o1 = {};
+							var newNode;
+							var k = -1;
+							var kl = itSource.length;
+							while (++k < kl) {
 								o1[itVar] = itSource[k];
-								var newNode = el.cloneNode(true);
-								newNode.removeAttribute('data-repeat');
-								el.parentNode.appendChild(newNode);
+								newNode = el.cloneNode(true);
+								fragment1.appendChild(newNode);
 								applyTemplate(newNode, o1, k);
 							}
+							el.parentNode.appendChild(fragment1);
 							el.parentNode.removeChild(el);
 						}
 						else if (isObject(itSource)) {
+							isRepeater = true;
+							el.removeAttribute('data-repeat');
+							var fragment2 = document.createDocumentFragment();
+							var o2 = {};
+							var newNode;
 							for (var o in itSource) {
-								var o2 = {};
 								o2[itVar] = itSource;
-								var newNode = el.cloneNode(true);
-								newNode.removeAttribute('data-repeat');
-								el.parentNode.appendChild(newNode);
+								newNode = el.cloneNode(true);
+								fragment2.appendChild(newNode);
 								applyTemplate(newNode, o2);
 							}
+							el.parentNode.appendChild(fragment2);
 							el.parentNode.removeChild(el);
 						}
 					}
@@ -170,12 +198,14 @@
 					// src attribute
 					matches = nv.match(regex.pattern);
 					if (matches) {
-						for (var i = 0; i < matches.length; i++) {
-							var path = matches[i].replace(regex.path, "");
+						var j = -1;
+						var jl = matches.length;
+						while (++j < jl) {
+							var path = matches[j].replace(regex.path, "");
 							var val = getValue(obj, path);
-							if (val) nv = nv.replace(matches[i], val);
+							if (val) nv = nv.replace(matches[j], val);
 							if (path === "index" && index !== undefined) {
-								nv = nv.replace(matches[i], index);
+								nv = nv.replace(matches[j], index);
 							}
 						}
 						el.setAttribute("src", nv);
@@ -186,12 +216,14 @@
 					// src attribute
 					matches = nv.match(regex.pattern);
 					if (matches) {
-						for (var i = 0; i < matches.length; i++) {
-							var path = matches[i].replace(regex.path, "");
+						var r = -1;
+						var rl = matches.length;
+						while (++r < rl) {
+							var path = matches[r].replace(regex.path, "");
 							var val = getValue(obj, path);
-							if (val) nv = nv.replace(matches[i], val);
+							if (val) nv = nv.replace(matches[r], val);
 							if (path === "index" && index !== undefined) {
-								nv = nv.replace(matches[i], index);
+								nv = nv.replace(matches[r], index);
 							}
 						}
 						el.setAttribute("href", nv);
@@ -202,8 +234,10 @@
 					// src attribute
 					matches = nv.match(regex.pattern);
 					if (matches) {
-						for (var i = 0; i < matches.length; i++) {
-							var path = matches[i].replace(regex.path, "");
+						var s = -1;
+						var sl = matches.length;
+						while (++s < sl) {
+							var path = matches[s].replace(regex.path, "");
 							var val = getValue(obj, path);
 							if (val) el.style.display = "block";
 						}
@@ -214,8 +248,10 @@
 					// src attribute
 					matches = nv.match(regex.pattern);
 					if (matches) {
-						for (var i = 0; i < matches.length; i++) {
-							var path = matches[i].replace(regex.path, "");
+						var z = -1;
+						var zl = matches.length;
+						while (++z < zl) {
+							var path = matches[z].replace(regex.path, "");
 							var val = getValue(obj, path);
 							if (val) el.style.display = "none";
 						}
@@ -226,48 +262,54 @@
 					// normal attribute (node name)
 					matches = nn.match(regex.pattern);
 					if (matches) {
-						for (var i = 0; i < matches.length; i++) {
-							var path = matches[i].replace(regex.path, "");
+						var x = -1;
+						var xl = matches.length;
+						while (++x < xl) {
+							var path = matches[x].replace(regex.path, "");
 							var val = getValue(obj, path);
-							if (val) nn = nn.replace(matches[i], val);
-							el.removeAttribute(matches[i]);
+							if (val) nn = nn.replace(matches[x], val);
+							el.setAttribute(nn, val)
+							el.removeAttribute(matches[x]);
 						}
-
 					}
 					// normal attribute (node value)
-					matches = nv.match(regex.pattern);
-					if (matches) {
-						for (var i = 0; i < matches.length; i++) {
-							var path = matches[i].replace(regex.path, "");
-							if (path === "index" && index !== undefined) {
-								nv = nv.replace(matches[i], index);
-							}
-							else {
-								var val = getValue(obj, path);
-								if (val !== undefined) {
-									nv = nv.replace(matches[i], val);
+					if (nv) {
+						matches = nv.match(regex.pattern);
+						if (matches) {
+							var d = -1;
+							var dl = matches.length;
+							while (++d < dl) {
+								var path = matches[d].replace(regex.path, "");
+								if (path === "index" && index !== undefined) {
+									nv = nv.replace(matches[d], index);
 								}
 								else {
-									nv = nv.replace(matches[i], "");
+									var val = getValue(obj, path);
+									if (val !== undefined) {
+										nv = nv.replace(matches[d], val);
+									}
+									else {
+										nv = nv.replace(matches[d], "");
+									}
 								}
 							}
+//							console.log(el.className, 'set > name: ' + nn + ", value: " + nv);
+							if (nn === "class" && el.className) el.className = nv;
+							else el.setAttribute(nn, nv);
 						}
 					}
-					el.setAttribute(nn, nv);
 				}
 			}
 		}
 		// process children
-		if (el.childNodes.length > 0) {
-			if (el.getAttribute && el.getAttribute('data-repeat')) {
-				return;
-			}
-			for (var i = 0; i < el.childNodes.length; i++) {
-				var child = el.childNodes[i];
-				applyTemplate(child, obj, index);
-			}
+		var node = el.firstChild;
+		while (node) {
+//			var t = new Date().getTime();
+			if (isRepeater) return;
+			applyTemplate(node, obj, index);
+			node = node.nextSibling;
+//			console.log(">>", new Date().getTime() - t, el);
 		}
-
 	}
 
 	soma.Template = function (source) {
