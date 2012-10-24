@@ -19,7 +19,7 @@ var obj1 = {
 		param1: "p1.p1",
 		param2: "p2.p2"
 	},
-	getClass: function(){ return "myClassA"; },
+	getClass: function(){ return "myClass"; },
 	fnParam: function(p1, p2){ return p1 === "p1.p1" && p2 === "p2.p2" ? "fn value [v1]" : undefined; },
 	getClassParam: function(p1, p2){ return p1 === "p1.p1" && p2 === "p2.p2" ? "myClass5" : undefined; },
 	functions: {
@@ -147,6 +147,6 @@ $('.switchtouch').bind('touchstart', function() {
 });
 
 // string
-new soma.Template('<p>{{name}}</p>')
-	.target(document.getElementById('target'))
-	.compile({name:"John"});
+//new soma.Template('<p>{{name}}</p>')
+//	.target(document.getElementById('target'))
+//	.compile({name:"John"});

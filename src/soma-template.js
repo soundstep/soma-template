@@ -2,6 +2,8 @@
 
 	'use strict';
 
+	var VERBOSE = false;
+
 	soma.template = soma.source || {};
 	soma.template.version = "0.0.1";
 
@@ -22,10 +24,12 @@
 		node: /<(.|\n)*?>/gi,
 		repeat:/(.*)\s+in\s+(.*)/,
 		findFunction:/(.*)\((.*)\)/,
+		findFunctionPath: /(.*)\.(.*)\(/,
 		findParams:/,\s+|,|\s+,\s+/,
 		findString:/('|")(.*)('|")/,
 		findDoubleQuote:/\"/g,
-		findSingleQuote:/\'/g
+		findSingleQuote:/\'/g,
+		findExtraQuote: /^["|']|["|']?$/g
 	};
 
 	var attributes = settings.attributes = {
@@ -52,35 +56,74 @@
 		return value ? value.nodeType > 0 : false;
 	};
 
-	var getParamsFromString = function(params) {
-		params = params.replace(regex.findDoubleQuote, "");
-		params = params.replace(regex.findSingleQuote, "");
-		return params.split(regex.findParams);
+	var getParamsFromString = function(str, obj) {
+		if (VERBOSE) console.log("----- GET PARAM VALUE", str, obj);
+		if (!str || str == "") return [];
+		if (str.match(regex.findString)) {
+			// string
+			str = str.replace(regex.findDoubleQuote, "");
+			str = str.replace(regex.findSingleQuote, "");
+			return str.split(regex.findParams);
+		}
+		else {
+			// value
+			var params = [];
+			var parts = str.split(regex.findParams);
+			for (var k=0; k<parts.length; k++) {
+				if (VERBOSE) console.log(k, parts[k], getValue(obj, parts[k]));
+				params.push(getValue(obj, parts[k]));
+			}
+			return params;
+		}
 	}
 
 	var getFunctionValue = function(obj, value, fnParts) {
-		console.log("----------------------", obj, value, fnParts);
-		var val = obj.data, fn, fp;
+		if (VERBOSE) console.log("----- GET FUNCTION VALUE", obj, value, fnParts);
+		var val = obj.data, fn, fp, fnCall;
 		if (fnParts[1].indexOf(".") === -1) {
 			fn = fnParts[1];
-			fp = getParamsFromString(fnParts[2]);
+			fp = getParamsFromString(fnParts[2], obj);
+			if (!val[fn]) {
+				if (obj.parent) {
+					return getValue(obj.parent, value);
+				}
+				return undefined;
+			}
+			fnCall = val[fn];
 		}
 		else {
 			// has path
-			var sep = fnParts[1].split('.');
-			fn = sep[sep.length-1];
-			fp = getParamsFromString(fnParts[2]);
+			var parts = fnParts[1].split('.');
+			fn = parts[parts.length-1];
+			fp = getParamsFromString(fnParts[2], obj);
+			parts.pop();
+			if (VERBOSE) console.log('parts', parts);
+			var i = -1;
+			var il = parts.length;
+			while (++i < il) {
+				val = val[parts[i]];
+				if (!val) {
+					if (obj.parent) {
+						return getValue(obj.parent, value);
+					}
+					return undefined;
+				}
+			}
+			fnCall = val[fn];
 		}
-		var parts =
-//		var i = -1;
-//		var il = parts.length;
-//		while (++i < il) {
-//
-//		}
 
-		console.log("fn", fn);
-		console.log("fp", fp);
-		return "";
+		if (typeof fnCall === 'function') {
+			if (VERBOSE) console.log('BEFORE CALL, fnCall: ', fnCall);
+			if (VERBOSE) console.log('BEFORE CALL, fp: ', fp);
+			if (VERBOSE) console.log('RESULT', fnCall.apply(null, fp));
+			return fnCall.apply(null, fp);
+		}
+
+		if (VERBOSE) console.log("fnCall", fnCall);
+		if (VERBOSE) console.log("val", val);
+		if (VERBOSE) console.log("fn", fn);
+		if (VERBOSE) console.log("fp", fp);
+		return undefined;
 	}
 
 	var getValue = function(obj, value) {
@@ -90,89 +133,22 @@
 			return getFunctionValue(obj, value, fnParts);
 		}
 		// value
-
-
-
-
-
-
-
-
-
-
-
-
-
-		return;
-		console.log(">>", obj, value);
-//		var t = new Date().getTime();
-		var fnParts = value.match(regex.findFunction);
-		console.log('fnParts', fnParts);
-		var parts;
-		if (fnParts) {
-			// has path in
-			parts = fnParts[1].split('.');
-			parts[1] += '(' + fnParts[2] + ')'
-		}
-		else {
-			parts = value.split('.');
-		}
-		console.log('parts', parts);
+		if (VERBOSE) console.log("----- GET VALUE", obj, value);
 		var val = obj.data;
+		var parts = value.split('.');
 		var i = -1;
 		var il = parts.length;
 		while (++i < il) {
-//			console.log('parts[i]', parts[i], parts.length);
-			var fp = parts[i].match(regex.findFunction);
-			if (fp) {
-
-				console.log("FP", fp, val);
-
-				var f = fp[1];
-				var p = fp[2];
-				var params = [];
-
-//				if (!f) {
-//					if (obj.parent) val = getValue(obj.parent, value);
-//					else return undefined;
-//				}
-
-				if (typeof val[f] !== 'function') {
-					console.log(111);
-					return undefined;
+			if (VERBOSE) console.log('PARTS', parts, obj, val);
+			val = val[parts[i]];
+			if (!val) {
+				if (obj.parent) {
+					val = getValue(obj.parent, value);
+					break;
 				}
-				if (p && p !== "") {
-					if (p.match(regex.findString)) {
-						// string
-						p = p.replace(regex.findDoubleQuote, "");
-						p = p.replace(regex.findSingleQuote, "");
-						params = p.split(regex.findParams);
-					}
-					else {
-						// value
-						var pp = p.split(regex.findParams);
-						for (var k=0; k<pp.length; k++) {
-							params.push(getValue(obj, pp[k]));
-						}
-					}
-				}
-				var fnVal = val[f].apply(null, params);
-				if (!fnVal) {
-					if (obj.parent) fnVal = getValue(obj.parent, value);
-					else return undefined;
-				}
-				return fnVal;
-			}
-			else {
-				var f1 = val[parts[i]];
-				if (!f1) {
-					if (obj.parent) f1 = getValue(obj.parent, value);
-					else return undefined;
-				}
-				val = f1;
 			}
 		}
-//		console.log(">> VALUE", new Date().getTime() - t, val);
+		if (VERBOSE) console.log("VAL", val);
 		return val;
 	};
 
@@ -192,7 +168,8 @@
 			var il = matches.length;
 			while (++i < il) {
 				var path = matches[i].replace(regex.path, "");
-				var val = getValue(obj, path);
+				var val = replaceIndex(index, path, str, matches[i]);
+				val = getValue(obj, path);
 				if (val) str = str.replace(matches[i], val);
 				str = replaceIndex(index, path, str, matches[i]);
 			}
@@ -217,6 +194,7 @@
 		// comment
 		if (el.nodeType === 3) return;
 		// attributes
+		if (VERBOSE) console.log("================== APPLY ==================", el, obj, index);
 		var node = el.outerHTML.match(regex.node)[0];
 		var attrs = node.match(regex.attrs);
 		attrs.shift();
@@ -224,11 +202,7 @@
 			for (var i=0; i<attrs.length; i++) {
 				var nParts = attrs[i].split('=');
 				var nn = nParts[0];
-				var nv = nParts[1];
-				if (nv) {
-					nv = nv.replace(regex.findDoubleQuote, "");
-					nv = nv.replace(regex.findSingleQuote, "");
-				}
+				var nv = nParts[1].replace(regex.findExtraQuote, "");
 				if (nn === "data-repeat") {
 					// repeat attribute
 					matches = nv.match(regex.repeat);
@@ -252,7 +226,7 @@
 								o1[itVar] = itSource[k];
 								var childObj1 = obj.add(o1, obj);
 
-								console.log('childObj', childObj1);
+								if (VERBOSE) console.log('childObj', childObj1);
 
 
 								newNode = el.cloneNode(true);
@@ -269,13 +243,13 @@
 							var fragment2 = document.createDocumentFragment();
 							var newNode;
 							for (var o in itSource) {
-								console.log(o, itVar, itSource);
+								if (VERBOSE) console.log(o, itVar, itSource);
 
 								var o2 = {};
 								o2[itVar] = itSource;
 								var childObj2 = obj.add(o2, obj);
 
-								console.log('childObj', childObj2);
+								if (VERBOSE) console.log('childObj', childObj2);
 
 								newNode = el.cloneNode(true);
 								fragment2.appendChild(newNode);
@@ -377,6 +351,7 @@
 								}
 								else {
 									var val = getValue(obj, path);
+
 									if (val !== undefined) {
 										nv = nv.replace(matches[d], val);
 									}
@@ -385,7 +360,7 @@
 									}
 								}
 							}
-//							console.log(el.className, 'set > name: ' + nn + ", value: " + nv);
+//							if (VERBOSE) console.log(el.className, 'set > name: ' + nn + ", value: " + nv);
 							if (nn === "class" && el.className) el.className = nv;
 							else el.setAttribute(nn, nv);
 						}
@@ -400,7 +375,7 @@
 			if (isRepeater) return;
 			applyTemplate(node, obj, index);
 			node = node.nextSibling;
-//			console.log(">>", new Date().getTime() - t, el);
+//			if (VERBOSE) console.log(">>", new Date().getTime() - t, el);
 		}
 	}
 
