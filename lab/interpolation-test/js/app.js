@@ -20,6 +20,8 @@ var obj1 = {
 		param2: "p2.p2"
 	},
 	getClass: function(){ return "myClassA"; },
+	fnParam: function(p1, p2){ return p1 === "p1.p1" && p2 === "p2.p2" ? "fn value [v1]" : undefined; },
+	getClassParam: function(p1, p2){ return p1 === "p1.p1" && p2 === "p2.p2" ? "myClass5" : undefined; },
 	functions: {
 		getClass: function(){ return "myClass4"; },
 		getClassParam: function(p1, p2){ return p1 === "p1.p1" && p2 === "p2.p2" ? "myClass5" : undefined; },
@@ -28,7 +30,10 @@ var obj1 = {
 		fnParam: function(p1, p2){ return p1 === "p1.p1" && p2 === "p2.p2" ? "fn value [v1]" : undefined; },
 		checked: function() { return "checked"; },
 		hideFn: function(){ return true; },
-		showFn: function(){ return true; }
+		showFn: function(){ return true; },
+		deep: {
+			fn1: function(){ return "fn deep string returned [v2]"; }
+		}
 	},
 	cl:"myClass",
 	cl2:"myClass2",
@@ -79,6 +84,9 @@ var obj2 = {
 		param1: "p1.p1",
 		param2: "p2.p2"
 	},
+	getClass: function(){ return "myClassA"; },
+	fnParam: function(p1, p2){ return p1 === "p1.p1" && p2 === "p2.p2" ? "fn value [v1]" : undefined; },
+	getClassParam: function(p1, p2){ return p1 === "p1.p1" && p2 === "p2.p2" ? "myClass5" : undefined; },
 	functions: {
 		getClass: function(){ return "myClass4"; },
 		getClassParam: function(p1, p2){ return p1 === "p1.p1" && p2 === "p2.p2" ? "myClass6" : undefined; },
@@ -87,7 +95,10 @@ var obj2 = {
 		fnParam: function(p1, p2){ return p1 === "p1.p1" && p2 === "p2.p2" ? "fn value [v2]" : undefined; },
 		checked: function() { return "checked"; },
 		hideFn: function(){ return true; },
-		showFn: function(){ return true; }
+		showFn: function(){ return true; },
+		deep: {
+			fn1: function(){ return "fn deep string returned [v2]"; }
+		}
 	},
 	cl:"myClass",
 	cl2:"myClass2",

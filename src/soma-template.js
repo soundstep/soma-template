@@ -52,7 +52,58 @@
 		return value ? value.nodeType > 0 : false;
 	};
 
+	var getParamsFromString = function(params) {
+		params = params.replace(regex.findDoubleQuote, "");
+		params = params.replace(regex.findSingleQuote, "");
+		return params.split(regex.findParams);
+	}
+
+	var getFunctionValue = function(obj, value, fnParts) {
+		console.log("----------------------", obj, value, fnParts);
+		var val = obj.data, fn, fp;
+		if (fnParts[1].indexOf(".") === -1) {
+			fn = fnParts[1];
+			fp = getParamsFromString(fnParts[2]);
+		}
+		else {
+			// has path
+			var sep = fnParts[1].split('.');
+			fn = sep[sep.length-1];
+			fp = getParamsFromString(fnParts[2]);
+		}
+		var parts =
+//		var i = -1;
+//		var il = parts.length;
+//		while (++i < il) {
+//
+//		}
+
+		console.log("fn", fn);
+		console.log("fp", fp);
+		return "";
+	}
+
 	var getValue = function(obj, value) {
+		var fnParts = value.match(regex.findFunction);
+		// function
+		if (fnParts) {
+			return getFunctionValue(obj, value, fnParts);
+		}
+		// value
+
+
+
+
+
+
+
+
+
+
+
+
+
+		return;
 		console.log(">>", obj, value);
 //		var t = new Date().getTime();
 		var fnParts = value.match(regex.findFunction);
