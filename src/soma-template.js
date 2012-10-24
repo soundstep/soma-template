@@ -6,8 +6,8 @@
 	soma.template.version = "0.0.1";
 
 	var errors = soma.template.errors = {
-		COMPILE_NO_ELEMENT: "Error in soma.Template.compile(), no target specified: template.source(element).compile(data).",
-		REPEAT_WRONG_ARGUMENTS: "Error in template, repeat attribute requires this syntax: 'item in items'."
+		COMPILE_NO_ELEMENT: "Error in soma.template, no target specified: template.source(element).compile(data).",
+		REPEAT_WRONG_ARGUMENTS: "Error in soma.template, repeat attribute requires this syntax: 'item in items'."
 	};
 
 	var settings = soma.template.settings = soma.template.settings || {};
@@ -28,8 +28,13 @@
 		findSingleQuote:/\'/g
 	};
 
-	var attributes = settings.attrs = {
-		skip:"data-skip"
+	var attributes = settings.attributes = {
+		skip:"data-skip",
+		repeat:"data-repeat",
+		src:"data-src",
+		href:"data-href",
+		show:"data-show",
+		hide:"data-hide"
 	};
 	var vars = settings.vars = {
 		index:"index"
@@ -47,9 +52,11 @@
 		return value ? value.nodeType > 0 : false;
 	};
 
-	var getValue = function(obj, val) {
+	var getValue = function(obj, value) {
+		console.log(">>", obj, value);
 //		var t = new Date().getTime();
-		var fnParts = val.match(regex.findFunction);
+		var fnParts = value.match(regex.findFunction);
+		console.log('fnParts', fnParts);
 		var parts;
 		if (fnParts) {
 			// has path in
@@ -57,18 +64,32 @@
 			parts[1] += '(' + fnParts[2] + ')'
 		}
 		else {
-			parts = val.split('.');
+			parts = value.split('.');
 		}
-		var val = obj;
+		console.log('parts', parts);
+		var val = obj.data;
 		var i = -1;
 		var il = parts.length;
 		while (++i < il) {
+//			console.log('parts[i]', parts[i], parts.length);
 			var fp = parts[i].match(regex.findFunction);
 			if (fp) {
+
+				console.log("FP", fp, val);
+
 				var f = fp[1];
 				var p = fp[2];
 				var params = [];
-				if (typeof val[f] !== 'function') return undefined;
+
+//				if (!f) {
+//					if (obj.parent) val = getValue(obj.parent, value);
+//					else return undefined;
+//				}
+
+				if (typeof val[f] !== 'function') {
+					console.log(111);
+					return undefined;
+				}
 				if (p && p !== "") {
 					if (p.match(regex.findString)) {
 						// string
@@ -85,12 +106,19 @@
 					}
 				}
 				var fnVal = val[f].apply(null, params);
-				if (!fnVal) return undefined;
+				if (!fnVal) {
+					if (obj.parent) fnVal = getValue(obj.parent, value);
+					else return undefined;
+				}
 				return fnVal;
 			}
 			else {
-				if (!val[parts[i]]) return undefined;
-				val = val[parts[i]];
+				var f1 = val[parts[i]];
+				if (!f1) {
+					if (obj.parent) f1 = getValue(obj.parent, value);
+					else return undefined;
+				}
+				val = f1;
 			}
 		}
 //		console.log(">> VALUE", new Date().getTime() - t, val);
@@ -162,39 +190,52 @@
 						var itSource = getValue(obj, itPath);
 						if (isArray(itSource)) {
 							isRepeater = true;
-							el.removeAttribute('data-repeat');
+							el.removeAttribute(attributes.repeat);
 							var fragment1 = document.createDocumentFragment();
-							var o1 = {};
 							var newNode;
 							var k = -1;
 							var kl = itSource.length;
 							while (++k < kl) {
+
+								var o1 = {};
 								o1[itVar] = itSource[k];
+								var childObj1 = obj.add(o1, obj);
+
+								console.log('childObj', childObj1);
+
+
 								newNode = el.cloneNode(true);
 								fragment1.appendChild(newNode);
-								applyTemplate(newNode, o1, k);
+								applyTemplate(newNode, childObj1, k);
 							}
 							el.parentNode.appendChild(fragment1);
 							el.parentNode.removeChild(el);
 						}
 						else if (isObject(itSource)) {
 							isRepeater = true;
-							el.removeAttribute('data-repeat');
+							el.removeAttribute(attributes.repeat);
+							//if (obj[itVar]) throw new Error("BLAH");
 							var fragment2 = document.createDocumentFragment();
-							var o2 = {};
 							var newNode;
 							for (var o in itSource) {
+								console.log(o, itVar, itSource);
+
+								var o2 = {};
 								o2[itVar] = itSource;
+								var childObj2 = obj.add(o2, obj);
+
+								console.log('childObj', childObj2);
+
 								newNode = el.cloneNode(true);
 								fragment2.appendChild(newNode);
-								applyTemplate(newNode, o2);
+								applyTemplate(newNode, childObj2);
 							}
 							el.parentNode.appendChild(fragment2);
 							el.parentNode.removeChild(el);
 						}
 					}
 				}
-				else if (nn === "data-src") {
+				else if (nn === attributes.src) {
 					// src attribute
 					matches = nv.match(regex.pattern);
 					if (matches) {
@@ -204,15 +245,15 @@
 							var path = matches[j].replace(regex.path, "");
 							var val = getValue(obj, path);
 							if (val) nv = nv.replace(matches[j], val);
-							if (path === "index" && index !== undefined) {
+							if (path === vars.index && index !== undefined) {
 								nv = nv.replace(matches[j], index);
 							}
 						}
 						el.setAttribute("src", nv);
-						el.removeAttribute("data-src");
+						el.removeAttribute(attributes.src);
 					}
 				}
-				else if (nn === "data-href") {
+				else if (nn === attributes.href) {
 					// src attribute
 					matches = nv.match(regex.pattern);
 					if (matches) {
@@ -222,15 +263,15 @@
 							var path = matches[r].replace(regex.path, "");
 							var val = getValue(obj, path);
 							if (val) nv = nv.replace(matches[r], val);
-							if (path === "index" && index !== undefined) {
+							if (path === vars.index && index !== undefined) {
 								nv = nv.replace(matches[r], index);
 							}
 						}
 						el.setAttribute("href", nv);
-						el.removeAttribute("data-href");
+						el.removeAttribute(attributes.href);
 					}
 				}
-				else if (nn === "data-show") {
+				else if (nn === attributes.show) {
 					// src attribute
 					matches = nv.match(regex.pattern);
 					if (matches) {
@@ -241,10 +282,10 @@
 							var val = getValue(obj, path);
 							if (val) el.style.display = "block";
 						}
-						el.removeAttribute("data-show");
+						el.removeAttribute(attributes.show);
 					}
 				}
-				else if (nn === "data-hide") {
+				else if (nn === attributes.hide) {
 					// src attribute
 					matches = nv.match(regex.pattern);
 					if (matches) {
@@ -255,7 +296,7 @@
 							var val = getValue(obj, path);
 							if (val) el.style.display = "none";
 						}
-						el.removeAttribute("data-hide");
+						el.removeAttribute(attributes.hide);
 					}
 				}
 				else {
@@ -280,7 +321,7 @@
 							var dl = matches.length;
 							while (++d < dl) {
 								var path = matches[d].replace(regex.path, "");
-								if (path === "index" && index !== undefined) {
+								if (path === vars.index && index !== undefined) {
 									nv = nv.replace(matches[d], index);
 								}
 								else {
@@ -312,9 +353,40 @@
 		}
 	}
 
+	var ObjectTree = function() {
+
+		var tree = {};
+
+		var addObject = function(obj, current) {
+			var o = {
+				parent: current,
+				data: obj,
+				children: [],
+				add: addObject
+			};
+			current.children.push(o);
+			return o;
+		}
+
+		return {
+			create: function(current, parent) {
+				tree = {
+					parent: parent,
+					data: current,
+					children: [],
+					add: addObject
+				};
+				return tree;
+			}
+		}
+
+	}
+
 	soma.Template = function (source) {
 
 		var tpl, cache, el;
+
+		var objTree = new ObjectTree();
 
 		if (source) setSource(source);
 
@@ -337,7 +409,8 @@
 					else el = tpl;
 				}
 				el.innerHTML = cache;
-				applyTemplate(el, data);
+				// apply
+				applyTemplate(el, objTree.create(data));
 				return this;
 			},
 			dispose: function() {

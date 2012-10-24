@@ -3,9 +3,11 @@
 <head>
 	<title></title>
 	<style type="text/css">
+		.boldclass {
+			font-weight: bold;
+		}
 		.myClass {
 			color: #B06E00;
-			font-weight: bold;
 		}
 		.myClass2 {
 			color: #A60B60;
@@ -36,12 +38,13 @@
 <body>
 
 <button class="switch">switch data</button>
+<button class="switchtouch">switch data (touch)</button>
 <div class="time"></div>
 
 <hr>
 
 <div id="ct">
-	<p class="{{cl}}">class on div + text {{test1}} dummy{{test2}}dummy</p>
+	<p class="boldclass {{cl}}">class on div + text {{test1}} dummy{{test2}}dummy</p>
 	<p class="{{cl2}}">class on div + text {{test1}}</p>
 	<p class="{{functions.getClass()}}">class function on div + text function {{functions.fn1()}}</p>
 	<p class="{{functions.getClassParam('p1.p1','p2.p2')}}">class function on div with param + text function with param {{functions.fnParam("p1.p1", "p2.p2")}}</p>
@@ -88,7 +91,7 @@
 			<div>
 				{{o.title}}
 				<ul data-repeat="arr in o.data">
-					<li>{{arr}}</li>
+					<li>{{arr}} {{o.title}} {{test3.obj.cl}}</li>
 				</ul>
 			</div>
 		</li>
@@ -101,7 +104,7 @@
 					<strong>Level 2, index {{index}}:</strong>
 					<ul>
 						<li data-repeat="l3 in l2">
-							<strong>Level 3, index {{index}}:</strong> {{l3}}
+							<strong>Level 3, index {{index}}:</strong> {{l3}} {{test3.obj.cl}} {{getClass()}} {{functions.getClass()}}
 						</li>
 					</ul>
 				</li>
@@ -110,7 +113,10 @@
 	</ul>
 </div>
 
+<div id="target"></div>
+
 <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="../../src/soma-template.js"></script>
 <script type="text/javascript" src="js/app.js"></script>
 
 </body>
