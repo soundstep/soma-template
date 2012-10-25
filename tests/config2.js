@@ -6,7 +6,7 @@ var config = {
     },
     "port": 9000,
     "tunnellink": "soundstep.pagekite.me",
-    "tunnel": "pagekite.py <port> soundstep.pagekite.me"
+    "tunnel": "show <port> soundstep.pagekite.me"
 };
 
 module.exports = config;

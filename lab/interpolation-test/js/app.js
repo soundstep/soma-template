@@ -130,7 +130,15 @@ var obj2 = {
 
 var obj;
 
-var template = new soma.Template(document.getElementById('ct'));
+var template = soma.template.create(document.getElementById('ct'));
+template.setTarget(document.getElementById('ct'));
+
+console.log(template);
+
+var templateChild1 = soma.template.create(document.getElementById('sub-ct'));
+templateChild1.setTarget(document.getElementById('sub-ct'));
+
+templateChild1.compile(obj1);
 
 function compile() {
 	obj = obj === obj1 ? obj2 : obj1;

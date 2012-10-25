@@ -27,9 +27,9 @@
 		findFunctionPath: /(.*)\.(.*)\(/,
 		findParams:/,\s+|,|\s+,\s+/,
 		findString:/('|")(.*)('|")/,
-		findDoubleQuote:/\"/g,
-		findSingleQuote:/\'/g,
-		findExtraQuote: /^["|']|["|']?$/g
+		findQuote:/\"|\'/g,
+		findExtraQuote: /^["|']|["|']?$/g,
+		findNotWhiteSpace: /[^\s]/gm
 	};
 
 	var attributes = settings.attributes = {
@@ -61,8 +61,7 @@
 		if (!str || str == "") return [];
 		if (str.match(regex.findString)) {
 			// string
-			str = str.replace(regex.findDoubleQuote, "");
-			str = str.replace(regex.findSingleQuote, "");
+			str = str.replace(regex.findQuote, "");
 			return str.split(regex.findParams);
 		}
 		else {
@@ -183,12 +182,49 @@
 		}
 	};
 
+	var contains = function(a, b){
+		return a.contains ?
+			a != b && a.contains(b) :
+			!!(a.compareDocumentPosition(b) & 16);
+	};
+
+	function comparePosition(a, b){
+		return a.compareDocumentPosition ?
+			a.compareDocumentPosition(b) :
+			a.contains ?
+				(a != b && a.contains(b) && 16) +
+					(a != b && b.contains(a) && 8) +
+					(a.sourceIndex >= 0 && b.sourceIndex >= 0 ?
+						(a.sourceIndex < b.sourceIndex && 4) +
+							(a.sourceIndex > b.sourceIndex && 2) :
+						1) +
+					0 :
+				0;
+	};
+
 	var applyTemplate = function (el, obj, index) {
 		var matches, path, val, isRepeater = false;
 		// comment
 		if (el.nodeType === 8) return;
+		// check text node
+		if (el.nodeType === 3 && !regex.findNotWhiteSpace.test(el.nodeValue)) return;
 		// skip
 		if (el.getAttribute && el.getAttribute(attributes.skip) !== null) return;
+		// check for templates
+		var t = -1;
+		var tl = templates.length;
+		console.log("-----------------------------", el);
+		console.log('>>> compile target', compileTarget, comparePosition(compileTarget, el));
+		while (++t < tl) {
+			console.log('loop on', templates[t].getTarget());
+//			console.log('contains', compileTarget.contains(templates[t].getTarget()));
+//			console.log('compare', compileTarget.compareDocumentPosition(templates[t].getTarget()));
+			console.log('position ', el.compareDocumentPosition(templates[t].getTarget()));
+			if (comparePosition(el, compileTarget) > 10 && comparePosition(el, templates[t].getTarget()) === 0) {
+				console.log("ABORTED");
+				return;
+			}
+		}
 		// node value
 		replaceNodeValue(el, obj, index);
 		// comment
@@ -380,54 +416,91 @@
 	}
 
 	var ObjectTree = function() {
-
 		var tree = {};
 
-		var addObject = function(obj, current) {
+		function addObject(obj, parent) {
 			var o = {
-				parent: current,
+				parent: parent,
 				data: obj,
 				children: [],
 				add: addObject
 			};
-			current.children.push(o);
+			if (parent) parent.children.push(o);
 			return o;
 		}
 
 		return {
-			create: function(current, parent) {
+			create: function(obj, parent) {
 				tree = {
 					parent: parent,
-					data: current,
+					data: obj,
 					children: [],
 					add: addObject
 				};
 				return tree;
 			}
 		}
+	};
 
-	}
+//	var Template = function(source) {
+//
+//		var tree = addTemplate(source);
+//		tree.data = new ObjectTree();
+//
+//		function addTemplate(source, parent) {
+//			var o = {
+//				parent: parent,
+//				template: source,
+//				cache: isElement(source) ? source.innerHTML : source,
+//				targetElement: null,
+//				target: setTarget,
+//				children: [],
+//				data: null,
+//				add: addTemplate,
+//				compile: compileTemplate
+//			};
+//			if (parent) current.children.push(o);
+//			return o;
+//		}
+//
+//		function setTarget(element) {
+//			console.log('set target', element);
+//			this.targetElement = element;
+//		}
+//
+//		function compileTemplate(data) {
+//			console.log('compile', data);
+//			if (!this.targetElement) {
+//				if (!isElement(template)) throw new Error(errors.COMPILE_NO_ELEMENT);
+//				else this.targetElement = template;
+//			}
+//			this.targetElement.innerHTML = this.cache;
+//			// apply
+//			applyTemplate(this.targetElement, this.data.create(data));
+//			return this;
+//		}
+//
+//		return tree;
+//	};
 
-	soma.Template = function (source) {
-
+	var Template = function(source) {
 		var tpl, cache, el;
-
 		var objTree = new ObjectTree();
-
 		if (source) setSource(source);
-
 		function setSource(source) {
 			tpl = source;
 			cache = isElement(tpl) ? tpl.innerHTML : tpl;
 		};
-
 		return {
 			source: function(source) {
 				setSource(source);
 			},
-			target:function (element) {
+			setTarget: function (element) {
 				el = element;
 				return this;
+			},
+			getTarget: function() {
+				return el;
 			},
 			compile:function (data) {
 				if (!el) {
@@ -435,6 +508,7 @@
 					else el = tpl;
 				}
 				el.innerHTML = cache;
+				compileTarget = el;
 				// apply
 				applyTemplate(el, objTree.create(data));
 				return this;
@@ -446,6 +520,29 @@
 				return this;
 			}
 		}
+	};
+
+	var templates = [];
+	var compileTarget;
+
+	soma.template.disposeAll = function () {
+		// TODO: need to properly dispose template
+		templates.length = 0;
+	}
+	soma.template.dispose = function (template) {
+		var i = -1;
+		var il = templates.length;
+		while (++i < il) {
+			if (templates[i] === template) {
+				templates.splice(i, 1);
+				break;
+			}
+		}
+	}
+	soma.template.create = function (source) {
+		var tpl = new Template(source);
+		templates.push(tpl);
+		return tpl;
 	};
 
 	// register for AMD module
