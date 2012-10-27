@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+<div id="ct1">
+	<p class=" s{{class1}}e  {{class2a}}-{{class2b}} {{class2a}}
+{{class2a}}
+	{{class2b}} " s{{attr1}}e {{attr2}}e>Text node interpolation: {{test1}} with 2 {{test2}} texts.</p>
+</div>
+
+<div id="ct2">
+	<p class=" s{{class1}}e  {{class2a}}-{{class2b}} {{class2a}}
+{{class2a}}
+	{{class2b}} " s{{attr1}}e {{attr2}}e>Text node interpolation: {{test1}} with 2 {{test2}} texts.</p>
+</div>
+
+<script type="text/javascript" src="../../src/soma-template.js"></script>
+<script type="text/javascript">
+	// tpl 1
+	var ct1 = document.getElementById('ct1');
+	var tpl1 = soma.template.compile(ct1);
+	// tpl 2
+//	var ct2 = document.getElementById('ct2');
+//	var tpl2 = soma.template.compile(ct2);
+	// render
+	tpl1.render({test1:"name 1 [tpl1][v1]",test2:"test 2 [tpl1][v1]"});
+//	tpl2.render({test1:"name 1 [tpl2][v1]",test2:"test 2 [tpl2][v1]"});
+</script>
+
+</body>
+</html>

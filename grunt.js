@@ -11,7 +11,7 @@ module.exports = function(grunt) {
 		},
 		min:{
 			dest:{
-				src:['<banner:meta.banner>', 'src/soma-template.js'],
+				src:['<banner:meta.banner>', 'src/soma-template-old.js'],
 				dest:'build/soma-template-v<%= meta.version %>.min.js'
 			}
 		},
