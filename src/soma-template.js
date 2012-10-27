@@ -2,7 +2,9 @@
 
 	'use strict';
 
-	var VERBOSE = false;
+	var VERBOSE_COMPILE = false;
+	var VERBOSE_RENDER = false;
+	var VERBOSE_INTERPOLATION = true;
 
 	soma.template = soma.source || {};
 	soma.template.version = "0.0.1";
@@ -18,19 +20,19 @@
 	};
 	var regex = settings.regex = {
 		attrs: new RegExp("([-A-Za-z0-9" + tokens.start + tokens.end + "(())._]+)(?:\s*=\s*(?:(?:\"((?:\\.|[^\"])*)\")|(?:'((?:\\.|[^'])*)')|([^>\u0020|\u0009]+)))?", "g"),
-		token:new RegExp(tokens.start + "(.*?)" + tokens.end, "gm"),
-		path:new RegExp(tokens.start + "|" + tokens.end, "gm"),
+		token: new RegExp(tokens.start + "(.*?)" + tokens.end, "gm"),
+		expression: new RegExp(tokens.start + "|" + tokens.end, "gm"),
 		node: /<(.|\n)*?>/gi,
 		trim: /^[\s+]+|[\s+]+$/g,
-		repeat:/(.*)\s+in\s+(.*)/,
-		findFunction:/(.*)\((.*)\)/,
+		repeat: /(.*)\s+in\s+(.*)/,
+		findFunction: /(.*)\((.*)\)/,
 		findFunctionPath: /(.*)\.(.*)\(/,
-		findParams:/,\s+|,|\s+,\s+/,
-		findString:/('|")(.*)('|")/,
-		findQuote:/\"|\'/g,
+		findParams: /,\s+|,|\s+,\s+/,
+		findString: /('|")(.*)('|")/,
+		findQuote: /\"|\'/g,
 		findExtraQuote: /^["|']|["|']?$/g,
 		findContent: /[^\s]/gm,
-		findTokens: /\{\{\w+\}\}/g,
+		findTokens: new RegExp(tokens.start + ".*?" + tokens.end, "g"), //new RegExp(tokens.start + ".*" + tokens.end + "+", "g"), // /\{\{(.*?)\}\}/g
 		findWhitespace: /\s+/g
 	};
 	var attributes = settings.attributes = {
@@ -64,22 +66,28 @@
 		if (value[value.length-1] === "") value.pop();
 		return value;
 	}
-
-	// elements
-
-	var Element = function(element) {
-		return {
-			element: element
+	function trimTokens(value) {
+		return value.replace(regex.expression, '');
+	}
+	var HashMap = function(){
+		var uuid = function(a,b){for(b=a='';a++<36;b+=a*51&52?(a^15?8^Math.random()*(a^20?16:4):4).toString(16):'-');return b;}
+		var getKey = function(target) {
+			if (!target) return;
+			if (typeof target !== 'object') return target;
+			return target.hashkey ? target.hashkey : target.hashkey = uuid();
 		}
-	}
-
-	// template
-
-	var templates = [];
-
-	var Template = function() {
-
-	}
+		return {
+			put: function(key, value) {
+				this[getKey(key)] = value;
+			},
+			get: function(key) {
+				return this[getKey(key)];
+			},
+			remove: function(key) {
+				delete this[getKey(key)];
+			}
+		}
+	};
 
 	// node
 
@@ -87,73 +95,74 @@
 		this.element = element;
 		this.value = value;
 		this.attributes = attributes;
-		this.parts = getInterpolationParts(value, false);
+		this.sequence = getSequence(value);
+		if (VERBOSE_COMPILE) console.log('            node text sequence:', this.sequence);
 	}
 
 	var Attribute = function(element, name, value) {
 		this.element = element;
 		this.name = name;
-		this.value = trim(value).split(regex.findWhitespace);
-		console.log('VALUE SPLIT', this.value);
-		console.log('--NAME');
-		this.nameParts = getInterpolationParts(this.name, true);
-		console.log('--VALUE');
-		this.valueParts = getInterpolationParts(this.value, true);
+		this.values = trim(value).split(regex.findWhitespace);
+		this.nameSequence = getSequence(this.name);
+		this.valuesSequence = getSequence(this.values);
+		if (VERBOSE_COMPILE) console.log('            attribute[name] sequence:', this.nameSequence);
+		if (VERBOSE_COMPILE) console.log('            attribute[values] sequence:', this.valuesSequence);
 	}
 
 	// interpolation
 
-	var InterpolationPart = function() {
-
+	function isExpFunction(value) {
+		console.log(value.match(regex.findFunction));
+		return !!value.match(regex.findFunction);
 	}
 
-	function createInterpolationPart() {
+	var Pattern = function(value) {
+		this.value = value;
+		this.expression = value.replace(regex.expression);
+		if (VERBOSE_INTERPOLATION) console.log('    > expression', this.expression);
+		if (VERBOSE_INTERPOLATION) console.log('    > is function', isExpFunction(this.expression));
+	};
 
-	}
+	var Interpolation = function(value) {
+		if (VERBOSE_INTERPOLATION) console.log('--- INTERPOLATION ---');
+		this.value = value;
+		this.pattern = new Pattern(trimTokens(value));
+	};
 
-	function getInterpolationParts(value, shouldTrim) {
-		if (!value) return null;
+	function getInterpolationPart(value) {
 		var parts = [];
+		var val = trim(value);
+		var tokensMatches = val.match(regex.findTokens);
+		var nonTokensMatches = val.split(regex.findTokens);
+		var i = -1, l = nonTokensMatches.length;
+		while (++i < l) {
+			parts.push(nonTokensMatches[i]);
+			if (tokensMatches && tokensMatches[i]) {
+				var interpolation = new Interpolation(tokensMatches[i]);
+				parts.push(interpolation);
+			}
+		}
+		return trimArray(parts);
+	}
+
+	function getSequence(value) {
+		if (!value) return null;
+		var sequence = [];
 		if (isArray(value)) {
 			var i = -1, l = value.length;
 			while (++i < l) {
-				var valueParts = [];
-				console.log('    VALUE[' + value + ']');
-				var val = trim(value[i]);
-				var tokensMatches = val.match(regex.findTokens);
-				var nonTokensMatches = val.split(regex.findTokens);
-				console.log('    GET TOKENS', val.match(regex.findTokens));
-				console.log('    GET NON TOKENS', val.split(regex.findTokens));
-				var m = -1, n = nonTokensMatches.length;
-				while (++m < n) {
-					valueParts.push(nonTokensMatches[m]);
-					if (tokensMatches && tokensMatches[m]) valueParts.push(tokensMatches[m]);
-				}
-				console.log('    FINAL', trimArray(valueParts));
+				sequence.push(getInterpolationPart(value[i]));
 			}
-			parts.push(valueParts);
 		}
 		else {
-			console.log('VALUE[' + value + ']');
-			var val = trim(value);
-			var tokensMatches = val.match(regex.findTokens);
-			var nonTokensMatches = val.split(regex.findTokens);
-			console.log('GET TOKENS', val.match(regex.findTokens));
-			console.log('GET NON TOKENS', val.split(regex.findTokens));
-			var m = -1, n = nonTokensMatches.length;
-			while (++m < n) {
-				parts.push(nonTokensMatches[m]);
-				if (tokensMatches && tokensMatches[m]) parts.push(tokensMatches[m]);
-			}
-			if (shouldTrim) console.log('FINAL',  trimArray(parts));
-			else console.log('FINAL',  parts);
+			sequence.push(getInterpolationPart(value));
 		}
-		return parts;
+		return sequence;
 	}
 
 	function hasInterpolation(value) {
 		var matches = value.match(regex.token);
-		if (matches && matches.length > 0) console.log('        has interpolation', matches);
+		if (matches && matches.length > 0) if (VERBOSE_COMPILE) console.log('            has interpolation', matches);
 		return matches && matches.length > 0;
 	}
 
@@ -168,25 +177,31 @@
 		return true;
 	}
 
-	function compileNodes(node) {
+	function addInterpolationNodeToList(interpolationNode, node, nodeList) {
+		if (interpolationNode) nodeList.put(node, interpolationNode);
+	}
+
+	function compileNodes(node, nodeList) {
 		if (!isNodeValid(node)) return;
-		console.log('    > compile node:', node);
-		if (node.nodeType === 3) analyseTextNode(node);
-		else analyseNode(node);
+		if (VERBOSE_COMPILE) console.log('    > compile node:', node);
+		var analyseFunc = node.nodeType === 3 ? analyseTextNode : analyseNode;
+		addInterpolationNodeToList(analyseFunc(node), node, nodeList);
 		// children
 		var child = node.firstChild;
 		while (child) {
-			compileNodes(child);
+			compileNodes(child, nodeList);
 			child = child.nextSibling;
 		}
 	}
 
 	function analyseTextNode(node) {
-		console.log('        analyse TEXT', node);
+		if (VERBOSE_COMPILE) console.log('        analyse TEXT', node);
 		if (hasInterpolation(node.nodeValue)) {
 			var n = new Node(node, node.nodeValue);
-			console.log('        found interpolation, create node', n);
+			if (VERBOSE_COMPILE) console.log('            node created:', n);
+			return n;
 		}
+		return null;
 	}
 
 	function analyseNode(node) {
@@ -196,36 +211,64 @@
 			if (attr.specified) {
 				name = attr.name;
 				value = attr.value;
-				console.log('        analyse NODE', '[attr]', attr, '[name]', name, '[value]', value);
+				if (VERBOSE_COMPILE) console.log('        analyse NODE', '[attr]', attr, '[name]', name, '[value]', value);
 				if (hasInterpolation(name + ':' + value)) {
 					if (!attributes) attributes = [];
 					var a = new Attribute(node, name, value);
 					attributes.push(a);
-					console.log('        found interpolation, create attribute', a);
+					if (VERBOSE_COMPILE) console.log('            attribute created', a);
 				}
 			}
 		}
 		if (attributes) {
 			var n = new Node(node, node.nodeValue, attributes);
-			console.log('        found interpolation, create node', n);
+			if (VERBOSE_COMPILE) console.log('            node created', n);
+			return n;
 		}
+		return null;
 	}
 
-	function Compile(element) {
-		console.log('--- COMPILE ---', element);
-		var el = element;
+	function compile(element) {
+		if (VERBOSE_COMPILE) console.log('--- COMPILE ---', element);
+		var template;
+		if (!(template = templates.get(element))) {
+			template = new Template(element);
+			templates.put(element, template);
+		}
+		template.compile();
+		return template;
+	}
 
-		compileNodes(el);
+	// template
+
+	var templates = new HashMap();
+
+	var Template = function(element) {
+
+		this.element = element;
+
+		var nodeList;
+
+		function compileTemplate() {
+			// TODO: dispose previous has map
+			nodeList = new HashMap();
+			compileNodes(element, nodeList);
+
+			console.log('    >>> NODE LIST', nodeList);
+
+		}
 
 		return {
-			render: Render
+			render: render,
+			compile: compileTemplate
 		}
-	}
+	};
 
 	// render
 
-	function Render(data) {
-		console.log('--- RENDER ---');
+	function render(data) {
+		if (VERBOSE_RENDER) console.log('--- RENDER ---');
+
 	}
 
 	// register for AMD module
@@ -242,6 +285,6 @@
 	}
 
 	// export
-	soma.template.compile =  Compile;
+	soma.template.compile = compile;
 
 })(this['soma'] = this['soma'] || {});

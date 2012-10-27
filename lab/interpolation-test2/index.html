@@ -5,10 +5,23 @@
 </head>
 <body>
 
+<div>
+	template 1
+	<button class="compile1">compile</button>
+	<button class="render1">render</button>
+</div>
+<div>
+	template 2
+	<button class="compile2">compile</button>
+	<button class="render2">render</button>
+</div>
+<div class="time"></div>
+
 <div id="ct1">
 	<p class=" s{{class1}}e  {{class2a}}-{{class2b}} {{class2a}}
 {{class2a}}
-	{{class2b}} " s{{attr1}}e {{attr2}}e>Text node interpolation: {{test1}} with 2 {{test2}} texts.</p>
+	{{class2b}} " s{{attr1}}e {{attr2}}e>Text node interpolation: {{test1}} with 2 {{test2}} texts. </p>
+	<p class="{{d1.d2.d3.valClass}} {{d1.d2.d3.fnClass()}} {{fnClass()}} {{d1.d2.d3.fnClassParams(test.test1, test.test2)}} {{d1.d2.d3.fnClassParamsString('tes.t1', 'tes.t1')}}" {{d1.d2.d3.val}} {{d1.d2.d3.fn()}} {{fn()}} {{d1.d2.d3.fnParams(test1)}} {{d1.d2.d3.fnParams("test1")}}>{{d1.d2.d3.val}} {{d1.d2.d3.fn()}} {{d1.d2.d3.fnParams(test.test1, test.test2)}} {{d1.d2.d3.fnParams("tes.t1", "tes.t1")}}</p>
 </div>
 
 <div id="ct2">
@@ -17,17 +30,34 @@
 	{{class2b}} " s{{attr1}}e {{attr2}}e>Text node interpolation: {{test1}} with 2 {{test2}} texts.</p>
 </div>
 
+<script type="text/javascript" src="jquery-1.8.2.min.js"></script>
 <script type="text/javascript" src="../../src/soma-template.js"></script>
+
 <script type="text/javascript">
-	// tpl 1
+
 	var ct1 = document.getElementById('ct1');
 	var tpl1 = soma.template.compile(ct1);
-	// tpl 2
-//	var ct2 = document.getElementById('ct2');
+	var ct2 = document.getElementById('ct2');
 //	var tpl2 = soma.template.compile(ct2);
-	// render
-	tpl1.render({test1:"name 1 [tpl1][v1]",test2:"test 2 [tpl1][v1]"});
-//	tpl2.render({test1:"name 1 [tpl2][v1]",test2:"test 2 [tpl2][v1]"});
+
+	$('.compile1').click(compile1);
+	$('.render1').click(render1);
+	$('.compile2').click(compile2);
+	$('.render2').click(render2);
+
+	function compile1() {
+		tpl1 = soma.template.compile(document.getElementById('ct1'));
+	}
+	function render1() {
+		tpl1.render({test1:"name 1 [tpl1][v1]",test2:"test 2 [tpl1][v1]"});
+	}
+	function compile2() {
+		tpl2 = soma.template.compile(document.getElementById('ct2'));
+	}
+	function render2() {
+		tpl2.render({test1:"name 1 [tpl2][v1]",test2:"test 2 [tpl2][v1]"});
+	}
+
 </script>
 
 </body>
