@@ -439,6 +439,7 @@
 			interpolationNode.render(data);
 		}
 		// children
+		// TODO: parse interpolation nodes rather than the real dom
 		var child = node.firstChild;
 		while (child) {
 			renderNodes(data, child, nodeList);
