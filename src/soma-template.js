@@ -3,8 +3,8 @@
 	'use strict';
 
 	var VERBOSE_COMPILE = false;
-	var VERBOSE_RENDER = false;
-	var VERBOSE_INTERPOLATION = true;
+	var VERBOSE_RENDER = true;
+	var VERBOSE_INTERPOLATION = false;
 
 	soma.template = soma.source || {};
 	soma.template.version = "0.0.1";
@@ -69,6 +69,42 @@
 	function trimTokens(value) {
 		return value.replace(regex.expression, '');
 	}
+	function isInterpolation(value) {
+		return typeof value === 'object' && value.expression;
+	}
+	function equals(o1, o2) {
+		if (o1 === o2) return true;
+		if (o1 === null || o2 === null) return false;
+		if (o1 !== o1 && o2 !== o2) return true; // NaN === NaN
+		var t1 = typeof o1, t2 = typeof o2, length, key, keySet;
+		if (t1 == t2) {
+			if (t1 == 'object') {
+				if (isArray(o1)) {
+					if ((length = o1.length) == o2.length) {
+						for(key=0; key<length; key++) {
+							if (!equals(o1[key], o2[key])) return false;
+						}
+						return true;
+					}
+				} else if (isDate(o1)) {
+					return isDate(o2) && o1.getTime() == o2.getTime();
+				} else {
+					keySet = {};
+					for(key in o1) {
+						if (!isFunction(o1[key]) && !equals(o1[key], o2[key])) {
+							return false;
+						}
+						keySet[key] = true;
+					}
+					for(key in o2) {
+						if (!keySet[key] && key.charAt(0) !== '$' && !isFunction(o2[key])) return false;
+					}
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	var HashMap = function(){
 		var uuid = function(a,b){for(b=a='';a++<36;b+=a*51&52?(a^15?8^Math.random()*(a^20?16:4):4).toString(16):'-');return b;}
 		var getKey = function(target) {
@@ -94,44 +130,164 @@
 	var Node = function(element, value, attributes) {
 		this.element = element;
 		this.value = value;
+		this.valueRendered;
 		this.attributes = attributes;
-		this.sequence = getSequence(value);
+		this.sequence = getSequence(value, true);
 		if (VERBOSE_COMPILE) console.log('            node text sequence:', this.sequence);
+	}
+	Node.prototype.render = function(data) {
+		this.renderValue(data);
+		this.renderAttributes(data);
+	}
+	Node.prototype.renderValue = function(data) {
+		if (!this.sequence) return;
+		var newValue = renderSequence(this.sequence, data);
+		if (newValue !== this.valueRendered) {
+			this.element.nodeValue = this.valueRendered = newValue;
+			console.log('            > RENDER VALUE', this.valueRendered);
+		}
+	}
+	Node.prototype.renderAttributes = function(data) {
+		if (!this.attributes) return;
+		console.log('            > render attributes', this.attributes);
+		var i = -1, l = this.attributes.length;
+		while (++i < l) {
+			this.attributes[i].render(data);
+		}
 	}
 
 	var Attribute = function(element, name, value) {
 		this.element = element;
 		this.name = name;
+		this.nameRendered;
 		this.values = trim(value).split(regex.findWhitespace);
+		this.valuesRendered = [];
 		this.nameSequence = getSequence(this.name);
 		this.valuesSequence = getSequence(this.values);
+		this.hasNameChanged = false;
+		this.hasValuesChanged = false;
+		this.previousName;
 		if (VERBOSE_COMPILE) console.log('            attribute[name] sequence:', this.nameSequence);
 		if (VERBOSE_COMPILE) console.log('            attribute[values] sequence:', this.valuesSequence);
+	}
+	Attribute.prototype.render = function(data) {
+		this.hasNameChanged = false;
+		this.hasValuesChanged = false;
+		this.renderName(data);
+		this.renderValues(data);
+		if (!this.hasNameChanged && !this.hasValuesChanged) return;
+		if (this.hasNameChanged && this.previousName) {
+			this.element.removeAttribute(this.previousName);
+		}
+		this.previousName = this.nameRendered;
+		if (this.nameRendered === "class" && this.element.className) {
+			this.element.className = this.valuesRendered.join(" ");
+		}
+		else {
+			this.element.setAttribute(this.nameRendered, this.valuesRendered.join(" "));
+			this.element.removeAttribute(this.name);
+		}
+		console.log('                > RENDER ATTRIBUTE:', this.nameRendered, this.valuesRendered);
+	}
+	Attribute.prototype.renderName = function(data) {
+		if (!this.nameSequence) return;
+		var newName = renderSequence(this.nameSequence, data);
+		if (newName !== this.nameRendered) {
+			this.hasNameChanged = true;
+			this.nameRendered = newName;
+		}
+	}
+	Attribute.prototype.renderValues = function(data) {
+		var newValues = [];
+		var i = -1, l = this.valuesSequence.length;
+		while (++i < l) {
+			if (this.valuesSequence[i]) {
+				newValues.push(renderSequence(this.valuesSequence[i], data));
+			}
+		}
+		if (!equals(newValues, this.valuesRendered)) {
+			this.hasValuesChanged = true;
+			this.valuesRendered = newValues;
+		}
+	}
+
+	function renderSequence(sequence, data) {
+		var rendered = "";
+		if (sequence) {
+			var i = -1, l = sequence.length;
+			while (++i < l) {
+				var part = sequence[i];
+				rendered += isInterpolation(part) ? part.render(data) : part;
+			}
+		}
+		return rendered;
 	}
 
 	// interpolation
 
 	function isExpFunction(value) {
-		console.log(value.match(regex.findFunction));
 		return !!value.match(regex.findFunction);
 	}
 
-	var Pattern = function(value) {
+	function getExpressionPath(value) {
+		var val = value.split('(')[0];
+		return val.substr(0, val.lastIndexOf("."));
+	}
+
+	function getExpressionName(value) {
+		var val = value.split('(')[0];
+		return val.substring(val.lastIndexOf(".")).replace('.', '');
+	}
+
+	function getParamsFromString(str) {
+		return str.split(regex.findParams);
+	}
+
+	var Expression = function(value) {
 		this.value = value;
-		this.expression = value.replace(regex.expression);
-		if (VERBOSE_INTERPOLATION) console.log('    > expression', this.expression);
-		if (VERBOSE_INTERPOLATION) console.log('    > is function', isExpFunction(this.expression));
+		this.valueRendered;
+		this.isFunction = isExpFunction(this.value)
+		this.path = getExpressionPath(this.value);
+		this.name = getExpressionName(this.value);
+		this.params = !this.isFunction ? null : getParamsFromString(value.match(regex.findFunction)[2]);
+		if (VERBOSE_INTERPOLATION) console.log('    > expression', this.value);
+		if (VERBOSE_INTERPOLATION) console.log('    > is function', this.isFunction);
+		if (VERBOSE_INTERPOLATION) console.log('    > path', this.path);
+		if (VERBOSE_INTERPOLATION) console.log('    > name', this.name);
+		if (VERBOSE_INTERPOLATION) console.log('    > params', this.params);
 	};
+	Expression.prototype.render = function(data) {
+		var pathParts = this.path.split('.');
+		if (VERBOSE_RENDER) console.log('            pathParts:', pathParts);
+		var i = -1, l = pathParts.length;
+		var path = data;
+		if (pathParts[0] !== "") {
+			while (++i < l) {
+				path = path[pathParts[i]];
+			}
+		}
+		if (!this.isFunction) {
+			if (VERBOSE_RENDER) console.log('            return value:', path[this.name]);
+			var newValue = path[this.name];
+			return this.valueRendered = newValue ? newValue : this.value;
+		}
+		return null;
+	}
 
 	var Interpolation = function(value) {
 		if (VERBOSE_INTERPOLATION) console.log('--- INTERPOLATION ---');
 		this.value = value;
-		this.pattern = new Pattern(trimTokens(value));
+		this.valueRendered;
+		this.expression = new Expression(trimTokens(value));
 	};
+	Interpolation.prototype.render = function(data) {
+		this.valueRendered = this.expression.render(data);
+		return this.valueRendered ? this.valueRendered : this.value;
+	}
 
-	function getInterpolationPart(value) {
+	function getInterpolationPart(value, isTextNode) {
 		var parts = [];
-		var val = trim(value);
+		var val = !isTextNode ? trim(value) : value;
 		var tokensMatches = val.match(regex.findTokens);
 		var nonTokensMatches = val.split(regex.findTokens);
 		var i = -1, l = nonTokensMatches.length;
@@ -142,22 +298,22 @@
 				parts.push(interpolation);
 			}
 		}
-		return trimArray(parts);
+		return !isTextNode ? trimArray(parts) : parts;
 	}
 
-	function getSequence(value) {
+	function getSequence(value, isTextNode) {
 		if (!value) return null;
-		var sequence = [];
 		if (isArray(value)) {
+			var sequence = [];
 			var i = -1, l = value.length;
 			while (++i < l) {
 				sequence.push(getInterpolationPart(value[i]));
 			}
+			return sequence;
 		}
 		else {
-			sequence.push(getInterpolationPart(value));
+			return getInterpolationPart(value, isTextNode);
 		}
-		return sequence;
 	}
 
 	function hasInterpolation(value) {
@@ -245,30 +401,55 @@
 
 	var Template = function(element) {
 
-		this.element = element;
+		var element = element;
+		var scope = new Scope();
 
 		var nodeList;
 
 		function compileTemplate() {
-			// TODO: dispose previous has map
+			// TODO: dispose previous hashmap
 			nodeList = new HashMap();
 			compileNodes(element, nodeList);
 
-			console.log('    >>> NODE LIST', nodeList);
+			if (VERBOSE_COMPILE) console.log('>>> NODE LIST', nodeList);
 
 		}
 
+		function renderTemplate(data) {
+			if (VERBOSE_RENDER) console.log('--- RENDER ---');
+			if (VERBOSE_RENDER) console.log('> scope', this.scope);
+			if (nodeList) renderNodes(this.scope, element, nodeList);
+		}
+
 		return {
-			render: render,
-			compile: compileTemplate
+			render: renderTemplate,
+			compile: compileTemplate,
+			scope: scope
 		}
 	};
 
 	// render
 
-	function render(data) {
-		if (VERBOSE_RENDER) console.log('--- RENDER ---');
+	function renderNodes(data, node, nodeList) {
+		if (!isNodeValid(node)) return;
+		if (VERBOSE_RENDER) console.log('    render node list with data:', data, ", and node:", node, ", and nodeList:", nodeList);
+		var interpolationNode = nodeList.get(node);
+		if (interpolationNode) {
+			if (VERBOSE_RENDER) console.log('        interpolationNode', interpolationNode);
+			interpolationNode.render(data);
+		}
+		// children
+		var child = node.firstChild;
+		while (child) {
+			renderNodes(data, child, nodeList);
+			child = child.nextSibling;
+		}
+	}
 
+	// scope
+
+	var Scope = function() {
+		this._parent = null;
 	}
 
 	// register for AMD module

@@ -3,6 +3,17 @@
 <head>
 	<title></title>
 </head>
+<style type="text/css">
+	.bold {
+		font-weight: bold;
+	}
+	.class1test {
+		color: #FF0000;
+	}
+	.class2test {
+		color: #0000FF;
+	}
+</style>
 <body>
 
 <div>
@@ -18,10 +29,11 @@
 <div class="time"></div>
 
 <div id="ct1">
-	<p class=" s{{class1}}e  {{class2a}}-{{class2b}} {{class2a}}
-{{class2a}}
-	{{class2b}} " s{{attr1}}e {{attr2}}e>Text node interpolation: {{test1}} with 2 {{test2}} texts. </p>
-	<p class="{{d1.d2.d3.valClass}} {{d1.d2.d3.fnClass()}} {{fnClass()}} {{d1.d2.d3.fnClassParams(test.test1, test.test2)}} {{d1.d2.d3.fnClassParamsString('tes.t1', 'tes.t1')}}" {{d1.d2.d3.val}} {{d1.d2.d3.fn()}} {{fn()}} {{d1.d2.d3.fnParams(test1)}} {{d1.d2.d3.fnParams("test1")}}>{{d1.d2.d3.val}} {{d1.d2.d3.fn()}} {{d1.d2.d3.fnParams(test.test1, test.test2)}} {{d1.d2.d3.fnParams("tes.t1", "tes.t1")}}</p>
+	<!--<p class=" s{{class1}}e  {{class2a}}-{{class2b}} {{class2a}}-->
+<!--{{class2a}}-->
+	<!--{{class2b}} " s{{attr1}}e {{attr2}}e>Text node interpolation: {{test1}} with 2 {{test2}} texts. </p>-->
+	<!--<p class="{{d1.d2.d3.valClass}} {{d1.d2.d3.fnClass()}} {{fnClass()}} {{d1.d2.d3.fnClassParams(test.test1, test.test2)}} {{d1.d2.d3.fnClassParamsString('tes.t1', 'tes.t1')}}" {{d1.d2.d3.val}} {{d1.d2.d3.fn()}} {{fn()}} {{d1.d2.d3.fnParams(test1)}} {{d1.d2.d3.fnParams("test1")}}>{{d1.d2.d3.val}} {{d1.d2.d3.fn()}} {{d1.d2.d3.fnParams(test.test1, test.test2)}} {{d1.d2.d3.fnParams("tes.t1", "tes.t1")}}</p>-->
+	<p cl{{cln}}="bold class{{clv}}test">My name is {{name}}</p>
 </div>
 
 <div id="ct2">
@@ -37,6 +49,7 @@
 
 	var ct1 = document.getElementById('ct1');
 	var tpl1 = soma.template.compile(ct1);
+	var scope1 = tpl1.scope;
 	var ct2 = document.getElementById('ct2');
 //	var tpl2 = soma.template.compile(ct2);
 
@@ -45,11 +58,18 @@
 	$('.compile2').click(compile2);
 	$('.render2').click(render2);
 
+	var count = 0;
+
 	function compile1() {
 		tpl1 = soma.template.compile(document.getElementById('ct1'));
 	}
 	function render1() {
-		tpl1.render({test1:"name 1 [tpl1][v1]",test2:"test 2 [tpl1][v1]"});
+		if (count++ % 2 == 0) {
+			scope1.name = scope1.name === "John" ? "David" : "John";
+			scope1.cln = scope1.cln == 'ass' ? 'ass' : 'ass' ;
+			scope1.clv = scope1.clv === 1 ? 2 : 1;
+		}
+		tpl1.render();
 	}
 	function compile2() {
 		tpl2 = soma.template.compile(document.getElementById('ct2'));
