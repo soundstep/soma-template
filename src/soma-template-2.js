@@ -139,6 +139,7 @@
 		this.attributes = attributes;
 		this.sequence = getSequence(value, true);
 		this.repeater = repeater;
+		this.repeaterData;
 		this.repeaterParent;
 		this.repeaterNodes = [];
 		this.repeaterScopes = [];
@@ -181,27 +182,49 @@
 		}
 		else {
 
-			// revert node
-			var p = -1;
-			var po = this.repeaterNodes.length;
-			while (++p < po) {
-				var rn = this.repeaterNodes[p];
-				rn.parentNode.removeChild(rn);
-			}
-			this.repeaterNodes.length = 0;
-			// TODO: dispose scopes
-			this.repeaterScopes.length = 0;
+			// check
+			var itVar = matches[1];
+			var itPath = matches[2];
+			var exp = new Expression(itPath);
+			var itSource = exp.render(data);
 
+			if (isArray(itSource)) {
+
+
+
+
+
+
+
+				
+			}
+
+
+			return;
+
+			console.log(itSource);
+
+			if (equals(this.repeaterData, itSource)) {
+				console.log('whole data is the same');
+				return;
+			}
+
+			// revert node
+//			var p = -1;
+//			var po = this.repeaterNodes.length;
+//			while (++p < po) {
+//				var rn = this.repeaterNodes[p];
+//				rn.parentNode.removeChild(rn);
+//			}
+//			this.repeaterNodes.length = 0;
+//			// TODO: dispose scopes
+//			this.repeaterScopes.length = 0;
+//
 			if (!this.repeaterParent) {
 				this.repeaterParent = this.element.parentNode;
 				this.repeaterParent.removeChild(this.element);
 			}
 
-			var itVar = matches[1];
-			var itPath = matches[2];
-
-			var exp = new Expression(itPath);
-			var itSource = exp.render(data);
 
 			if (isArray(itSource)) {
 				this.element.removeAttribute(attributes.repeat);
@@ -210,21 +233,41 @@
 				var k = -1;
 				var kl = itSource.length;
 				while (++k < kl) {
+					console.log(k, this.repeaterData, itSource);
+					if (this.repeaterData && this.repeaterData[k] && equals(itSource[k], this.repeaterData[k])) {
+						console.log('item data is the same', k);
+						fragment1.appendChild(this.repeaterNodes[k]);
+					}
+					else {
 
-					var o1 = {};
-					o1[itVar] = itSource[k];
-					var scopeChild = data.add(o1, data);
+						var previousChild = this.repeaterNodes[k];
+						console.log('previous child', previousChild);
+						if (previousChild) {
+							this.repeaterParent.removeChild(previousChild);
+						}
 
-					newNode = this.element.cloneNode(true);
-					fragment1.appendChild(newNode);
+						console.log('create', k);
+						var o1 = {};
+						o1[itVar] = itSource[k];
 
-					compileNodes(newNode, scopeChild.nodeList);
-					renderNodes(scopeChild, newNode, scopeChild.nodeList);
+						var scopeChild = data.add(o1, data);
 
-					this.repeaterNodes.push(newNode);
-					this.repeaterScopes.push(scopeChild);
+						newNode = this.element.cloneNode(true);
+						fragment1.appendChild(newNode);
+
+						compileNodes(newNode, scopeChild.nodeList);
+						renderNodes(scopeChild, newNode, scopeChild.nodeList);
+
+						this.repeaterNodes[k] = newNode;
+
+					}
+
+
 				}
 				this.repeaterParent.appendChild(fragment1);
+
+				this.repeaterData = itSource;
+
 			}
 			else if (isObject(itSource)) {
 //				el.removeAttribute(attributes.repeat);
