@@ -39,18 +39,13 @@
 
 <div>
 	template 1
-	<button class="compile1">compile</button>
-	<button class="render1">render</button>
-</div>
-<div>
-	template 2
-	<button class="compile2">compile</button>
-	<button class="render2">render</button>
+	<button class="create">create</button>
+	<button class="render">render</button>
 </div>
 <div class="time"></div>
 
 <div id="ct">
-	<!--<p class="boldclass {{cl}}">class on div + text {{test1}} dummy{{test2}}dummy</p>-->
+	<p class="boldclass {{cl}}">class on div + text {{test1}} dummy{{test2}}dummy</p>
 	<!--<p class="{{cl2}}">class on div + text {{test1}}</p>-->
 	<!--<p class="{{getClass()}}">class function with path on div + text function {{getClass()}}</p>-->
 	<!--<p class="{{getClassParam('p1.p1','p2.p2')}}">class function on div with param + text function with param {{fnParam("p1.p1", "p2.p2")}}</p>-->
@@ -75,10 +70,12 @@
 			<!--</div>-->
 		<!--</div>-->
 	<!--</div>-->
-	<ul>
-		<li>repeat image with index:</li>
-		<li data-repeat="img in imgrep">{{img}}</li>
-	</ul>
+	<!--<ul>-->
+		<!--<li>repeat image with index:</li>-->
+		<!--<li data-repeat="img in imgrep">-->
+			<!--{{img}}-->
+		<!--</li>-->
+	<!--</ul>-->
 	<!--<ul>-->
 		<!--<li>repeat image with index:</li>-->
 			<!--<li data-repeat="img in imgrep">-->
@@ -127,7 +124,7 @@
 </div>
 
 <script type="text/javascript" src="jquery-1.8.2.min.js"></script>
-<script type="text/javascript" src="../../src/soma-template-2.js"></script>
+<script type="text/javascript" src="../../src/soma-template.js"></script>
 
 <script type="text/javascript">
 
@@ -264,31 +261,28 @@
 	var obj;
 
 	var ct = document.getElementById('ct');
-	var tpl1 = soma.template.compile(ct);
+	var tpl = soma.template.create(ct);
+//	var tpl1 = soma.template.compile(ct);
 //	var scope1 = tpl1.scope;
 //	var ct2 = document.getElementById('ct2');
 //	var tpl2 = soma.template.compile(ct2);
 
-	$('.compile1').click(compile1);
-	$('.render1').click(render1);
-	$('.compile2').click(compile2);
-	$('.render2').click(render2);
+	$('.compile').click(create);
+	$('.render').click(render);
 
-	var count = 0;
-
-	function compile1() {
-		tpl1 = soma.template.compile(document.getElementById('ct1'));
+	function create() {
+		tpl = soma.template.create(ct);
 	}
-	function render1() {
+	function render() {
 		obj = obj === obj1 ? obj2 : obj1;
-		tpl1.render(obj);
+		tpl.render(obj);
 	}
-	function compile2() {
-		tpl2 = soma.template.compile(document.getElementById('ct2'));
-	}
-	function render2() {
-		tpl2.render({test1:"name 1 [tpl2][v1]",test2:"test 2 [tpl2][v1]"});
-	}
+//	function compile2() {
+//		//tpl2 = soma.template.compile(document.getElementById('ct2'));
+//	}
+//	function render2() {
+//		tpl2.render({test1:"name 1 [tpl2][v1]",test2:"test 2 [tpl2][v1]"});
+//	}
 
 </script>
 
