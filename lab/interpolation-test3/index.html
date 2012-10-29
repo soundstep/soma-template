@@ -45,7 +45,7 @@
 <div class="time"></div>
 
 <div id="ct">
-	<p class="boldclass {{cl}}">class on div + text {{test1}} dummy{{test2}}dummy</p>
+	<!--<p class="boldclass {{cl}}">class on div + text {{test1}} dummy{{test2}}dummy</p>-->
 	<!--<p class="{{cl2}}">class on div + text {{test1}}</p>-->
 	<!--<p class="{{getClass()}}">class function with path on div + text function {{getClass()}}</p>-->
 	<!--<p class="{{getClassParam('p1.p1','p2.p2')}}">class function on div with param + text function with param {{fnParam("p1.p1", "p2.p2")}}</p>-->
@@ -57,7 +57,7 @@
 	<!--<p>do a interpolation skip here: <span data-skip>{{test1}}</span> but not here: {{test1}}</p>-->
 	<!--checked attribute on an input from boolean: <input type="checkbox" {{checked}}><br/>-->
 	<!--checked attribute on an input from function: <input type="checkbox" {{functions.checked()}}>-->
-	<!--<p><img data-src="{{img}}" width="60" height="60"></p>-->
+	<p><img data-src="{{img}}" width="60" height="60"></p>
 	<!--<p data-hide="{{hideValue}}">HIDE ON VALUE, THIS SHOULD NOT APPEAR!!</p>-->
 	<!--<p data-hide="{{functions.hideFn()}}">HIDE ON FUNCTION, THIS SHOULD NOT APPEAR!!</p>-->
 	<!--<p style="display:none" data-show="{{showValue}}">show on value, this should appear</p>-->
@@ -270,11 +270,15 @@
 	$('.compile').click(create);
 	$('.render').click(render);
 
+	var count = 0;
+
 	function create() {
 		tpl = soma.template.create(ct);
 	}
 	function render() {
-		obj = obj === obj1 ? obj2 : obj1;
+		if (count++ % 2 === 0) {
+			obj = obj === obj1 ? obj2 : obj1;
+		}
 		tpl.render(obj);
 	}
 //	function compile2() {
