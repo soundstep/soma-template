@@ -57,11 +57,15 @@
 	<!--<p>do a interpolation skip here: <span data-skip>{{test1}}</span> but not here: {{test1}}</p>-->
 	<!--checked attribute on an input from boolean: <input type="checkbox" {{checked}}><br/>-->
 	<!--checked attribute on an input from function: <input type="checkbox" {{functions.checked()}}>-->
-	<p><img data-src="{{img}}" width="60" height="60"></p>
+	<!--<p><img data-src="{{img}}" width="60" height="60"></p>-->
+	<!--<p data-hide="false">HIDE ON VALUE, THIS SHOULD NOT APPEAR!!</p>-->
 	<!--<p data-hide="{{hideValue}}">HIDE ON VALUE, THIS SHOULD NOT APPEAR!!</p>-->
+	<!--<p data-hide>HIDE ON VALUE, THIS SHOULD NOT APPEAR!!</p>-->
 	<!--<p data-hide="{{functions.hideFn()}}">HIDE ON FUNCTION, THIS SHOULD NOT APPEAR!!</p>-->
+	<!--<p style="display:none" data-show>show on value, this should appear</p>-->
+	<!--<p style="display:none" data-show="true">show on value, this should appear</p>-->
 	<!--<p style="display:none" data-show="{{showValue}}">show on value, this should appear</p>-->
-	<!--<p style="display:none" data-show="{{functions.showFn()}}">show on function, this should appear</p>-->
+	<!--<p style="display:none" data-show="false">show on function, this should appear</p>-->
 	<!--<a data-href="http://{{link}}" target="_blank">This is link</a>-->
 	<!--<div>-->
 		<!--<div>-->
@@ -70,12 +74,11 @@
 			<!--</div>-->
 		<!--</div>-->
 	<!--</div>-->
-	<!--<ul>-->
-		<!--<li>repeat image with index:</li>-->
-		<!--<li data-repeat="img in imgrep">-->
-			<!--{{img}}-->
-		<!--</li>-->
-	<!--</ul>-->
+	<ul>
+		<li>repeat image with index:</li>
+		<li data-repeat="image in imgrep">{{image}}</li>
+		<li>after</li>
+	</ul>
 	<!--<ul>-->
 		<!--<li>repeat image with index:</li>-->
 			<!--<li data-repeat="img in imgrep">-->
@@ -142,7 +145,7 @@
 		test3: {
 			obj: {
 				val: "val3 [v1]",
-				cl: "myClass3"
+				cl: "myClass4"
 			}
 		},
 		params: {

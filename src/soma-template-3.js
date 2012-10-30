@@ -140,33 +140,45 @@
 	// scope
 
 	var Scope = function(data) {
-		function addScope(data, parent) {
+		function createChild(data) {
+			var obj = createObject(data);
+			obj._parent = this;
+			this._children.push(obj);
+			return obj;
+		}
+		function createObject(data) {
 			var obj = {
-				_parent: parent,
+				_parent: null,
 				_children: [],
-				_add: addScope
+				_createChild: function() {
+					return createChild.apply(obj, arguments);
+				}
 			};
 			if (data && isObject(data)) {
 				for (var i in data) {
 					obj[i] = data[i];
 				}
 			}
-			if (parent) parent.children.push(o);
 			return obj;
 		}
-		return addScope(data);
+		return createObject(data);
 	};
 
 	// compile
 
-	var Node = function(element) {
+	var Node = function(element, scope) {
 		this.element = element;
-		this.scope;
-		this.attributes;
-		this.value;
-		this.interpolation;
+		this.elementParent = element.parentNode;
+		this.scope = scope;
+		this.attributes = null;
+		this.value = null;
+		this.interpolation = null;
 		this.invalidate = false;
 		this.skip = false;
+		this.repeater = null;
+		this.repeaterDescendant = null;
+		this.parent = null;
+		this.children = [];
 
 		if (this.isTextNode()) {
 			this.value = element.nodeValue;
@@ -189,6 +201,36 @@
 			return exp;
 		},
 		render: function() {
+			console.log('> render', this.element);
+			if (this.repeater) {
+
+				var data = getRepeaterData(this.repeater, this.scope);
+				if (isArray(data)) {
+					var fragment = document.createDocumentFragment();
+					var i = -1; l = data.length;
+					while (++i < l) {
+						var newNode = this.element.cloneNode(true);
+						fragment.appendChild(newNode);
+
+//						var n = compile(newNode);
+//						n.parent = this;
+//						this.children.push(n);
+
+//						var exp = getExpressionsFromNode(n)
+//						updateExpressions(exp)
+//						console.log(exp);
+
+//						render(n);
+
+						//n.render();
+
+					}
+					this.elementParent.replaceChild(fragment, this.element);
+				}
+
+
+				return;
+			}
 			if (this.invalidate) {
 				this.invalidate = false;
 				if (this.isTextNode()) {
@@ -203,6 +245,18 @@
 			}
 		}
 	};
+
+	function getRepeaterData(value, scope) {
+		var parts;
+		if (!(parts = value.match(regex.repeat))) return;
+		var name = parts[1];
+		var source = parts[2];
+		var exp = new Expression(source);
+
+		console.log('exp.getValue(scope)', exp.getValue(scope));
+
+		return exp.getValue(scope);
+	}
 
 	var Attribute = function(name, value, node) {
 		this.name = name;
@@ -223,14 +277,25 @@
 			var element = this.node.element;
 			if (this.invalidate) {
 				this.invalidate = false;
-				var name = this.interpolationName.render();
-				var value = this.interpolationValue.render();
+				this.name = this.interpolationName.render() || this.name;
+				this.value = this.interpolationValue.render() || this.value;
 				if (this.name === attributes.src) {
-					renderSrc(name, value);
+					renderSrc(this.name, this.value);
+				}
+				else if (this.name === attributes.href) {
+					renderHref(this.name, this.value);
 				}
 				else {
-					renderAttribute(name, value);
+					renderAttribute(this.name, this.value);
 				}
+			}
+			// hide
+			if (this.name === attributes.hide) {
+				element.style.display = (!isDefined(this.value) || this.value === "" || this.value === true || this.value === "true") ? "none" : "block";
+			}
+			// show
+			if (this.name === attributes.show) {
+				element.style.display = (!isDefined(this.value) || this.value === "" || this.value === true || this.value === "true") ? "block" : "none";
 			}
 			// normal attribute
 			function renderAttribute(name, value) {
@@ -244,6 +309,10 @@
 			// src attribute
 			function renderSrc(name, value) {
 				element.setAttribute('src', value);
+			}
+			// href attribute
+			function renderHref(name, value) {
+				element.setAttribute('href', value);
 			}
 		}
 	}
@@ -304,8 +373,10 @@
 				console.log('result:', this.pattern, val);
 			}
 		},
-		getValue: function(data) {
-			return getValue(data, this.path, this.accessor, this.params, this.isFunction);
+		getValue: function(scope) {
+			var value = getValue(scope, this.path, this.accessor, this.params, this.isFunction);
+			if (!value && scope._parent) return getValue(scope._parent, this.path, this.accessor, this.params, this.isFunction);
+			return value;
 		}
 	};
 
@@ -358,26 +429,32 @@
 		return value.split(regex.findParams);
 	}
 
-	function compile(element, nodeList) {
+	function compile(element, parent, repeaterDescendant) {
 		if (!isElementValid(element)) return;
 		console.log('> compile', element);
 		// get node
-		var node = getNodeFromElement(element);
-		nodeList.push(node);
+		var node = getNodeFromElement(element, parent ? parent.scope : new Scope());
+		if (repeaterDescendant) {
+			node.repeaterDescendant = repeaterDescendant;
+			node.scope = node.scope._createChild();
+		}
 		// children
 		if (node.skip) return;
 		var child = element.firstChild;
 		while (child) {
-			compile(child, nodeList);
+			var childNode = compile(child, node, node.repeater);
+			if (childNode) {
+				childNode.parent = node;
+				node.children.push(childNode);
+			}
 			child = child.nextSibling;
 		}
+		return node;
 	}
 
-	function getNodeFromElement(element) {
-		var node = new Node(element);
+	function getNodeFromElement(element, scope) {
+		var node = new Node(element, scope);
 		var attributes = [];
-		var skip;
-		var repeater;
 		for (var attr, name, value, attrs = element.attributes, j = 0, jj = attrs && attrs.length; j < jj; j++) {
 			attr = attrs[j];
 			if (attr.specified) {
@@ -387,9 +464,15 @@
 					node.skip = (value === "" || value === "true");
 				}
 				if (name === settings.attributes.repeat) {
-					repeater = value;
+					node.repeater = value;
 				}
-				if (hasInterpolation(name + ':' + value)) {
+				if (
+					hasInterpolation(name + ':' + value) ||
+					name === settings.attributes.repeat ||
+					name === settings.attributes.show ||
+					name === settings.attributes.hide ||
+					name === settings.attributes.href
+					) {
 					attributes.push(new Attribute(name, value, node));
 				}
 			}
@@ -397,20 +480,6 @@
 		node.attributes = attributes;
 		return node;
 	}
-
-//	function getNodeInstance(element) {
-//		var NodeType = Node;
-//		var attributeValue;
-//		if (element.nodeType === 1)  {
-//			var skip = element.getAttribute('data-skip');
-//
-//			if (attributeValue = element.getAttribute('data-skip') && attributeValue) {
-//
-//			}
-//			console.log('--> node type:', );
-//		}
-//		return new Node(element);
-//	}
 
 	function hasInterpolation(value) {
 		var matches = value.match(regex.token);
@@ -431,27 +500,44 @@
 
 	// render
 
-	function updateScopes(scope, nodeList) {
-		console.log('> update scopes');
-		var i = -1, l = nodeList.length;
-		while(++i < l) {
-			nodeList[i].scope = scope;
-		}
-	}
+//	function updateScopes(parent) {
+//		var i = -1, l = parent.children.length;
+//		while(++i < l) {
+//			var node = parent.children[i];
+//			if (node.repeaterDescendant) {
+//				clearScope(node.scope);
+//				populateRepeaterScope(node.scope._parent, node.repeaterDescendant);
+//			}
+//			updateScopes(node);
+//		}
+//	}
+//
+//	function populateRepeaterScope(scope, value) {
+//		console.log(value);
+//		var parts;
+//		if (!(parts = value.match(regex.repeat))) return;
+//		var name = parts[1];
+//		var source = parts[2];
+//		var exp = new Expression(source);
+//
+//		console.log('exp.getValue(scope)', exp.getValue(scope));
+//
+//		scope[name] = exp.getValue(scope);
+//	}
 
 	function updateExpressions(expressions) {
-		console.log('> update expressions');
 		var i = -1, l = expressions.length;
 		while(++i < l) {
 			expressions[i].update();
 		}
 	}
 
-	function render(nodeList) {
-		console.log('> render nodes');
-		var i = -1, l = nodeList.length;
+	function render(parent) {
+		var i = -1, l = parent.children.length;
 		while(++i < l) {
-			nodeList[i].render();
+			var node = parent.children[i];
+			node.render();
+			render(node);
 		}
 	}
 
@@ -459,33 +545,49 @@
 
 	var Template = function(element) {
 		this.element = element;
-		this.scope = new Scope();
-		this.nodeList = [];
+		this.node;
 		this.expressions = [];
 		this.compile();
 	};
 	Template.prototype = {
 		compile: function() {
 			console.log('--- COMPILE ---');
-			this.nodeList.length = 0;
-			compile(this.element, this.nodeList);
-			this.expressions = getExpressionsFromNodes(this.nodeList);
+			this.node = compile(this.element);
+			console.log('> node:', this.node);
+			this.expressions = getExpressionsFromNode(this.node);
+			console.log('> expression:', this.expressions);
 		},
 		render: function(data) {
 			console.log('--- RENDER ---');
-			if (isDefined(data)) this.scope = new Scope(data);
-			updateScopes(this.scope, this.nodeList);
+			if (isDefined(data)) updateScopeWithData(this.node.scope, data);
+			//updateScopes(this.node);
 			updateExpressions(this.expressions);
-			render(this.nodeList);
+			render(this.node);
 		}
 	};
 
-	function getExpressionsFromNodes(nodeList) {
+	function updateScopeWithData(scope, data) {
+		clearScope(scope);
+		for (var d in data) {
+			scope[d] = data[d];
+		}
+	}
+
+	function clearScope(scope) {
+		for (var key in scope) {
+			if (key.substr(0, 1) !== '_') {
+				scope[key] = null;
+				delete scope[key];
+			}
+		}
+	}
+
+	function getExpressionsFromNode(node) {
 		var exp = [];
-		var i = -1, l = nodeList.length;
+		exp = exp.concat(node.getExpressions());
+		var i = -1, l = node.children.length;
 		while (++i < l) {
-			var node = nodeList[i];
-			exp = exp.concat(node.getExpressions());
+			exp = exp.concat(getExpressionsFromNode(node.children[i]));
 		}
 		return exp;
 	}
