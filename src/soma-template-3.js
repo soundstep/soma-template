@@ -2,9 +2,7 @@
 
 	'use strict';
 
-	var VERBOSE_COMPILE = true;
-	var VERBOSE_RENDER = true;
-	var VERBOSE_INTERPOLATION = false;
+	var VERBOSE = false;
 
 	soma.template = soma.source || {};
 	soma.template.version = "0.0.1";
@@ -245,7 +243,6 @@
 			}
 		},
 		render: function() {
-			console.log('> render', this, this.element);
 			if (this.invalidate) {
 				this.invalidate = false;
 				if (this.isTextNode()) {
@@ -259,70 +256,105 @@
 				}
 			}
 			if (this.repeater) {
-
-				// v1
-				var data = getRepeaterData(this.repeater, this.scope);
-				if (isArray(data)) {
-
-					var i = -1, l1 = data.length, l2 = this.childrenRepeater.length;
-					var l = l1 > l2 ? l1 : l2;
-					while (++i < l) {
-						if (i < l1) {
-							var previousElement;
-							var existingChild = this.childrenRepeater[i];
-							if (!existingChild) {
-								// no existing node
-								var newElement = this.element.cloneNode(true);
-								newElement.removeAttribute(attributes.repeat);
-								var newNode = getNodeFromElement(newElement, this.scope._createChild());
-								this.childrenRepeater[i] = newNode;
-								updateScopeWithRepeaterData(this.repeater, newNode.scope, data[i]);
-								newNode.scope['$index'] = i;
-								compile(newElement, this.parent, this.repeater, newNode);
-								newNode.update();
-								newNode.render();
-								if (!previousElement) {
-									if (this.previousSibling) {
-										insertAfter(this.previousSibling, newElement);
-									}
-									else if (this.nextSibling) {
-										insertBefore(this.nextSibling, newElement);
-									}
-									else {
-										this.parent.element.appendChild(newElement);
-									}
-								}
-								else {
-									insertAfter(previousElement, newElement);
-								}
-								previousElement = newNode.element;
-							}
-							else {
-								// existing node
-								updateScopeWithRepeaterData(this.repeater, existingChild.scope, data[i]);
-								existingChild.scope['$index'] = i;
-								existingChild.update();
-								existingChild.render();
-								previousElement = existingChild.element;
-							}
-						}
-						else {
-							// todo: dispose node
-							this.parent.element.removeChild(this.childrenRepeater[i].element);
-						}
-					}
-					if (this.element.parentNode) {
-						this.parent.element.removeChild(this.element);
-					}
-					this.childrenRepeater.length = data.length;
-				}
+				this.renderRepeater();
 			}
-			this.renderChildren();
+			else {
+				this.renderChildren();
+			}
 		},
 		renderChildren: function() {
 			var i = -1, l = this.children.length;
 			while (++i < l) {
 				this.children[i].render();
+			}
+		},
+		renderRepeater: function() {
+			var data = getRepeaterData(this.repeater, this.scope);
+			if (isArray(data)) {
+				var i = -1, l1 = data.length, l2 = this.childrenRepeater.length;
+				var l = l1 > l2 ? l1 : l2;
+				while (++i < l) {
+					if (i < l1) {
+						var previousElement;
+						var existingChild = this.childrenRepeater[i];
+						if (!existingChild) {
+							// no existing node
+							var newElement = this.element.cloneNode(true);
+							newElement.removeAttribute(attributes.repeat);
+							var newNode = getNodeFromElement(newElement, this.scope._createChild());
+							this.childrenRepeater[i] = newNode;
+							updateScopeWithRepeaterData(this.repeater, newNode.scope, data[i]);
+							newNode.scope['$index'] = i;
+							compile(newElement, this.parent, this.repeater, newNode);
+							newNode.update();
+							newNode.render();
+							if (!previousElement) {
+								if (this.previousSibling) insertAfter(this.previousSibling, newElement);
+								else if (this.nextSibling) insertBefore(this.nextSibling, newElement);
+								else this.parent.element.appendChild(newElement);
+							}
+							else insertAfter(previousElement, newElement);
+							previousElement = newNode.element;
+						}
+						else {
+							// existing node
+							updateScopeWithRepeaterData(this.repeater, existingChild.scope, data[i]);
+							existingChild.scope['$index'] = i;
+							existingChild.update();
+							existingChild.render();
+							previousElement = existingChild.element;
+						}
+					}
+					else {
+						// todo: dispose node
+						this.parent.element.removeChild(this.childrenRepeater[i].element);
+					}
+				}
+				this.childrenRepeater.length = data.length;
+			}
+			else {
+				var count = -1;
+				for (var o in data) {
+					count++;
+					var previousElement;
+					var existingChild = this.childrenRepeater[count];
+					if (!existingChild) {
+						// no existing node
+						var newElement = this.element.cloneNode(true);
+						newElement.removeAttribute(attributes.repeat);
+						var newNode = getNodeFromElement(newElement, this.scope._createChild());
+						this.childrenRepeater[count] = newNode;
+						updateScopeWithRepeaterData(this.repeater, newNode.scope, data[o]);
+						newNode.scope['$key'] = o;
+						compile(newElement, this.parent, this.repeater, newNode);
+						newNode.update();
+						newNode.render();
+						if (!previousElement) {
+							if (this.previousSibling) insertAfter(this.previousSibling, newElement);
+							else if (this.nextSibling) insertBefore(this.nextSibling, newElement);
+							else this.parent.element.appendChild(newElement);
+						}
+						else insertAfter(previousElement, newElement);
+						previousElement = newNode.element;
+					}
+					else {
+						// existing node
+						updateScopeWithRepeaterData(this.repeater, existingChild.scope, data[o]);
+						existingChild.scope['$key'] = o;
+						existingChild.update();
+						existingChild.render();
+						previousElement = existingChild.element;
+					}
+				}
+				var size = count;
+				while (count++ < this.childrenRepeater.length-1) {
+					// todo: dispose node
+					this.parent.element.removeChild(this.childrenRepeater[count].element);
+				}
+				this.childrenRepeater.length = size+1;
+			}
+			if (this.element.parentNode) {
+				this.parent.element.removeChild(this.element);
 			}
 		}
 	};
@@ -342,7 +374,7 @@
 		scope[name] = data;
 	}
 
-	var Attribute = function(name, value, node) {
+	var Attribute = function(name, value, node, data) {
 		this.name = name;
 		this.value = value;
 		this.node = node;
@@ -464,7 +496,6 @@
 			if (this.value !== val) {
 				this.value = val;
 				(this.node || this.attribute).invalidate = true;
-				console.log('result:', this.pattern, val);
 			}
 		},
 		getValue: function(scope) {
@@ -474,31 +505,44 @@
 		}
 	};
 
-	function getValue(data, path, accessor, params, isFunction) {
-		var pathParts = path.split('.');
+	function getValue(data, pathString, accessor, params, isFunc) {
+		var pathParts = pathString.split('.');
 		var path = data;
 		if (pathParts[0] !== "") {
 			var i = -1, l = pathParts.length;
 			while (++i < l) {
+				if (!path) {
+					if (data._parent) return getValue(data._parent, pathString, accessor, params, isFunc);
+					else return undefined;
+				}
 				path = path[pathParts[i]];
 			}
 		}
-		if (!path) return undefined;
-		if (!isFunction) {
+		if (!path) {
+			if (data._parent) return getValue(data._parent, pathString, accessor, params, isFunc);
+			else return undefined;
+		}
+		if (!isFunc) {
 			return path[accessor];
 		}
 		else {
 			var args = [];
-			var i = -1, l = params.length;
-			while (++i < l) {
-				var p = params[i];
-				if (p.match(regex.findQuote)) {
-					args.push(p.replace(regex.findQuote, ''));
+			if (params) {
+				var i = -1, l = params.length;
+				while (++i < l) {
+					var p = params[i];
+					if (p.match(regex.findQuote)) {
+						args.push(p.replace(regex.findQuote, ''));
+					}
+					else {
+						var exp = new Expression(p);
+						args.push(exp.getValue(data));
+					}
 				}
-				else {
-					var exp = new Expression(p);
-					args.push(exp.getValue(data));
-				}
+			}
+			if (!isFunction(path[accessor])) {
+				if (data._parent) return getValue(data._parent, pathString, accessor, params, isFunc);
+				else return undefined;
 			}
 			return path[accessor].apply(null, args);
 		}
@@ -573,7 +617,6 @@
 
 	function compile(element, parent, repeaterDescendant, nodeTarget) {
 		if (!isElementValid(element)) return;
-		console.log('> compile', element);
 		// get node
 		var node;
 		if (!nodeTarget) {
@@ -610,12 +653,9 @@
 	};
 	Template.prototype = {
 		compile: function() {
-			console.log('--- COMPILE ---');
 			this.node = compile(this.element);
-			console.log('> node:', this.node);
 		},
 		render: function(data) {
-			console.log('--- RENDER ---');
 			if (isDefined(data)) updateScopeWithData(this.node.scope, data);
 			this.node.update();
 			this.node.render();

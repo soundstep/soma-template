@@ -45,87 +45,94 @@
 <div class="time"></div>
 
 <div id="ct">
-	<!--<p class="boldclass {{cl}}">class on div + text {{test1}} dummy{{test2}}dummy</p>-->
-	<!--<p class="{{cl2}}">class on div + text {{test1}}</p>-->
-	<!--<p class="{{getClass()}}">class function with path on div + text function {{getClass()}}</p>-->
-	<!--<p class="{{getClassParam('p1.p1','p2.p2')}}">class function on div with param + text function with param {{fnParam("p1.p1", "p2.p2")}}</p>-->
-	<!--<p class="{{functions.getClass()}}">class function on div + text function {{functions.fn1()}}</p>-->
-	<!--<p class="{{functions.getClassParam('p1.p1','p2.p2')}}">class function on div with param + text function with param {{functions.fnParam("p1.p1", "p2.p2")}}</p>-->
-	<!--<p class="{{functions.getClassParam(params.param1,params.param2)}}">class function on div with param var + text function with param var {{functions.fnParam(params.param1, params.param2)}}</p>-->
-	<!--<p>function deep {{functions.deep.fn1()}}</p>-->
-	<!--<p>text function + string params {{functions.fn2("hello", "world")}}</p>-->
-	<!--<p>do a interpolation skip here: <span data-skip>{{test1}}</span> but not here: {{test1}}</p>-->
-	<!--checked attribute on an input from boolean: <input type="checkbox" {{checked}}><br/>-->
-	<!--checked attribute on an input from function: <input type="checkbox" {{functions.checked()}}>-->
-	<!--<p><img data-src="{{img}}" width="60" height="60"></p>-->
-	<!--<p data-hide="false">HIDE ON VALUE, THIS SHOULD NOT APPEAR!!</p>-->
-	<!--<p data-hide="{{hideValue}}">HIDE ON VALUE, THIS SHOULD NOT APPEAR!!</p>-->
-	<!--<p data-hide>HIDE ON VALUE, THIS SHOULD NOT APPEAR!!</p>-->
-	<!--<p data-hide="{{functions.hideFn()}}">HIDE ON FUNCTION, THIS SHOULD NOT APPEAR!!</p>-->
-	<!--<p style="display:none" data-show>show on value, this should appear</p>-->
-	<!--<p style="display:none" data-show="true">show on value, this should appear</p>-->
-	<!--<p style="display:none" data-show="{{showValue}}">show on value, this should appear</p>-->
-	<!--<p style="display:none" data-show="false">show on function, this should appear</p>-->
-	<!--<a data-href="http://{{link}}" target="_blank">This is link</a>-->
-	<!--<div>-->
-		<!--<div>-->
-			<!--<div>-->
-				<!--<p class="{{test3.obj.cl}}">deep div with deep data {{test3.obj.val}}</p>-->
-			<!--</div>-->
-		<!--</div>-->
-	<!--</div>-->
-	<!--<ul>-->
-		<!--<li class="{{cl2}}">repeat image with index: </li>-->
-		<!--<li class="{{cl2}}" data-repeat="r in rep">[{{$index}}]<p>{{r.val}}</p><p data-hide="{{r.hide}}">{{test1}}</p></li>-->
-		<!--<li class="{{cl2}}">after</li>-->
-	<!--</ul>-->
-	<!--<ul>-->
-		<!--<li>repeat image with index:</li>-->
-			<!--<li data-repeat="img in imgrep">-->
-				<!--assets/{{img}}{{$index}}.jpg<br/>-->
-			<!--<img data-src="assets/{{img}}{{$index}}.jpg" width="60" height="60">-->
-		<!--</li>-->
-	<!--</ul>-->
-	<!--<ul>-->
-		<!--<li>repeat on array:</li>-->
-			<!--<li data-repeat="item in arr">-->
-				<!--<div class="list{{index}}">[{{$index}}] - {{item}}</div>-->
-			<!--</li>-->
-		<!--</li>-->
-	<!--</ul>-->
-	<!--<ul>-->
-		<!--<li>repeat on array containing object:</li>-->
-		<!--<li data-repeat="item in items">-->
-			<!--<div class="list{{index}}">[{{$index}}] - {{item.name}} {{item.deep.other}}</div>-->
-		<!--</li>-->
-	<!--</ul>-->
-	<ul>
-		<li>repeat on object:</li>
-		<li data-repeat="o in obj">
+	<p class="boldclass {{cl}}">class on div + text {{test1}} dummy{{test2}}dummy</p>
+	<p class="{{cl2}}">class on div + text {{test1}}</p>
+	<p class="{{getClass()}}">class function with path on div + text function {{getClass()}}</p>
+	<p class="{{getClassParam('p1.p1','p2.p2')}}">class function on div with param + text function with param {{fnParam("p1.p1", "p2.p2")}}</p>
+	<p class="{{functions.getClass()}}">class function on div + text function {{functions.fn1()}}</p>
+	<p class="{{functions.getClassParam('p1.p1','p2.p2')}}">class function on div with param + text function with param {{functions.fnParam("p1.p1", "p2.p2")}}</p>
+	<p class="{{functions.getClassParam(params.param1,params.param2)}}">class function on div with param var + text function with param var {{functions.fnParam(params.param1, params.param2)}}</p>
+	<p>function deep {{functions.deep.fn1()}}</p>
+	<p>text function + string params {{functions.fn2("hello", "world")}}</p>
+	<p>do a interpolation skip here: <span data-skip>{{test1}}</span> but not here: {{test1}}</p>
+	checked attribute on an input from boolean: <input type="checkbox" {{checked}}><br/>
+	checked attribute on an input from function: <input type="checkbox" {{functions.checked()}}>
+	<p><img data-src="{{img}}" width="60" height="60"></p>
+	<p data-hide="{{hideValue}}">HIDE ON VALUE, THIS SHOULD NOT APPEAR!!</p>
+	<p data-hide>HIDE ON VALUE, THIS SHOULD NOT APPEAR!!</p>
+	<p data-hide="{{functions.hideFn()}}">HIDE ON FUNCTION, THIS SHOULD NOT APPEAR!!</p>
+	<p style="display:none" data-show>show on value, this should appear</p>
+	<p style="display:none" data-show="true">show on value, this should appear</p>
+	<p style="display:none" data-show="{{showValue}}">show on value, this should appear</p>
+	<p style="display:none" data-show="false">show on function, this should appear</p>
+	<a data-href="http://{{link}}" target="_blank">This is link</a>
+	<div>
+		<div>
 			<div>
-				{{o.title}}
-				<ul data-repeat="arr in o.data">
-					<li>{{arr}} {{o.title}} {{test3.obj.cl}}</li>
-
-				</ul>
+				<p class="{{test3.obj.cl}}">deep div with deep data {{test3.obj.val}}</p>
 			</div>
+		</div>
+	</div>
+	<ul>
+		<li class="{{cl2}}">repeat image with index: </li>
+		<li class="{{cl2}}" data-repeat="r in rep">[{{$index}}]<p>{{r.val}}</p><p data-hide="{{r.hide}}">{{test1}}</p></li>
+		<li class="{{cl2}}">after</li>
+	</ul>
+	<ul>
+		<li>repeat image with index:</li>
+			<li data-repeat="img in imgrep">
+				assets/{{img}}{{$index}}.jpg<br/>
+			<img data-src="assets/{{img}}{{$index}}.jpg" width="60" height="60">
 		</li>
 	</ul>
-	<!--<ul>-->
-	<!--<li data-repeat="l1 in l0">-->
-	<!--<strong>Level 1, index {{index}}:</strong>-->
-	<!--<ul>-->
-	<!--<li data-repeat="l2 in l1">-->
-	<!--<strong>Level 2, index {{index}}:</strong>-->
-	<!--<ul>-->
-	<!--<li data-repeat="l3 in l2">-->
-	<!--<strong>Level 3, index {{index}}:</strong> {{l3}} {{test3.obj.cl}} {{getClass()}} {{functions.getClass()}}-->
-	<!--</li>-->
-	<!--</ul>-->
-	<!--</li>-->
-	<!--</ul>-->
-	<!--</li>-->
-	<!--</ul>-->
+	<ul>
+		<li>repeat on array:</li>
+			<li data-repeat="item in arr">
+				<div class="list{{index}}">[{{$index}}] - {{item}}</div>
+			</li>
+		</li>
+	</ul>
+	<ul>
+		<li>repeat on array containing object:</li>
+		<li data-repeat="item in items">
+			<div class="list{{index}}">[{{$index}}] - {{item.name}} {{item.deep.other}}</div>
+		</li>
+	</ul>
+	<ul class="ul-1">
+		<li data-repeat="o in objarray" class="li-1" cclass="{{cl2}}">{{o.title}}
+			<ul class="ul-2">
+				<li data-repeat="d in o.data.arr" class="li2">{{$index}}</li>
+			</ul>
+		</li>
+	</ul>
+	<ul class="root"><li data-repeat="o in obj" class="{{cl2}}">A<ul class="second">
+		<li data-repeat="d in o.data.arr">{{$index}}</li>
+	</ul>
+	</li>
+	</ul>
+	<ul class="root">
+		<li>repeat on object:</li>
+		<li data-repeat="o in obj" class="{{cl2}}">{{$key}}: {{o.title}}
+			<ul class="second">
+				<li data-repeat="d in o.data.arr">{{$index}} {{d}} {{test3.obj.cl}}</li>
+			</ul>
+		</li>
+	</ul>
+	<ul>
+		<li data-repeat="l1 in l0">
+		<strong>Level 1, index {{$index}}:</strong>
+			<ul>
+				<li data-repeat="l2 in l1">
+					<strong>Level 2, index {{$index}}:</strong>
+					<ul>
+						<li data-repeat="l3 in l2">
+							<strong>Level 3, index {{$index}}:</strong> {{l3}} {{test3.obj.cl}} {{getClass()}} {{functions.getClass()}} {{functions.getClassParam('p1.p1','p2.p2')}}
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+	</ul>
 </div>
 
 <script type="text/javascript" src="jquery-1.8.2.min.js"></script>
@@ -181,9 +188,23 @@
 		items: [{name:"zero [v1]", deep:{other:"1 [v1]"}}, {name:"one [v1]", deep:{other:"2 [v1]"}}, {name:"two [v1]", deep:{other:"3 [v1]"}}],
 		arr:["zero [v1]", "one [v1]", "two [v1]"],
 		obj: {
-			title: "object containing arrays",
-			data: [1, 2, 3]
+			item1: {
+				title: "object containing arrays 1",
+				data: {
+					arr: [1, 2, 3]
+				},
+				hide:false
+			}
 		},
+		objarray: [
+			{
+				title: "object containing arrays 1",
+				data: {
+					arr: [1, 2, 3]
+				},
+				hide:false
+			}
+		],
 		l0: [
 			[
 				["0-0-1 [v1]", "0-0-1 [v1]", "0-0-2 [v1]"],
@@ -251,9 +272,51 @@
 		items: [{name:"zero [v2]", deep:{other:"1 [v2]"}}, {name:"one [v2]", deep:{other:"2 [v2]"}}, {name:"two [v2]", deep:{other:"3 [v2]"}}],
 		arr:["zero [v2]", "one [v2]", "two [v2]"],
 		obj: {
-			title: "object containing arrays",
-			data: [1, 2, 3]
+			item1: {
+				title: "object containing arrays 1",
+				data: {
+					arr: [1, 2, 3]
+				},
+				hide:false
+			},
+			item2: {
+				title: "object containing arrays 2 [v2]",
+				data: {
+					arr: [1, 2, 3]
+				},
+				hide:true
+			},
+			item3: {
+				title: "object containing arrays 3 [v2]",
+				data: {
+					arr: [1, 2, 3]
+				},
+				hide:false
+			}
 		},
+		objarray: [
+			{
+				title: "object containing arrays 1",
+				data: {
+					arr: [1, 2, 3]
+				},
+				hide:false
+			},
+			{
+				title: "object containing arrays 1",
+				data: {
+					arr: [1, 2, 3]
+				},
+				hide:false
+			},
+			{
+				title: "object containing arrays 1",
+				data: {
+					arr: [1, 2, 3]
+				},
+				hide:false
+			}
+		],
 		l0: [
 			[
 				["0-0-1 [v2]", "0-0-1 [v2]", "0-0-2 [v2]"],
@@ -294,7 +357,9 @@
 		if (count % 2 === 0) {
 			obj = obj === obj1 ? obj2 : obj1;
 		}
+		var time = new Date().getTime();
 		tpl.render(obj);
+		$('.time').html(new Date().getTime() - time);
 	}
 //	function compile2() {
 //		//tpl2 = soma.template.compile(document.getElementById('ct2'));
