@@ -76,7 +76,7 @@
 	<!--</div>-->
 	<ul>
 		<li>repeat image with index:</li>
-		<li data-repeat="image in imgrep">{{image}}</li>
+		<li data-repeat="image in imgrep"><p>{{image}}</p><p>{{test1}}</p></li>
 		<li>after</li>
 	</ul>
 	<!--<ul>-->
@@ -279,7 +279,7 @@
 		tpl = soma.template.create(ct);
 	}
 	function render() {
-		if (count++ % 2 === 0) {
+		if (count % 2 === 0) {
 			obj = obj === obj1 ? obj2 : obj1;
 		}
 		tpl.render(obj);

@@ -31,7 +31,7 @@
 		findString: /('|")(.*)('|")/,
 		findQuote: /\"|\'/g,
 		findExtraQuote: /^["|']|["|']?$/g,
-		findContent: /[^\s]/gm,
+		findContent: /[^.|^\s]/gm,
 		findTokens: new RegExp(tokens.start + ".*?" + tokens.end, "g"), //new RegExp(tokens.start + ".*" + tokens.end + "+", "g"), // /\{\{(.*?)\}\}/g
 		findWhitespace: /\s+/g
 	};
@@ -83,6 +83,9 @@
 	}
 	function isNode(value) {
 		return typeof value === 'object' && value.sequence !== undefined;
+	}
+	function isDate(value){
+		return toString.apply(value) == '[object Date]';
 	}
 	function equals(o1, o2) {
 		if (o1 === o2) return true;
@@ -168,7 +171,6 @@
 
 	var Node = function(element, scope) {
 		this.element = element;
-		this.elementParent = element.parentNode;
 		this.scope = scope;
 		this.attributes = null;
 		this.value = null;
@@ -179,6 +181,9 @@
 		this.repeaterDescendant = null;
 		this.parent = null;
 		this.children = [];
+		this.childrenRepeater = [];
+		this.previousSibling = null;
+		this.nextSibling = null;
 
 		if (this.isTextNode()) {
 			this.value = element.nodeValue;
@@ -190,45 +195,91 @@
 		isTextNode: function() {
 			return this.element.nodeType === 3;
 		},
-		getExpressions: function() {
-			var exp = (isDefined(this.interpolation)) ? this.interpolation.expressions : [];
-			if (this.attributes) {
+		getExpressionsString: function() {
+			var str = "";
+			if (isDefined(this.interpolation)) {
+				str += this.interpolation.getExpressionsString();
+			}
+			if (isDefined(this.attributes)) {
 				var i = -1, l = this.attributes.length;
 				while (++i < l) {
-					exp = exp.concat(this.attributes[i].getExpressions());
+					str += this.attributes[i].interpolationName.getExpressionsString();
+					str += this.attributes[i].interpolationValue.getExpressionsString();
 				}
 			}
-			return exp;
+			str += this.getChildrenExpressionsString();
+			return str;
+		},
+		getChildrenExpressionsString: function() {
+			var str = "";
+			var i = -1, l = this.children.length;
+			while (++i < l) {
+				str += this.children[i].getExpressionsString();
+			}
+			return str;
+		},
+		update: function() {
+			if (this.repeater) return;
+			if (isDefined(this.interpolation)) {
+				this.interpolation.update();
+			}
+			if (isDefined(this.attributes)) {
+				var i = -1, l = this.attributes.length;
+				while (++i < l) {
+					this.attributes[i].interpolationName.update();
+					this.attributes[i].interpolationValue.update();
+				}
+			}
+			this.updateChildren();
+		},
+		updateChildren: function() {
+			var i = -1, l = this.children.length;
+			while (++i < l) {
+				this.children[i].update();
+			}
 		},
 		render: function() {
-			console.log('> render', this.element);
+			console.log('> render', this, this.element);
 			if (this.repeater) {
 
 				var data = getRepeaterData(this.repeater, this.scope);
 				if (isArray(data)) {
+
+					if (!this.element.parentNode) insertAfter(this.previousSibling, this.element);
+
+					// make children
 					var fragment = document.createDocumentFragment();
-					var i = -1; l = data.length;
+					var i = -1, l = data.length;
 					while (++i < l) {
-						var newNode = this.element.cloneNode(true);
-						fragment.appendChild(newNode);
+						var newElement = this.element.cloneNode(true);
+						fragment.appendChild(newElement);
+						var newNode = new Node(newElement, this.scope._createChild());
+						updateScopeWithRepeaterData(this.repeater, newNode.scope, data[i]);
+						compile(newElement, this.parent, this.repeater, newNode);
+						newNode.update();
+						newNode.render();
 
-//						var n = compile(newNode);
-//						n.parent = this;
-//						this.children.push(n);
+						var previous = this.childrenRepeater[i];
+						if (previous) {
+							var isEquals = equals(previous.getExpressionsString(), newNode.getExpressionsString());
+							console.log(0, previous.getExpressionsString());
+							console.log(1, newNode.getExpressionsString());
+							console.log('>>>>>>>>>>>>>>', isEquals);
+							if (!isEquals) {
+								this.parent.element.replaceChild(newElement, previous.element);
+							}
+						}
+						else {
+							insertAfter(this.element, newElement);
+						}
 
-//						var exp = getExpressionsFromNode(n)
-//						updateExpressions(exp)
-//						console.log(exp);
-
-//						render(n);
-
-						//n.render();
+						this.childrenRepeater[i] = newNode;
 
 					}
-					this.elementParent.replaceChild(fragment, this.element);
+
+					this.parent.element.removeChild(this.element);
+
 				}
-
-
 				return;
 			}
 			if (this.invalidate) {
@@ -243,19 +294,33 @@
 					this.attributes[i].render();
 				}
 			}
+			this.renderChildren();
+		},
+		renderChildren: function() {
+			var i = -1, l = this.children.length;
+			while (++i < l) {
+				this.children[i].render();
+			}
 		}
 	};
 
-	function getRepeaterData(value, scope) {
+	function insertAfter(referenceNode, newNode) {
+		referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+	}
+
+	function getRepeaterData(repeaterValue, scope) {
 		var parts;
-		if (!(parts = value.match(regex.repeat))) return;
-		var name = parts[1];
+		if (!(parts = repeaterValue.match(regex.repeat))) return;
 		var source = parts[2];
 		var exp = new Expression(source);
-
-		console.log('exp.getValue(scope)', exp.getValue(scope));
-
 		return exp.getValue(scope);
+	}
+
+	function updateScopeWithRepeaterData(repeaterValue, scope, data) {
+		var parts;
+		if (!(parts = repeaterValue.match(regex.repeat))) return;
+		var name = parts[1];
+		scope[name] = data;
 	}
 
 	var Attribute = function(name, value, node) {
@@ -267,12 +332,6 @@
 		this.invalidate = false;
 	};
 	Attribute.prototype = {
-		getExpressions: function() {
-			var exp = [];
-			exp = exp.concat(this.interpolationName.expressions);
-			exp = exp.concat(this.interpolationValue.expressions);
-			return exp;
-		},
 		render: function() {
 			var element = this.node.element;
 			if (this.invalidate) {
@@ -323,6 +382,7 @@
 		this.attribute = attribute;
 		this.sequence = [];
 		this.expressions = [];
+		this.expressionsString = "";
 		// find parts
 		var val = this.value;
 		var tokensMatches = val.match(regex.findTokens);
@@ -339,6 +399,20 @@
 		trimArray(this.sequence);
 	};
 	Interpolation.prototype = {
+		getExpressionsString: function() {
+			var str = "";
+			var i = -1, l = this.expressions.length;
+			while (++i < l) {
+				str += this.expressions[i].value;
+			}
+			return str;
+		},
+		update: function() {
+			var i = -1, l = this.expressions.length;
+			while (++i < l) {
+				this.expressions[i].update();
+			}
+		},
 		render: function() {
 			var rendered = "";
 			if (this.sequence) {
@@ -429,31 +503,10 @@
 		return value.split(regex.findParams);
 	}
 
-	function compile(element, parent, repeaterDescendant) {
-		if (!isElementValid(element)) return;
-		console.log('> compile', element);
-		// get node
-		var node = getNodeFromElement(element, parent ? parent.scope : new Scope());
-		if (repeaterDescendant) {
-			node.repeaterDescendant = repeaterDescendant;
-			node.scope = node.scope._createChild();
-		}
-		// children
-		if (node.skip) return;
-		var child = element.firstChild;
-		while (child) {
-			var childNode = compile(child, node, node.repeater);
-			if (childNode) {
-				childNode.parent = node;
-				node.children.push(childNode);
-			}
-			child = child.nextSibling;
-		}
-		return node;
-	}
-
 	function getNodeFromElement(element, scope) {
 		var node = new Node(element, scope);
+		node.previousSibling = element.previousSibling;
+		node.nextSibling = element.nextSibling;
 		var attributes = [];
 		for (var attr, name, value, attrs = element.attributes, j = 0, jj = attrs && attrs.length; j < jj; j++) {
 			attr = attrs[j];
@@ -492,53 +545,39 @@
 		// comment
 		if (type === 8) return false;
 		// empty text node
-		var hasContent = regex.findContent.test(element.nodeValue);
-		if (type === 3 && !hasContent) return false;
+		//var hasContent = regex.findContent.test(element.nodeValue);
+		if (type === 3 && !hasInterpolation(element.nodeValue)) return false;
 		// result
 		return true;
 	}
 
-	// render
-
-//	function updateScopes(parent) {
-//		var i = -1, l = parent.children.length;
-//		while(++i < l) {
-//			var node = parent.children[i];
-//			if (node.repeaterDescendant) {
-//				clearScope(node.scope);
-//				populateRepeaterScope(node.scope._parent, node.repeaterDescendant);
-//			}
-//			updateScopes(node);
-//		}
-//	}
-//
-//	function populateRepeaterScope(scope, value) {
-//		console.log(value);
-//		var parts;
-//		if (!(parts = value.match(regex.repeat))) return;
-//		var name = parts[1];
-//		var source = parts[2];
-//		var exp = new Expression(source);
-//
-//		console.log('exp.getValue(scope)', exp.getValue(scope));
-//
-//		scope[name] = exp.getValue(scope);
-//	}
-
-	function updateExpressions(expressions) {
-		var i = -1, l = expressions.length;
-		while(++i < l) {
-			expressions[i].update();
+	function compile(element, parent, repeaterDescendant, nodeTarget) {
+		if (!isElementValid(element)) return;
+		console.log('> compile', element);
+		// get node
+		var node;
+		if (!nodeTarget) {
+			node = getNodeFromElement(element, parent ? parent.scope : new Scope());
+			if (repeaterDescendant) {
+				node.repeaterDescendant = repeaterDescendant;
+			}
 		}
-	}
-
-	function render(parent) {
-		var i = -1, l = parent.children.length;
-		while(++i < l) {
-			var node = parent.children[i];
-			node.render();
-			render(node);
+		else {
+			node = nodeTarget;
+			node.parent = parent;
 		}
+		// children
+		if (node.skip) return;
+		var child = element.firstChild;
+		while (child) {
+			var childNode = compile(child, node, node.repeater);
+			if (childNode) {
+				childNode.parent = node;
+				node.children.push(childNode);
+			}
+			child = child.nextSibling;
+		}
+		return node;
 	}
 
 	// template
@@ -554,15 +593,12 @@
 			console.log('--- COMPILE ---');
 			this.node = compile(this.element);
 			console.log('> node:', this.node);
-			this.expressions = getExpressionsFromNode(this.node);
-			console.log('> expression:', this.expressions);
 		},
 		render: function(data) {
 			console.log('--- RENDER ---');
 			if (isDefined(data)) updateScopeWithData(this.node.scope, data);
-			//updateScopes(this.node);
-			updateExpressions(this.expressions);
-			render(this.node);
+			this.node.update();
+			this.node.render();
 		}
 	};
 
@@ -580,16 +616,6 @@
 				delete scope[key];
 			}
 		}
-	}
-
-	function getExpressionsFromNode(node) {
-		var exp = [];
-		exp = exp.concat(node.getExpressions());
-		var i = -1, l = node.children.length;
-		while (++i < l) {
-			exp = exp.concat(getExpressionsFromNode(node.children[i]));
-		}
-		return exp;
 	}
 
 	var templates = new HashMap();
