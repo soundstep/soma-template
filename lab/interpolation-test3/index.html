@@ -74,41 +74,43 @@
 			<!--</div>-->
 		<!--</div>-->
 	<!--</div>-->
-	<ul>
-		<li>repeat image with index:</li>
-		<li data-repeat="image in imgrep"><p>{{image}}</p><p>{{test1}}</p></li>
-		<li>after</li>
-	</ul>
+	<!--<ul>-->
+		<!--<li class="{{cl2}}">repeat image with index: </li>-->
+		<!--<li class="{{cl2}}" data-repeat="r in rep">[{{$index}}]<p>{{r.val}}</p><p data-hide="{{r.hide}}">{{test1}}</p></li>-->
+		<!--<li class="{{cl2}}">after</li>-->
+	<!--</ul>-->
 	<!--<ul>-->
 		<!--<li>repeat image with index:</li>-->
 			<!--<li data-repeat="img in imgrep">-->
-				<!--assets/{{img}}{{index}}.jpg<br/>-->
-			<!--&lt;!&ndash;<img data-src="assets/{{img}}{{index}}.jpg" width="60" height="60">&ndash;&gt;-->
+				<!--assets/{{img}}{{$index}}.jpg<br/>-->
+			<!--<img data-src="assets/{{img}}{{$index}}.jpg" width="60" height="60">-->
 		<!--</li>-->
 	<!--</ul>-->
 	<!--<ul>-->
-	<!--<li>repeat on array:</li>-->
-	<!--<li data-repeat="item in arr">-->
-	<!--<div class="list{{index}}">[{{index}}] - {{item}}</div>-->
-	<!--</li>-->
+		<!--<li>repeat on array:</li>-->
+			<!--<li data-repeat="item in arr">-->
+				<!--<div class="list{{index}}">[{{$index}}] - {{item}}</div>-->
+			<!--</li>-->
+		<!--</li>-->
 	<!--</ul>-->
 	<!--<ul>-->
-	<!--<li>repeat on array containing object:</li>-->
-	<!--<li data-repeat="item in items">-->
-	<!--<div class="list{{index}}">[{{index}}] - {{item.name}} {{item.deep.other}}</div>-->
-	<!--</li>-->
+		<!--<li>repeat on array containing object:</li>-->
+		<!--<li data-repeat="item in items">-->
+			<!--<div class="list{{index}}">[{{$index}}] - {{item.name}} {{item.deep.other}}</div>-->
+		<!--</li>-->
 	<!--</ul>-->
-	<!--<ul>-->
-	<!--<li>repeat on object:</li>-->
-	<!--<li data-repeat="o in obj">-->
-	<!--<div>-->
-	<!--{{o.title}}-->
-	<!--<ul data-repeat="arr in o.data">-->
-	<!--<li>{{arr}} {{o.title}} {{test3.obj.cl}}</li>-->
-	<!--</ul>-->
-	<!--</div>-->
-	<!--</li>-->
-	<!--</ul>-->
+	<ul>
+		<li>repeat on object:</li>
+		<li data-repeat="o in obj">
+			<div>
+				{{o.title}}
+				<ul data-repeat="arr in o.data">
+					<li>{{arr}} {{o.title}} {{test3.obj.cl}}</li>
+
+				</ul>
+			</div>
+		</li>
+	</ul>
 	<!--<ul>-->
 	<!--<li data-repeat="l1 in l0">-->
 	<!--<strong>Level 1, index {{index}}:</strong>-->
@@ -136,6 +138,11 @@
 		imgrep: [
 			"img",
 			"img"
+		],
+		rep: [
+			{val:"val A", hide: false},
+			{val:"val B", hide: true},
+			{val:"val C", hide: false}
 		],
 		hideValue: true,
 		showValue: true,
@@ -201,6 +208,11 @@
 		imgrep: [
 			"img",
 			"img"
+		],
+		rep: [
+			{val:"val 1", hide: true},
+			{val:"val 2", hide: false},
+			{val:"val 3", hide: true}
 		],
 		hideValue: true,
 		showValue: true,

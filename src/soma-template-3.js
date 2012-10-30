@@ -75,6 +75,12 @@
 		if (value[value.length-1] === "") value.pop();
 		return value;
 	}
+	function insertBefore(referenceNode, newNode) {
+		referenceNode.parentNode.insertBefore(newNode, referenceNode);
+	}
+	function insertAfter(referenceNode, newNode) {
+		referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+	}
 	function trimTokens(value) {
 		return value.replace(regex.expression, '');
 	}
@@ -219,7 +225,6 @@
 			return str;
 		},
 		update: function() {
-			if (this.repeater) return;
 			if (isDefined(this.interpolation)) {
 				this.interpolation.update();
 			}
@@ -230,6 +235,7 @@
 					this.attributes[i].interpolationValue.update();
 				}
 			}
+			if (this.repeater) return;
 			this.updateChildren();
 		},
 		updateChildren: function() {
@@ -240,48 +246,6 @@
 		},
 		render: function() {
 			console.log('> render', this, this.element);
-			if (this.repeater) {
-
-				var data = getRepeaterData(this.repeater, this.scope);
-				if (isArray(data)) {
-
-					if (!this.element.parentNode) insertAfter(this.previousSibling, this.element);
-
-					// make children
-					var fragment = document.createDocumentFragment();
-					var i = -1, l = data.length;
-					while (++i < l) {
-						var newElement = this.element.cloneNode(true);
-						fragment.appendChild(newElement);
-						var newNode = new Node(newElement, this.scope._createChild());
-						updateScopeWithRepeaterData(this.repeater, newNode.scope, data[i]);
-						compile(newElement, this.parent, this.repeater, newNode);
-						newNode.update();
-						newNode.render();
-
-						var previous = this.childrenRepeater[i];
-						if (previous) {
-							var isEquals = equals(previous.getExpressionsString(), newNode.getExpressionsString());
-							console.log(0, previous.getExpressionsString());
-							console.log(1, newNode.getExpressionsString());
-							console.log('>>>>>>>>>>>>>>', isEquals);
-							if (!isEquals) {
-								this.parent.element.replaceChild(newElement, previous.element);
-							}
-						}
-						else {
-							insertAfter(this.element, newElement);
-						}
-
-						this.childrenRepeater[i] = newNode;
-
-					}
-
-					this.parent.element.removeChild(this.element);
-
-				}
-				return;
-			}
 			if (this.invalidate) {
 				this.invalidate = false;
 				if (this.isTextNode()) {
@@ -294,6 +258,65 @@
 					this.attributes[i].render();
 				}
 			}
+			if (this.repeater) {
+
+				// v1
+				var data = getRepeaterData(this.repeater, this.scope);
+				if (isArray(data)) {
+
+					var i = -1, l1 = data.length, l2 = this.childrenRepeater.length;
+					var l = l1 > l2 ? l1 : l2;
+					while (++i < l) {
+						if (i < l1) {
+							var previousElement;
+							var existingChild = this.childrenRepeater[i];
+							if (!existingChild) {
+								// no existing node
+								var newElement = this.element.cloneNode(true);
+								newElement.removeAttribute(attributes.repeat);
+								var newNode = getNodeFromElement(newElement, this.scope._createChild());
+								this.childrenRepeater[i] = newNode;
+								updateScopeWithRepeaterData(this.repeater, newNode.scope, data[i]);
+								newNode.scope['$index'] = i;
+								compile(newElement, this.parent, this.repeater, newNode);
+								newNode.update();
+								newNode.render();
+								if (!previousElement) {
+									if (this.previousSibling) {
+										insertAfter(this.previousSibling, newElement);
+									}
+									else if (this.nextSibling) {
+										insertBefore(this.nextSibling, newElement);
+									}
+									else {
+										this.parent.element.appendChild(newElement);
+									}
+								}
+								else {
+									insertAfter(previousElement, newElement);
+								}
+								previousElement = newNode.element;
+							}
+							else {
+								// existing node
+								updateScopeWithRepeaterData(this.repeater, existingChild.scope, data[i]);
+								existingChild.scope['$index'] = i;
+								existingChild.update();
+								existingChild.render();
+								previousElement = existingChild.element;
+							}
+						}
+						else {
+							// todo: dispose node
+							this.parent.element.removeChild(this.childrenRepeater[i].element);
+						}
+					}
+					if (this.element.parentNode) {
+						this.parent.element.removeChild(this.element);
+					}
+					this.childrenRepeater.length = data.length;
+				}
+			}
 			this.renderChildren();
 		},
 		renderChildren: function() {
@@ -303,10 +326,6 @@
 			}
 		}
 	};
-
-	function insertAfter(referenceNode, newNode) {
-		referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-	}
 
 	function getRepeaterData(repeaterValue, scope) {
 		var parts;
@@ -333,6 +352,7 @@
 	};
 	Attribute.prototype = {
 		render: function() {
+			if (this.node.repeater) return;
 			var element = this.node.element;
 			if (this.invalidate) {
 				this.invalidate = false;
@@ -449,7 +469,7 @@
 		},
 		getValue: function(scope) {
 			var value = getValue(scope, this.path, this.accessor, this.params, this.isFunction);
-			if (!value && scope._parent) return getValue(scope._parent, this.path, this.accessor, this.params, this.isFunction);
+			if (!isDefined(value) && scope._parent) return getValue(scope._parent, this.path, this.accessor, this.params, this.isFunction);
 			return value;
 		}
 	};
