@@ -31,7 +31,13 @@
 		findExtraQuote: /^["|']|["|']?$/g,
 		findContent: /[^.|^\s]/gm,
 		findTokens: new RegExp(tokens.start + ".*?" + tokens.end, "g"), //new RegExp(tokens.start + ".*" + tokens.end + "+", "g"), // /\{\{(.*?)\}\}/g
-		findWhitespace: /\s+/g
+		findWhitespace: /\s+/g,
+		sequence: new RegExp(tokens.start + ".+?" + tokens.end + "|[^" + tokens.start + "]+", "g") //    \{\{.+?\}\}|[^{]+|\{(?!\{)
+		// todo: need to escape the tokens when the user is settings them
+		// todo: info about the sequence regex: \{\{.+?\}\}|[^{]+|\{(?!\{)
+		// todo: need the last option: \{(?!\{) in case the tokens.start is at least 2 characters, for 1 character only the first options are enough
+		// this means substr the tokens, need to that on unescaped tokens
+
 	};
 	var attributes = settings.attributes = {
 		skip:"data-skip",
@@ -65,6 +71,9 @@
 	}
 	var isDefined = function(value) {
 		return value !== null && value !== undefined;
+	}
+	function escapeRegExp(str) {
+		return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 	}
 	function trim(value) {
 		return value.replace(regex.trim, '');
@@ -147,7 +156,12 @@
 		var getKey = function(target) {
 			if (!target) return;
 			if (typeof target !== 'object') return target;
-			return target.hashkey ? target.hashkey : target.hashkey = uuid();
+			var result;
+			try {
+				// IE 7-8 needs a try catch, seems like I can't add a property on an element
+				result = target.hashkey ? target.hashkey : target.hashkey = uuid();
+			} catch(err){};
+			return result;
 		}
 		return {
 			put: function(key, value) {
@@ -382,7 +396,7 @@
 				this.childrenRepeater.length = size+1;
 			}
 			if (this.element.parentNode) {
-				this.parent.element.removeChild(this.element);
+				this.element.parentNode.removeChild(this.element);
 			}
 		}
 	};
@@ -468,18 +482,36 @@
 		this.expressions = [];
 		// find parts
 		var val = this.value;
-		var tokensMatches = val.match(regex.findTokens);
-		var nonTokensMatches = val.split(regex.findTokens);
-		var i = -1, l = nonTokensMatches.length;
-		while (++i < l) {
-			this.sequence.push(nonTokensMatches[i]);
-			if (tokensMatches && tokensMatches[i]) {
-				var exp = new Expression(trimTokens(tokensMatches[i]), this.node, this.attribute);
-				this.sequence.push(exp);
-				this.expressions.push(exp);
+
+//		var tokensMatches = val.match(regex.findTokens);
+//		var nonTokensMatches = val.split(regex.findTokens);
+//		var i = -1, l = nonTokensMatches.length;
+//		while (++i < l) {
+//			this.sequence.push(nonTokensMatches[i]);
+//			if (tokensMatches && tokensMatches[i]) {
+//				var exp = new Expression(trimTokens(tokensMatches[i]), this.node, this.attribute);
+//				this.sequence.push(exp);
+//				this.expressions.push(exp);
+//			}
+//		}
+//		trimArray(this.sequence);
+
+		var parts = val.match(regex.sequence);
+		if (parts) {
+			var i = -1;
+			var l = parts.length;
+			while (++i < l) {
+				if (parts[i].match(regex.token)) {
+					var exp = new Expression(trimTokens(parts[i]), this.node, this.attribute);
+					this.sequence.push(exp);
+					this.expressions.push(exp);
+				}
+				else {
+					this.sequence.push(parts[i]);
+				}
 			}
+			trimArray(this.sequence);
 		}
-		trimArray(this.sequence);
 	};
 	Interpolation.prototype = {
 		update: function() {
@@ -523,9 +555,9 @@
 			var val = this.getValue(scope);
 			if (watchers[this.pattern] && typeof watchers[this.pattern] === 'function') {
 				var watcherValue = watchers[this.pattern](this.value, val, scope, node, this.attribute);
-					if (isDefined(watcherValue)) {
-						val = watcherValue;
-					}
+				if (isDefined(watcherValue)) {
+					val = watcherValue;
+				}
 			}
 			if (this.value !== val) {
 				this.value = val;
@@ -622,11 +654,11 @@
 				}
 				if (
 					hasInterpolation(name + ':' + value) ||
-					name === settings.attributes.repeat ||
-					name === settings.attributes.show ||
-					name === settings.attributes.hide ||
-					name === settings.attributes.href ||
-					value.indexOf(settings.attributes.cloak) !== -1
+						name === settings.attributes.repeat ||
+						name === settings.attributes.show ||
+						name === settings.attributes.hide ||
+						name === settings.attributes.href ||
+						value.indexOf(settings.attributes.cloak) !== -1
 					) {
 					attributes.push(new Attribute(name, value, node));
 				}
