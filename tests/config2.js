@@ -1,7 +1,7 @@
 var config = {
     "browserstack": {
         "username": "romu@soundstep.com",
-        "password": "wavedaz",
+        "password": "***",
         "timeout": 480
     },
     "port": 9000,
