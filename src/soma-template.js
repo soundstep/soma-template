@@ -143,6 +143,7 @@
 	}
 	var HashMap = function(){
 		var uuid = function(a,b){for(b=a='';a++<36;b+=a*51&52?(a^15?8^Math.random()*(a^20?16:4):4).toString(16):'-');return b;}
+		var data = {};
 		var getKey = function(target) {
 			if (!target) return;
 			if (typeof target !== 'object') return target;
@@ -150,13 +151,16 @@
 		}
 		return {
 			put: function(key, value) {
-				this[getKey(key)] = value;
+				data[getKey(key)] = value;
 			},
 			get: function(key) {
-				return this[getKey(key)];
+				return data[getKey(key)];
 			},
 			remove: function(key) {
-				delete this[getKey(key)];
+				delete data[getKey(key)];
+			},
+			getData: function() {
+				return data;
 			}
 		}
 	};
@@ -205,6 +209,7 @@
 		this.childrenRepeater = [];
 		this.previousSibling = null;
 		this.nextSibling = null;
+		this.template = null;
 
 		if (this.isTextNode()) {
 			this.value = element.nodeValue;
@@ -217,6 +222,7 @@
 			return this.element.nodeType === 3;
 		},
 		update: function() {
+			if (this.parent && templates.get(this.element)) return;
 			if (isDefined(this.interpolation)) {
 				this.interpolation.update();
 			}
@@ -231,12 +237,36 @@
 			this.updateChildren();
 		},
 		updateChildren: function() {
+			if (this.parent && templates.get(this.element)) return;
 			var i = -1, l = this.children.length;
 			while (++i < l) {
 				this.children[i].update();
 			}
 		},
+		invalidateData: function() {
+			if (this.parent && templates.get(this.element)) return;
+			this.invalidate = true;
+			var i, l;
+			if (this.attributes) {
+				i = -1
+				l = this.attributes.length;
+				while (++i < l) {
+					this.attributes[i].invalidate = true;
+				}
+			}
+			i = -1;
+			l = this.childrenRepeater.length;
+			while (++i < l) {
+				this.childrenRepeater[i].invalidateData();
+			}
+			i = -1;
+			l = this.children.length;
+			while (++i < l) {
+				this.children[i].invalidateData();
+			}
+		},
 		render: function() {
+			if (this.parent && templates.get(this.element)) return;
 			if (this.invalidate) {
 				this.invalidate = false;
 				if (this.isTextNode()) {
@@ -257,12 +287,14 @@
 			}
 		},
 		renderChildren: function() {
+			if (this.parent && templates.get(this.element)) return;
 			var i = -1, l = this.children.length;
 			while (++i < l) {
 				this.children[i].render();
 			}
 		},
 		renderRepeater: function() {
+			if (this.parent && templates.get(this.element)) return;
 			var data = getRepeaterData(this.repeater, this.scope);
 			if (isArray(data)) {
 				var i = -1, l1 = data.length, l2 = this.childrenRepeater.length;
@@ -276,15 +308,16 @@
 							var newElement = this.element.cloneNode(true);
 							newElement.removeAttribute(attributes.repeat);
 							var newNode = getNodeFromElement(newElement, this.scope._createChild());
+							newNode.template = this.template;
 							this.childrenRepeater[i] = newNode;
 							updateScopeWithRepeaterData(this.repeater, newNode.scope, data[i]);
 							newNode.scope['$index'] = i;
-							compile(newElement, this.parent, this.repeater, newNode);
+							compile(this.template, newElement, this.parent, this.repeater, newNode);
 							newNode.update();
 							newNode.render();
 							if (!previousElement) {
-								if (this.previousSibling) insertAfter(this.previousSibling, newElement);
-								else if (this.nextSibling) insertBefore(this.nextSibling, newElement);
+								if (this.previousSibling && this.previousSibling.parentNode) insertAfter(this.previousSibling, newElement);
+								else if (this.nextSibling && this.nextSibling.parentNode) insertBefore(this.nextSibling, newElement);
 								else this.parent.element.appendChild(newElement);
 							}
 							else insertAfter(previousElement, newElement);
@@ -317,15 +350,16 @@
 						var newElement = this.element.cloneNode(true);
 						newElement.removeAttribute(attributes.repeat);
 						var newNode = getNodeFromElement(newElement, this.scope._createChild());
+						newNode.template = this.template;
 						this.childrenRepeater[count] = newNode;
 						updateScopeWithRepeaterData(this.repeater, newNode.scope, data[o]);
 						newNode.scope['$key'] = o;
-						compile(newElement, this.parent, this.repeater, newNode);
+						compile(this.template, newElement, this.parent, this.repeater, newNode);
 						newNode.update();
 						newNode.render();
 						if (!previousElement) {
-							if (this.previousSibling) insertAfter(this.previousSibling, newElement);
-							else if (this.nextSibling) insertBefore(this.nextSibling, newElement);
+							if (this.previousSibling && this.previousSibling.parentNode) insertAfter(this.previousSibling, newElement);
+							else if (this.nextSibling && this.nextSibling.parentNode) insertBefore(this.nextSibling, newElement);
 							else this.parent.element.appendChild(newElement);
 						}
 						else insertAfter(previousElement, newElement);
@@ -459,7 +493,11 @@
 			if (this.sequence) {
 				var i = -1, l = this.sequence.length;
 				while (++i < l) {
-					rendered += isExpression(this.sequence[i]) ? this.sequence[i].value : this.sequence[i];
+					var val = "";
+					if (isExpression(this.sequence[i])) val = this.sequence[i].value;
+					else val = this.sequence[i];
+					if (!isDefined(val)) val = "";
+					rendered += val;
 				}
 			}
 			return rendered;
@@ -475,13 +513,20 @@
 		this.accessor = getExpressionAccessor(this.pattern);
 		this.params = !this.isFunction ? null : getParamsFromString(this.pattern.match(regex.findFunction)[2]);
 		this.value;
+		this.watchers = [];
 	};
 	Expression.prototype = {
 		update: function() {
-			var scope;
-			if (this.node) scope = this.node.scope;
-			else scope = this.attribute.node.scope;
+			var node = this.node || this.attribute.node;
+			var scope = node.scope;
+			var watchers = node.template.watchers;
 			var val = this.getValue(scope);
+			if (watchers[this.pattern] && typeof watchers[this.pattern] === 'function') {
+				var watcherValue = watchers[this.pattern](this.value, val, scope, node, this.attribute);
+					if (isDefined(watcherValue)) {
+						val = watcherValue;
+					}
+			}
 			if (this.value !== val) {
 				this.value = val;
 				(this.node || this.attribute).invalidate = true;
@@ -597,6 +642,7 @@
 	}
 
 	function isElementValid(element) {
+		if (!element) return;
 		var type = element.nodeType;
 		if (!element || !type) return false;
 		// comment
@@ -608,7 +654,7 @@
 		return true;
 	}
 
-	function compile(element, parent, repeaterDescendant, nodeTarget) {
+	function compile(template, element, parent, repeaterDescendant, nodeTarget) {
 		if (!isElementValid(element)) return;
 		// get node
 		var node;
@@ -622,11 +668,12 @@
 			node = nodeTarget;
 			node.parent = parent;
 		}
+		node.template = template;
 		// children
 		if (node.skip) return;
 		var child = element.firstChild;
 		while (child) {
-			var childNode = compile(child, node, node.repeater);
+			var childNode = compile(template, child, node, node.repeater);
 			if (childNode) {
 				childNode.parent = node;
 				node.children.push(childNode);
@@ -639,18 +686,28 @@
 	// template
 
 	var Template = function(element) {
+		this.watchers = {};
 		this.element = element;
-		this.node;
 		this.compile();
 	};
 	Template.prototype = {
 		compile: function() {
-			this.node = compile(this.element);
+			this.node = compile(this, this.element);
+		},
+		update: function(data) {
+			if (isDefined(data)) updateScopeWithData(this.node.scope, data);
+			if (this.node) this.node.update();
 		},
 		render: function(data) {
-			if (isDefined(data)) updateScopeWithData(this.node.scope, data);
-			this.node.update();
-			this.node.render();
+			this.update(data);
+			if (this.node) this.node.render();
+		},
+		invalidate: function() {
+			if (this.node) this.node.invalidateData();
+		},
+		watch: function(pattern, watcher) {
+			if (!isString(pattern)) return;
+			this.watchers[pattern] = watcher;
 		}
 	};
 
@@ -673,12 +730,20 @@
 	var templates = new HashMap();
 
 	function createTemplate(element) {
+		if (!isElement(element)) return;
 		var template = new Template(element);
 		templates.put(element, template);
 		return template;
 	}
+	var c = 0;
+	function renderAllTemplates() {
+		for (var key in templates.getData()) {
+			templates.get(key).render();
+		}
+	}
 
 	// exports
 	soma.template.create = createTemplate;
+	soma.template.renderAll = renderAllTemplates;
 
 })(this['soma'] = this['soma'] || {});

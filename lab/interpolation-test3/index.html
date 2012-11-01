@@ -42,13 +42,23 @@
 
 <div>
 	template 1
-	<button class="create">create</button>
-	<button class="render">render</button>
+	<button class="render1">render 1</button>
+</div>
+<div>
+	template 2
+	<button class="render2">render 2</button>
+</div>
+<div>
+	<button class="invalidate">invalidate</button>
+	<button class="render-all">render all</button>
 </div>
 <div class="time"></div>
 
-<div id="ct" class="data-cloak">
-	<p class="boldclass {{cl}}">class on div + text {{test1}} dummy{{test2}}dummy</p>
+<div id="ct">
+	<p class="boldclass {{cl}} {{none}}"> {{none}} class on div + text {{test1}} {{test1}} dummy{{test2}}dummy</p>
+	<div id="ct2">
+		<p class="boldclass {{cl}}">class on div + text {{test1}} dummy{{test2}}dummy</p>
+	</div>
 	<p class="{{cl2}}">class on div + text {{test1}}</p>
 	<p class="{{getClass()}}">class function with path on div + text function {{getClass()}}</p>
 	<p class="{{getClassParam('p1.p1','p2.p2')}}">class function on div with param + text function with param {{fnParam("p1.p1", "p2.p2")}}</p>
@@ -69,6 +79,32 @@
 	<p style="display:none" data-show="{{showValue}}">show on value, this should appear</p>
 	<p style="display:none" data-show="false">show on function, this should appear</p>
 	<a data-href="http://{{link}}" target="_blank">This is link</a>
+	<ul class="{{cl}}">
+		<li data-repeat="item in people">
+			{{item.name}} {{item.age}}
+			<ul>
+				<li data-repeat="item in item.people">
+					{{item.name}} {{item.age}}
+					<ul>
+						<li data-repeat="item in item.people">
+							{{item.name}} {{item.age}}
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+	</ul>
+	<ul>
+		<div data-repeat="item in people">
+			{{item.name}} {{item.age}}
+			<div data-repeat="item in item.people">
+				{{item.name}} {{item.age}}
+				<div data-repeat="item in item.people">
+					{{item.name}} {{item.age}}
+				</div>
+			</div>
+		</div>
+	</ul>
 	<div>
 		<div>
 			<div>
@@ -182,7 +218,7 @@
 			hideFn: function(){ return true; },
 			showFn: function(){ return true; },
 			deep: {
-				fn1: function(){ return "fn deep string returned [v2]"; }
+				fn1: function(){ return "fn deep string returned [v1]"; }
 			}
 		},
 		cl:"myClass",
@@ -224,6 +260,24 @@
 				["2-1-1 [v1]", "2-1-1 [v1]", "2-1-2 [v1]"],
 				["2-2-1 [v1]", "2-2-1 [v1]", "2-2-2 [v1]"]
 			]
+		],
+		people: [
+			{
+				name:"John [v1]",
+				age:20,
+				people: [
+					{
+						name:"David [v1]",
+						age:25,
+						people: [
+							{
+								name:"Mike [v1]",
+								age:30
+							}
+						]
+					}
+				]
+			}
 		]
 	};
 
@@ -336,32 +390,89 @@
 				["2-1-1 [v2]", "2-1-1 [v2]", "2-1-2 [v2]"],
 				["2-2-1 [v2]", "2-2-1 [v2]", "2-2-2 [v2]"]
 			]
+		],
+		people: [
+			{
+				name:"John [v2]",
+				age:20,
+				people: [
+					{
+						name:"David [v2]",
+						age:25,
+						people: [
+							{
+								name:"Mike [v2]",
+								age:30
+							}
+						]
+					}
+				]
+			}
 		]
 	};
 
 	var obj;
+	var objA;
+	var objB;
 
 	var ct = document.getElementById('ct');
+	var ct2 = document.getElementById('ct2');
 	var tpl = soma.template.create(ct);
+	var tpl2 = soma.template.create(ct2);
 //	var tpl1 = soma.template.compile(ct);
 //	var scope1 = tpl1.scope;
 //	var ct2 = document.getElementById('ct2');
 //	var tpl2 = soma.template.compile(ct2);
 
-	$('.compile').click(create);
-	$('.render').click(render);
+	tpl.watch('item.name', function(oldValue, newValue, scope, node, attribute) {
+//		console.log(0, oldValue, newValue, node, scope, attribute);
+		return "Paul";
+	});
+	var count = 2;
+	tpl.watch('cl', function(oldValue, newValue, node, scope, attribute) {
+//		console.log(0, oldValue, newValue, node, scope, attribute);
+		return "myClass" + count++ % 6;
+	});
 
-	var count = 0;
+	$('.render1').click(render1);
+	$('.render2').click(render2);
+	$('.render-all').click(renderAll);
+	$('.invalidate').click(invalidate);
 
+//	var count = 0;
+//
 	function create() {
-		tpl = soma.template.create(ct);
+
 	}
-	function render() {
-		if (count % 2 === 0) {
-			obj = obj === obj1 ? obj2 : obj1;
-		}
+	function render1() {
+//		if (count % 2 === 0) {
+			objA = objA === obj1 ? obj2 : obj1;
+//		}
 		var time = new Date().getTime();
-		tpl.render(obj);
+		tpl.render(objA);
+		$('.time').html(new Date().getTime() - time);
+	}
+	function render2() {
+//		if (count % 2 === 0) {
+			objB = objB === obj1 ? obj2 : obj1;
+//		}
+		var time = new Date().getTime();
+		tpl2.render(objB);
+		$('.time').html(new Date().getTime() - time);
+	}
+	function invalidate() {
+		tpl.invalidate();
+		tpl2.invalidate();
+	};
+	function renderAll() {
+//		if (count % 2 === 0) {
+		objA = objA === obj1 ? obj2 : obj1;
+		objB = objB === obj2 ? obj1 : obj2;
+//		}
+		var time = new Date().getTime();
+		tpl.update(objA);
+		tpl2.update(objB);
+		soma.template.renderAll();
 		$('.time').html(new Date().getTime() - time);
 	}
 //	function compile2() {
