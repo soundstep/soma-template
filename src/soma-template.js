@@ -158,7 +158,7 @@
 			if (typeof target !== 'object') return target;
 			var result;
 			try {
-				// IE 7-8 needs a try catch, seems like I can't add a property on an element
+				// IE 7-8 needs a try catch, seems like I can't add a property on text nodes
 				result = target.hashkey ? target.hashkey : target.hashkey = uuid();
 			} catch(err){};
 			return result;
@@ -310,7 +310,7 @@
 			}
 		},
 		renderRepeater: function() {
-			if (this.repeater) this.element.removeAttribute(attributes.repeat);
+//			if (this.repeater) this.element.removeAttribute(attributes.repeat);
 			renderRepeater(this);
 			if (this.element.parentNode) {
 				this.element.parentNode.removeChild(this.element);
@@ -319,7 +319,6 @@
 	};
 
 	function renderRepeater(node) {
-		console.log(node);
 		var data = getRepeaterData(node.repeater, node.scope);
 		if (isArray(data)) {
 			var i = -1;
@@ -334,7 +333,7 @@
 					if (!existingChild) {
 						// no existing node
 						var newElement = node.element.cloneNode(true);
-						var newNode = getNodeFromElement(newElement, node.scope._createChild());
+						var newNode = getNodeFromElement(newElement, node.scope._createChild(), true);
 						newNode.template = node.template;
 						node.childrenRepeater[i] = newNode;
 						updateScopeWithRepeaterData(node.repeater, newNode.scope, data[i]);
@@ -371,29 +370,29 @@
 			for (var o in data) {
 				count++;
 				var previousElement;
-				var existingChild = this.childrenRepeater[count];
+				var existingChild = node.childrenRepeater[count];
 				if (!existingChild) {
 					// no existing node
-					var newElement = this.element.cloneNode(true);
-					var newNode = getNodeFromElement(newElement, this.scope._createChild());
-					newNode.template = this.template;
-					this.childrenRepeater[count] = newNode;
-					updateScopeWithRepeaterData(this.repeater, newNode.scope, data[o]);
+					var newElement = node.element.cloneNode(true);
+					var newNode = getNodeFromElement(newElement, node.scope._createChild(), true);
+					newNode.template = node.template;
+					node.childrenRepeater[count] = newNode;
+					updateScopeWithRepeaterData(node.repeater, newNode.scope, data[o]);
 					newNode.scope['$key'] = o;
-					compile(this.template, newElement, this.parent, this.repeater, newNode);
+					compile(node.template, newElement, node.parent, node.repeater, newNode);
 					newNode.update();
 					newNode.render();
 					if (!previousElement) {
-						if (this.previousSibling && this.previousSibling.parentNode) insertAfter(this.previousSibling, newElement);
-						else if (this.nextSibling && this.nextSibling.parentNode) insertBefore(this.nextSibling, newElement);
-						else this.parent.element.appendChild(newElement);
+						if (node.previousSibling && node.previousSibling.parentNode) insertAfter(node.previousSibling, newElement);
+						else if (node.nextSibling && node.nextSibling.parentNode) insertBefore(node.nextSibling, newElement);
+						else node.parent.element.appendChild(newElement);
 					}
 					else insertAfter(previousElement, newElement);
 					previousElement = newNode.element;
 				}
 				else {
 					// existing node
-					updateScopeWithRepeaterData(this.repeater, existingChild.scope, data[o]);
+					updateScopeWithRepeaterData(node.repeater, existingChild.scope, data[o]);
 					existingChild.scope['$key'] = o;
 					existingChild.update();
 					existingChild.render();
@@ -401,11 +400,11 @@
 				}
 			}
 			var size = count;
-			while (count++ < this.childrenRepeater.length-1) {
+			while (count++ < node.childrenRepeater.length-1) {
 				// todo: dispose node
-				this.parent.element.removeChild(this.childrenRepeater[count].element);
+				node.parent.element.removeChild(node.childrenRepeater[count].element);
 			}
-			this.childrenRepeater.length = size+1;
+			node.childrenRepeater.length = size+1;
 		}
 	}
 
@@ -420,13 +419,7 @@
 	function updateScopeWithRepeaterData(repeaterValue, scope, data) {
 		var parts;
 		if (!(parts = repeaterValue.match(regex.repeat))) return;
-
-//		console.log('>>>>>>>> update scope with data', parts);
-
 		var name = parts[1];
-
-//		console.log('assign ', name, ' with ', data);
-
 		scope[name] = data;
 	}
 
@@ -496,20 +489,6 @@
 		this.expressions = [];
 		// find parts
 		var val = this.value;
-
-//		var tokensMatches = val.match(regex.findTokens);
-//		var nonTokensMatches = val.split(regex.findTokens);
-//		var i = -1, l = nonTokensMatches.length;
-//		while (++i < l) {
-//			this.sequence.push(nonTokensMatches[i]);
-//			if (tokensMatches && tokensMatches[i]) {
-//				var exp = new Expression(trimTokens(tokensMatches[i]), this.node, this.attribute);
-//				this.sequence.push(exp);
-//				this.expressions.push(exp);
-//			}
-//		}
-//		trimArray(this.sequence);
-
 		var parts = val.match(regex.sequence);
 		if (parts) {
 			var i = -1;
@@ -650,7 +629,7 @@
 		return value.split(regex.findParams);
 	}
 
-	function getNodeFromElement(element, scope) {
+	function getNodeFromElement(element, scope, isRepeaterDescendant) {
 		var node = new Node(element, scope);
 		node.previousSibling = element.previousSibling;
 		node.nextSibling = element.nextSibling;
@@ -663,7 +642,7 @@
 				if (name === settings.attributes.skip) {
 					node.skip = (value === "" || value === "true");
 				}
-				if (name === settings.attributes.repeat) {
+				if (!isRepeaterDescendant && name === settings.attributes.repeat) {
 					node.repeater = value;
 				}
 				if (
@@ -739,7 +718,6 @@
 	Template.prototype = {
 		compile: function() {
 			this.node = compile(this, this.element);
-			console.log(this.node);
 		},
 		update: function(data) {
 			if (isDefined(data)) updateScopeWithData(this.node.scope, data);

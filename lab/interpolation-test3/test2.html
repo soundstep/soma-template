@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+<div id="div" data-repeat="test">
+	<div id="div2" data-repeat="test2">
+	</div>
+</div>
+
+<script type="text/javascript">
+
+
+
+
+
+	var times = 0;
+
+	var d = document.getElementById('div');
+
+	clone(d);
+	function clone(el) {
+		for (var i=0; i<3; i++) {
+			var c = el.cloneNode(true);
+			times++;
+			console.log(times);
+			parse(c);
+			if (times < 2) {
+				clone(c);
+			}
+		}
+	}
+
+
+	function parse(element) {
+		for (var attr, name, value, attrs = element.attributes, j = 0, jj = attrs && attrs.length; j < jj; j++) {
+			attr = attrs[j];
+			if (attr.specified) {
+				if (attr.name === 'data-repeat') {
+					console.log(attr.value);
+				}
+			}
+		}
+		var child = element.firstChild;
+		while (child) {
+			parse(child);
+			child = child.nextSibling;
+		}
+
+	}
+
+
+
+//	var d = document.getElementById('div');
+//	d.parentNode.removeChild(d);
+//
+//	//d.removeAttribute('data-repeat');
+//
+//	var clone = d.cloneNode(true);
+//
+//	for (var attr, name, value, attrs = clone.attributes, j = 0, jj = attrs && attrs.length; j < jj; j++) {
+//		attr = attrs[j];
+//		if (attr.specified) {
+//			if (attr.name === ' data-repeat') alert(attr.value)
+//
+//		}
+//	}
+</script>
+
+</body>
+</html>
