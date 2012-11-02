@@ -54,8 +54,8 @@
 </div>
 <div class="time"></div>
 
-<div id="ct">
-	<p class="boldclass {{cl}} {{none}}"> {{none}} class on div + text {{test1}} {{test1}} dummy{{test2}}dummy</p>
+<div id="ct" class="data-cloak">
+	<p class="boldclass {{cl}}"> class on div + text {{test1}} {{test1}} dummy{{test2}}dummy</p>
 	<div id="ct2">
 		<p class="boldclass {{cl}}">class on div + text {{test1}} dummy{{test2}}dummy</p>
 	</div>
@@ -128,14 +128,14 @@
 	<ul>
 		<li>repeat on array:</li>
 			<li data-repeat="item in arr">
-				<div class="list{{index}}">[{{$index}}] - {{item}}</div>
+				<div class="list{{$index}}">[{{$index}}] - {{item}}</div>
 			</li>
 		</li>
 	</ul>
 	<ul>
 		<li>repeat on array containing object:</li>
 		<li data-repeat="item in items">
-			<div class="list{{index}}">[{{$index}}] - {{item.name}} {{item.deep.other}}</div>
+			<div class="list{{$index}}">[{{$index}}] - {{item.name}} {{item.deep.other}}</div>
 		</li>
 	</ul>
 	<ul class="ul-1">
