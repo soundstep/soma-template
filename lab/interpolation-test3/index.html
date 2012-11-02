@@ -55,7 +55,7 @@
 <div class="time"></div>
 
 <div id="ct">
-	<p class="boldclass {{cl}} {{none}}"> {{none}} class on div + text {{test1}} {{test1}} dummy{{test2}}dummy</p>
+	<!--<p class="boldclass {{cl}} {{none}}"> {{none}} class on div + text {{test1}} {{test1}} dummy{{test2}}dummy</p>-->
 	<!--<div id="ct2">-->
 		<!--<p class="boldclass {{cl}}">class on div + text {{test1}} dummy{{test2}}dummy</p>-->
 	<!--</div>-->
@@ -113,11 +113,11 @@
 			<!--</div>-->
 		<!--</div>-->
 	<!--</div>-->
-	<ul>
-		<li class="{{cl2}}">repeat image with index: </li>
-		<li class="{{cl2}}" data-repeat="r in rep">[{{$index}}]<p>{{r.val}}</p><p data-hide="{{r.hide}}">{{test1}}</p></li>
-		<li class="{{cl2}}">after</li>
-	</ul>
+	<!--<ul>-->
+		<!--<li class="{{cl2}}">repeat image with index: </li>-->
+		<!--<li class="{{cl2}}" data-repeat="r in rep">[{{$index}}]<p>{{r.val}}</p><p data-hide="{{r.hide}}">{{test1}}</p></li>-->
+		<!--<li class="{{cl2}}">after</li>-->
+	<!--</ul>-->
 	<!--<ul>-->
 		<!--<li>repeat image with index:</li>-->
 			<!--<li data-repeat="img in imgrep">-->
@@ -158,21 +158,21 @@
 			<!--</ul>-->
 		<!--</li>-->
 	<!--</ul>-->
-	<!--<ul>-->
-		<!--<li data-repeat="l1 in l0">-->
-		<!--<strong>Level 1, index {{$index}}:</strong>-->
-			<!--<ul>-->
-				<!--<li data-repeat="l2 in l1">-->
-					<!--<strong>Level 2, index {{$index}}:</strong>-->
-					<!--<ul>-->
-						<!--<li data-repeat="l3 in l2">-->
-							<!--<strong>Level 3, index {{$index}}:</strong> {{l3}} {{test3.obj.cl}} {{getClass()}} {{functions.getClass()}} {{functions.getClassParam('p1.p1','p2.p2')}}-->
-						<!--</li>-->
-					<!--</ul>-->
-				<!--</li>-->
-			<!--</ul>-->
-		<!--</li>-->
-	<!--</ul>-->
+	<ul>
+		<li data-repeat="l1 in l0">
+			<strong>Level 1, index {{$index}}:</strong>
+			<ul>
+				<li data-repeat="l2 in l1">
+					<strong>Level 2, index {{$index}}:</strong>
+					<ul>
+						<li data-repeat="l3 in l2">
+							<strong>Level 3, index {{$index}}:</strong> {{l3}} {{test3.obj.cl}} {{getClass()}} {{functions.getClass()}} {{functions.getClassParam('p1.p1','p2.p2')}}
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+	</ul>
 </div>
 
 <script type="text/javascript" src="jquery-1.8.2.min.js"></script>
@@ -247,21 +247,21 @@
 			}
 		],
 		l0: [
-			[
-				["0-0-1 [v1]", "0-0-1 [v1]", "0-0-2 [v1]"],
-				["0-1-1 [v1]", "0-1-1 [v1]", "0-1-2 [v1]"],
-				["0-2-1 [v1]", "0-2-1 [v1]", "0-2-2 [v1]"]
-			],
-			[
-				["1-0-1 [v1]", "1-0-1 [v1]", "1-0-2 [v1]"],
-				["1-1-1 [v1]", "1-1-1 [v1]", "1-1-2 [v1]"],
-				["1-2-1 [v1]", "1-2-1 [v1]", "1-2-2 [v1]"]
-			],
-			[
-				["2-0-1 [v1]", "2-0-1 [v1]", "2-0-2 [v1]"],
-				["2-1-1 [v1]", "2-1-1 [v1]", "2-1-2 [v1]"],
-				["2-2-1 [v1]", "2-2-1 [v1]", "2-2-2 [v1]"]
-			]
+				[
+					["0-0-0 [v1]", "0-0-1 [v1]", "0-0-2 [v1]"],
+					["0-1-0 [v1]", "0-1-1 [v1]", "0-1-2 [v1]"],
+					["0-2-0 [v1]", "0-2-1 [v1]", "0-2-2 [v1]"]
+				],
+				[
+					["1-0-0 [v1]", "1-0-1 [v1]", "1-0-2 [v1]"],
+					["1-1-0 [v1]", "1-1-1 [v1]", "1-1-2 [v1]"],
+					["1-2-0 [v1]", "1-2-1 [v1]", "1-2-2 [v1]"]
+				],
+				[
+					["2-0-0 [v1]", "2-0-1 [v1]", "2-0-2 [v1]"],
+					["2-1-0 [v1]", "2-1-1 [v1]", "2-1-2 [v1]"],
+					["2-2-0 [v1]", "2-2-1 [v1]", "2-2-2 [v1]"]
+				]
 		],
 		people: [
 			{
@@ -378,21 +378,21 @@
 			}
 		],
 		l0: [
-			[
-				["0-0-1 [v2]", "0-0-1 [v2]", "0-0-2 [v2]"],
-				["0-1-1 [v2]", "0-1-1 [v2]", "0-1-2 [v2]"],
-				["0-2-1 [v2]", "0-2-1 [v2]", "0-2-2 [v2]"]
-			],
-			[
-				["1-0-1 [v2]", "1-0-1 [v2]", "1-0-2 [v2]"],
-				["1-1-1 [v2]", "1-1-1 [v2]", "1-1-2 [v2]"],
-				["1-2-1 [v2]", "1-2-1 [v2]", "1-2-2 [v2]"]
-			],
-			[
-				["2-0-1 [v2]", "2-0-1 [v2]", "2-0-2 [v2]"],
-				["2-1-1 [v2]", "2-1-1 [v2]", "2-1-2 [v2]"],
-				["2-2-1 [v2]", "2-2-1 [v2]", "2-2-2 [v2]"]
-			]
+				[
+					["0-0-1 [v2]", "0-0-1 [v2]", "0-0-2 [v2]"],
+					["0-1-1 [v2]", "0-1-1 [v2]", "0-1-2 [v2]"],
+					["0-2-1 [v2]", "0-2-1 [v2]", "0-2-2 [v2]"]
+				],
+				[
+					["1-0-1 [v2]", "1-0-1 [v2]", "1-0-2 [v2]"],
+					["1-1-1 [v2]", "1-1-1 [v2]", "1-1-2 [v2]"],
+					["1-2-1 [v2]", "1-2-1 [v2]", "1-2-2 [v2]"]
+				],
+				[
+					["2-0-1 [v2]", "2-0-1 [v2]", "2-0-2 [v2]"],
+					["2-1-1 [v2]", "2-1-1 [v2]", "2-1-2 [v2]"],
+					["2-2-1 [v2]", "2-2-1 [v2]", "2-2-2 [v2]"]
+				]
 		],
 		people: [
 			{
@@ -427,15 +427,15 @@
 //	var ct2 = document.getElementById('ct2');
 //	var tpl2 = soma.template.compile(ct2);
 
-	tpl.watch('item.name', function(oldValue, newValue, scope, node, attribute) {
-//		console.log(0, oldValue, newValue, node, scope, attribute);
-		return "Paul";
-	});
-	var count = 2;
-	tpl.watch('cl', function(oldValue, newValue, node, scope, attribute) {
-//		console.log(0, oldValue, newValue, node, scope, attribute);
-//		return "myClass" + count++ % 6;
-	});
+//	tpl.watch('item.name', function(oldValue, newValue, scope, node, attribute) {
+////		console.log(0, oldValue, newValue, node, scope, attribute);
+//		return "Paul";
+//	});
+//	var count = 2;
+//	tpl.watch('cl', function(oldValue, newValue, node, scope, attribute) {
+////		console.log(0, oldValue, newValue, node, scope, attribute);
+////		return "myClass" + count++ % 6;
+//	});
 
 	$('.render1').click(render1);
 	$('.render2').click(render2);

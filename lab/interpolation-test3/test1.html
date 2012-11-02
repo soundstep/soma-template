@@ -9,83 +9,28 @@
 
 <script type="text/javascript">
 
-	var isElement = function(value) {
-		return value ? value.nodeType > 0 : false;
-	};
-
-	var c = 0;
-
-	var HashMap = function(){
-		var uuid = function(a,b){for(b=a='';a++<36;b+=a*51&52?(a^15?8^Math.random()*(a^20?16:4):4).toString(16):'-');return b;}
-		var data = {};
-		var getKey = function(target) {
-			if (!target) return;
-			if (typeof target !== 'object') return target;
-			var result;
-			//if (isElement(target) && target.nodeType === 3) console.log('WOW');
-			//if (isElement(target) && target.nodeType === 3) return null;
-
-			if (target.hashkey) {
-				console.log(0);
-				return target.hashkey;
-			}
-			else {
-				console.log(1);
-				try {
-					target.hashkey = c++;
-				} catch(err){}
-				console.log('1b');
-				return target.hashkey;
-			}
-
+	//var times = 0;
+	function rec(times) {
+		var data = getData(times);
+		console.log('---------', times, data);
+		if (!data) return;
+		for (var i=0; i<data.length; i++) {
+			console.log(i);
+			rec(times+1);
 		}
-		return {
-			put: function(key, value) {
-				var k = getKey(key);
-				console.log('Z', k);
-				data[k] = value;
-			},
-			get: function(key) {
-				var k = getKey(key);
-				console.log('A', k);
-				return data[k];
-			},
-			remove: function(key) {
-				var k = getKey(key);
-				console.log('B', k);
-				delete data[k];
-			},
-			getData: function() {
-				return data;
-			}
-		}
-	};
-
-
-	var uuid = function(a,b){for(b=a='';a++<36;b+=a*51&52?(a^15?8^Math.random()*(a^20?16:4):4).toString(16):'-');return b;}
-
-	var i = -1;
-	var l = 20;
-
-	var ct = document.getElementById('ct').firstChild;
-
-	console.log('start');
-
-	var hm = new HashMap();
-	hm.put(ct, "ok there");
-
-
-	while(++i < l) {
-		console.log('loop ', i);
-
-		var c = hm.get(ct, "ok there");
-		console.log(c);
-
-
-//		alert(hm.get(ct));
 	}
 
+	rec(0);
 
+
+	function getData(t) {
+		var arr = [
+			[1, 2, 3, 4, 5],
+			[1, 2, 3, 4, 5],
+			[1, 2, 3, 4, 5]
+		];
+		return arr[t];
+	}
 
 
 </script>

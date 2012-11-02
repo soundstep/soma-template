@@ -192,7 +192,7 @@
 			var obj = {
 				_parent: null,
 				_children: [],
-				_createChild: function() {
+				_createChild: function(data) {
 					return createChild.apply(obj, arguments);
 				}
 			};
@@ -207,6 +207,8 @@
 	};
 
 	// compile
+
+	var c = 0;
 
 	var Node = function(element, scope) {
 		this.element = element;
@@ -308,98 +310,104 @@
 			}
 		},
 		renderRepeater: function() {
-			if (this.parent && templates.get(this.element)) return;
-			var data = getRepeaterData(this.repeater, this.scope);
-			if (isArray(data)) {
-				var i = -1, l1 = data.length, l2 = this.childrenRepeater.length;
-				var l = l1 > l2 ? l1 : l2;
-				while (++i < l) {
-					if (i < l1) {
-						var previousElement;
-						var existingChild = this.childrenRepeater[i];
-						if (!existingChild) {
-							// no existing node
-							var newElement = this.element.cloneNode(true);
-							newElement.removeAttribute(attributes.repeat);
-							var newNode = getNodeFromElement(newElement, this.scope._createChild());
-							newNode.template = this.template;
-							this.childrenRepeater[i] = newNode;
-							updateScopeWithRepeaterData(this.repeater, newNode.scope, data[i]);
-							newNode.scope['$index'] = i;
-							compile(this.template, newElement, this.parent, this.repeater, newNode);
-							newNode.update();
-							newNode.render();
-							if (!previousElement) {
-								if (this.previousSibling && this.previousSibling.parentNode) insertAfter(this.previousSibling, newElement);
-								else if (this.nextSibling && this.nextSibling.parentNode) insertBefore(this.nextSibling, newElement);
-								else this.parent.element.appendChild(newElement);
-							}
-							else insertAfter(previousElement, newElement);
-							previousElement = newNode.element;
-						}
-						else {
-							// existing node
-							updateScopeWithRepeaterData(this.repeater, existingChild.scope, data[i]);
-							existingChild.scope['$index'] = i;
-							existingChild.update();
-							existingChild.render();
-							previousElement = existingChild.element;
-						}
-					}
-					else {
-						// todo: dispose node
-						this.parent.element.removeChild(this.childrenRepeater[i].element);
-					}
-				}
-				this.childrenRepeater.length = data.length;
+			if (this.repeater) this.element.removeAttribute(attributes.repeat);
+			renderRepeater(this);
+			if (this.element.parentNode) {
+				this.element.parentNode.removeChild(this.element);
 			}
-			else {
-				var count = -1;
-				for (var o in data) {
-					count++;
+		}
+	};
+
+	function renderRepeater(node) {
+		console.log(node);
+		var data = getRepeaterData(node.repeater, node.scope);
+		if (isArray(data)) {
+			var i = -1;
+			var l1 = data.length;
+			var l2 = node.childrenRepeater.length;
+			var l = l1 > l2 ? l1 : l2;
+			while (++i < l) {
+				if (i < l1) {
+
 					var previousElement;
-					var existingChild = this.childrenRepeater[count];
+					var existingChild = node.childrenRepeater[i];
 					if (!existingChild) {
 						// no existing node
-						var newElement = this.element.cloneNode(true);
-						newElement.removeAttribute(attributes.repeat);
-						var newNode = getNodeFromElement(newElement, this.scope._createChild());
-						newNode.template = this.template;
-						this.childrenRepeater[count] = newNode;
-						updateScopeWithRepeaterData(this.repeater, newNode.scope, data[o]);
-						newNode.scope['$key'] = o;
-						compile(this.template, newElement, this.parent, this.repeater, newNode);
+						var newElement = node.element.cloneNode(true);
+						var newNode = getNodeFromElement(newElement, node.scope._createChild());
+						newNode.template = node.template;
+						node.childrenRepeater[i] = newNode;
+						updateScopeWithRepeaterData(node.repeater, newNode.scope, data[i]);
+						newNode.scope['$index'] = i;
+						compile(node.template, newElement, node.parent, node.repeater, newNode);
 						newNode.update();
 						newNode.render();
 						if (!previousElement) {
-							if (this.previousSibling && this.previousSibling.parentNode) insertAfter(this.previousSibling, newElement);
-							else if (this.nextSibling && this.nextSibling.parentNode) insertBefore(this.nextSibling, newElement);
-							else this.parent.element.appendChild(newElement);
+							if (node.previousSibling && node.previousSibling.parentNode) insertAfter(node.previousSibling, newElement);
+							else if (node.nextSibling && node.nextSibling.parentNode) insertBefore(node.nextSibling, newElement);
+							else node.parent.element.appendChild(newElement);
 						}
 						else insertAfter(previousElement, newElement);
 						previousElement = newNode.element;
 					}
 					else {
 						// existing node
-						updateScopeWithRepeaterData(this.repeater, existingChild.scope, data[o]);
-						existingChild.scope['$key'] = o;
+						updateScopeWithRepeaterData(node.repeater, existingChild.scope, data[i]);
+						existingChild.scope['$index'] = i;
 						existingChild.update();
 						existingChild.render();
 						previousElement = existingChild.element;
 					}
 				}
-				var size = count;
-				while (count++ < this.childrenRepeater.length-1) {
+				else {
 					// todo: dispose node
-					this.parent.element.removeChild(this.childrenRepeater[count].element);
+					node.parent.element.removeChild(node.childrenRepeater[i].element);
 				}
-				this.childrenRepeater.length = size+1;
 			}
-			if (this.element.parentNode) {
-				this.element.parentNode.removeChild(this.element);
-			}
+			if (node.childrenRepeater.length > data.length) node.childrenRepeater.length = data.length;
 		}
-	};
+		else {
+			var count = -1;
+			for (var o in data) {
+				count++;
+				var previousElement;
+				var existingChild = this.childrenRepeater[count];
+				if (!existingChild) {
+					// no existing node
+					var newElement = this.element.cloneNode(true);
+					var newNode = getNodeFromElement(newElement, this.scope._createChild());
+					newNode.template = this.template;
+					this.childrenRepeater[count] = newNode;
+					updateScopeWithRepeaterData(this.repeater, newNode.scope, data[o]);
+					newNode.scope['$key'] = o;
+					compile(this.template, newElement, this.parent, this.repeater, newNode);
+					newNode.update();
+					newNode.render();
+					if (!previousElement) {
+						if (this.previousSibling && this.previousSibling.parentNode) insertAfter(this.previousSibling, newElement);
+						else if (this.nextSibling && this.nextSibling.parentNode) insertBefore(this.nextSibling, newElement);
+						else this.parent.element.appendChild(newElement);
+					}
+					else insertAfter(previousElement, newElement);
+					previousElement = newNode.element;
+				}
+				else {
+					// existing node
+					updateScopeWithRepeaterData(this.repeater, existingChild.scope, data[o]);
+					existingChild.scope['$key'] = o;
+					existingChild.update();
+					existingChild.render();
+					previousElement = existingChild.element;
+				}
+			}
+			var size = count;
+			while (count++ < this.childrenRepeater.length-1) {
+				// todo: dispose node
+				this.parent.element.removeChild(this.childrenRepeater[count].element);
+			}
+			this.childrenRepeater.length = size+1;
+		}
+	}
 
 	function getRepeaterData(repeaterValue, scope) {
 		var parts;
@@ -412,7 +420,13 @@
 	function updateScopeWithRepeaterData(repeaterValue, scope, data) {
 		var parts;
 		if (!(parts = repeaterValue.match(regex.repeat))) return;
+
+//		console.log('>>>>>>>> update scope with data', parts);
+
 		var name = parts[1];
+
+//		console.log('assign ', name, ' with ', data);
+
 		scope[name] = data;
 	}
 
@@ -725,6 +739,7 @@
 	Template.prototype = {
 		compile: function() {
 			this.node = compile(this, this.element);
+			console.log(this.node);
 		},
 		update: function(data) {
 			if (isDefined(data)) updateScopeWithData(this.node.scope, data);
