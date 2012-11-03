@@ -22,7 +22,7 @@ describe("template", function () {
 		expect(typeof soma.template.version === 'string').toBeTruthy();
 	});
 
-	it("create template", function () {
+	it("create template with source element", function () {
 		expect(tpl).not.toBeNull();
 		expect(tpl).not.toBeUndefined();
 		expect(tpl.toString()).toEqual('[object Template]');
@@ -31,6 +31,51 @@ describe("template", function () {
 		expect(tpl.node).not.toBeUndefined();
 		expect(tpl.watchers).not.toBeNull();
 		expect(tpl.watchers).not.toBeUndefined();
+	});
+
+	it("create template with source element and target element ", function () {
+		var target = doc.createElement('div');
+		var source = doc.createElement('div');
+		source.innerHTML = "{{name}}";
+		var template = soma.template.create(source, target);
+		expect(template).not.toBeNull();
+		expect(template).not.toBeUndefined();
+		expect(template.toString()).toEqual('[object Template]');
+		expect(template.element).not.toBeNull();
+		expect(template.element).not.toBeUndefined();
+		expect(template.element.innerHTML).not.toBeNull();
+		expect(template.element.innerHTML).not.toBeUndefined();
+		expect(template.element.innerHTML).toEqual(source.innerHTML);
+		expect(template.node).not.toBeNull();
+		expect(template.node).not.toBeUndefined();
+		expect(template.watchers).not.toBeNull();
+		expect(template.watchers).not.toBeUndefined();
+	});
+
+	it("create template string", function () {
+		var str = "{{name}}";
+		var template = soma.template.create(str, ct);
+		expect(template).not.toBeNull();
+		expect(template).not.toBeUndefined();
+		expect(template.toString()).toEqual('[object Template]');
+		expect(template.element).not.toBeNull();
+		expect(template.element).not.toBeUndefined();
+		expect(template.element.innerHTML).not.toBeNull();
+		expect(template.element.innerHTML).not.toBeUndefined();
+		expect(template.element.innerHTML).toEqual(str);
+		expect(template.node).not.toBeNull();
+		expect(template.node).not.toBeUndefined();
+		expect(template.watchers).not.toBeNull();
+		expect(template.watchers).not.toBeUndefined();
+	});
+
+	it("create template string no param throws error", function () {
+		var str = "<div>{{name}}</div>";
+		expect(function(){soma.template.create(str)}).toThrow(soma.template.errors.TEMPLATE_STRING_NO_ELEMENT);
+	});
+
+	it("create template no param throws error", function () {
+		expect(function(){soma.template.create()}).toThrow(soma.template.errors.TEMPLATE_NO_PARAM);
 	});
 
 	it("create same template", function () {

@@ -2,7 +2,8 @@ soma.template = soma.source || {};
 soma.template.version = "0.0.1";
 
 var errors = soma.template.errors = {
-	COMPILE_NO_ELEMENT: "Error in soma.template, no target specified: template.source(element).compile(data).",
+	TEMPLATE_STRING_NO_ELEMENT: "Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create('string', element)",
+	TEMPLATE_NO_PARAM: "Error in soma.template, a template requires at least 1 parameter - soma.template.create(element)",
 	REPEAT_WRONG_ARGUMENTS: "Error in soma.template, repeat attribute requires this syntax: 'item in items'."
 };
 

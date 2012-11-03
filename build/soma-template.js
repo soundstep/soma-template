@@ -6,7 +6,8 @@ soma.template = soma.source || {};
 soma.template.version = "0.0.1";
 
 var errors = soma.template.errors = {
-	COMPILE_NO_ELEMENT: "Error in soma.template, no target specified: template.source(element).compile(data).",
+	TEMPLATE_STRING_NO_ELEMENT: "Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create('string', element)",
+	TEMPLATE_NO_PARAM: "Error in soma.template, a template requires at least 1 parameter - soma.template.create(element)",
 	REPEAT_WRONG_ARGUMENTS: "Error in soma.template, repeat attribute requires this syntax: 'item in items'."
 };
 
@@ -782,13 +783,35 @@ Template.prototype = {
 	}
 };
 
-function createTemplate(element) {
-	if (!isElement(element)) return;
-	var existingTemplate = getTemplate(element);
-	if (existingTemplate) {
-		existingTemplate.dispose();
-		existingTemplate = null;
+function createTemplate(source, target) {
+	var element;
+	if (isString(source)) {
+		// string template
+		if (!isElement(target)) {
+			throw new Error(soma.template.errors.TEMPLATE_STRING_NO_ELEMENT);
+		}
+		target.innerHTML = source;
+		element = target;
 	}
+	else if (isElement(source)) {
+		if (isElement(target)) {
+			// element template with target
+			target.innerHTML = source.innerHTML;
+			element = target;
+		}
+		else {
+			// element template
+			element = source;
+		}
+	}
+	else {
+		throw new Error(soma.template.errors.TEMPLATE_NO_PARAM);
+	}
+	// existing template
+	if (getTemplate(element)) {
+		getTemplate(element).dispose();
+	}
+	// create template
 	var template = new Template(element);
 	templates.put(element, template);
 	return template;
