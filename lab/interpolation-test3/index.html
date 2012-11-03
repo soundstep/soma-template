@@ -60,6 +60,7 @@
 		<p class="boldclass {{cl}}">class on div + text {{test1}} dummy{{test2}}dummy</p>
 	</div>
 	<p class="{{cl2}}">class value on div</p>
+	<p class="watchnode">watch node: {{test1}}</p>
 	<p {{classname}}="myClass2">class name on div</p>
 	<p class="{{getClass()}}">class function with path on div + text function {{getClass()}}</p>
 	<p class="{{getClassParam('p1.p1','p2.p2')}}">class function on div with param + text function with param {{fnParam("p1.p1", "p2.p2")}}</p>
@@ -176,7 +177,7 @@
 </div>
 
 <script type="text/javascript" src="jquery-1.8.2.min.js"></script>
-<script type="text/javascript" src="../../src/soma-template.js"></script>
+<script type="text/javascript" src="../../build/soma-template.js"></script>
 
 <script type="text/javascript">
 
@@ -426,11 +427,19 @@
 //	var scope1 = tpl1.scope;
 //	var ct2 = document.getElementById('ct2');
 //	var tpl2 = soma.template.compile(ct2);
-
-//	tpl.watch('item.name', function(oldValue, newValue, scope, node, attribute) {
-////		console.log(0, oldValue, newValue, node, scope, attribute);
+//	tpl.watch($('.watchnode')[0], function(oldValue, newValue, pattern, scope, node, attribute) {
+//		return "new value";
+//	});
+//	tpl.watch('item.name', function(oldValue, newValue, pattern, scope, node, attribute) {
 //		return "Paul";
 //	});
+//	tpl.watch('functions.checked()', function(oldValue, newValue, pattern, scope, node, attribute) {
+//		console.log(0, oldValue, newValue, pattern, node, scope, attribute);
+//		return 'checked';
+//	});
+
+
+
 //	var count = 2;
 //	tpl.watch('cl', function(oldValue, newValue, node, scope, attribute) {
 ////		console.log(0, oldValue, newValue, node, scope, attribute);

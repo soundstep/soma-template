@@ -1,0 +1,1 @@
+this.soma = this.soma || {};

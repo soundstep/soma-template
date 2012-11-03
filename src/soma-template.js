@@ -2,8 +2,6 @@
 
 	'use strict';
 
-	var VERBOSE = false;
-
 	soma.template = soma.source || {};
 	soma.template.version = "0.0.1";
 
@@ -549,17 +547,10 @@
 		},
 		update: function() {
 			var node = this.node || this.attribute.node;
-			var scope = node.scope;
-			var watchers = node.template.watchers;
-			var val = this.getValue(scope);
-			if (isFunction(watchers[this.pattern])) {
-				var watcherValue = watchers[this.pattern](this.value, val, scope, node, this.attribute);
-				if (isDefined(watcherValue)) {
-					val = watcherValue;
-				}
-			}
-			if (this.value !== val) {
-				this.value = val;
+			var newValue = this.getValue(node.scope);
+			newValue = getWatcherValue(this, newValue);
+			if (this.value !== newValue) {
+				this.value = newValue;
 				(this.node || this.attribute).invalidate = true;
 			}
 		},
@@ -567,6 +558,21 @@
 			return getValue(scope, this.path, this.accessor, this.params, this.isFunction);
 		}
 	};
+
+	function getWatcherValue(exp, newValue) {
+		var node = exp.node || exp.attribute.node;
+		var watchers = node.template.watchers;
+		var nodeTarget = isTextNode(node.element) && node.parent ? node.parent.element : node.element;
+		var watcherNode = watchers.get(nodeTarget);
+		var watcher = watcherNode ? watcherNode : watchers.get(exp.pattern);
+		if (isFunction(watcher)) {
+			var watcherValue = watcher(exp.value, newValue, exp.pattern, node.scope, node, exp.attribute);
+			if (isDefined(watcherValue)) {
+				return watcherValue;
+			}
+		}
+		return newValue;
+	}
 
 	function getValue(data, pathString, accessor, params, isFunc, paramsFound) {
 		var pathParts = pathString.split('.');
@@ -712,7 +718,7 @@
 	// template
 
 	var Template = function(element) {
-		this.watchers = {};
+		this.watchers = new HashMap();
 		this.element = element;
 		this.compile();
 	};
@@ -734,9 +740,10 @@
 		invalidate: function() {
 			if (this.node) this.node.invalidateData();
 		},
-		watch: function(pattern, watcher) {
-			if (!isString(pattern)) return;
-			this.watchers[pattern] = watcher;
+		watch: function(target, watcher) {
+			if (!isString(target) && !isElement(target)) return;
+			console.log('put', target);
+			this.watchers.put(target, watcher);
 		}
 	};
 
@@ -764,7 +771,7 @@
 		templates.put(element, template);
 		return template;
 	}
-	var c = 0;
+
 	function renderAllTemplates() {
 		for (var key in templates.getData()) {
 			templates.get(key).render();

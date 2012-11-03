@@ -3,21 +3,22 @@
 
 
 // base path, that will be used to resolve files and exclude
-basePath = '../../../../../../..';
+basePath = '';
 
 
 // list of files / patterns to load in the browser
 files = [
-  JASMINE,
-  JASMINE_ADAPTER,
-  'src/*.js',
-  'tests/spec/*.js'
+	JASMINE,
+	JASMINE_ADAPTER,
+	'helpers/*.js',
+	'../build/soma-template.js',
+	'spec/api/*.js'
 ];
 
 
 // list of files to exclude
 exclude = [
-  
+
 ];
 
 
