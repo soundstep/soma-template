@@ -46,5 +46,5 @@ phing
 .classpath*
 .idea*
 user.properties*
-#node_modules
+node_modules
 
