@@ -27,6 +27,15 @@ Node.prototype = {
 	dispose: function() {
 
 	},
+	getNode: function(element) {
+		if (element === this.element) return this;
+		else {
+			var i = -1, l = this.children.length;
+			while (++i < l) {
+				return this.children[i].getNode(element);
+			}
+		}
+	},
 	update: function() {
 		if (nodeIsTemplate(this)) return;
 		if (isDefined(this.interpolation)) {

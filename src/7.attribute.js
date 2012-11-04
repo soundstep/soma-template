@@ -5,6 +5,9 @@ var Attribute = function(name, value, node, data) {
 	this.interpolationName = new Interpolation(this.name, null, this);
 	this.interpolationValue = new Interpolation(this.value, null, this);
 	this.invalidate = false;
+	if (this.interpolationName && this.interpolationName.value.match(regex.token)) {
+		this.node.element.removeAttribute(this.interpolationName.value);
+	}
 };
 Attribute.prototype = {
 	toString: function() {

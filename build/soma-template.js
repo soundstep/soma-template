@@ -11,31 +11,26 @@ var errors = soma.template.errors = {
 	REPEAT_WRONG_ARGUMENTS: "Error in soma.template, repeat attribute requires this syntax: 'item in items'."
 };
 
+var tokenStart = '{{';
+var tokenEnd = '}}';
+
 var settings = soma.template.settings = soma.template.settings || {};
 
 var tokens = settings.tokens = {
-	start:"{{",
-	end:"}}"
-};
-
-var regex = settings.regex = {
-	sequence: new RegExp(tokens.start + ".+?" + tokens.end + "|[^" + tokens.start + "]+", "g"), //    \{\{.+?\}\}|[^{]+|\{(?!\{)
-	token: new RegExp(tokens.start + ".*?" + tokens.end, "g"),
-	expression: new RegExp(tokens.start + "|" + tokens.end, "gm"),
-	escape: /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,
-	trim: /^[\s+]+|[\s+]+$/g,
-	repeat: /(.*)\s+in\s+(.*)/,
-	func: /(.*)\((.*)\)/,
-	params: /,\s+|,|\s+,\s+/,
-	quote: /\"|\'/g,
-	content: /[^.|^\s]/gm
-
-	// todo: need to escape the tokens when the user is settings them
-
-	// todo: info about the sequence regex: \{\{.+?\}\}|[^{]+|\{(?!\{)
-	// todo: need the last option: \{(?!\{) in case the tokens.start is at least 2 characters, for 1 character only the first options are enough
-	// this means substr the tokens, need to that on unescaped tokens
-
+	start: function(value) {
+		if (isDefined(value) && value !== '') {
+			tokenStart = escapeRegExp(value);
+			setRegEX(value, true);
+		}
+		return tokenStart;
+	},
+	end: function(value) {
+		if (isDefined(value) && value !== '') {
+			tokenEnd = escapeRegExp(value);
+			setRegEX(value, false);
+		}
+		return tokenEnd;
+	}
 };
 
 var attributes = settings.attributes = {
@@ -52,6 +47,20 @@ var vars = settings.vars = {
 	index: "$index",
 	key: "$key"
 };
+
+var regex = {
+	sequence: null, // \{\{.+?\}\}|[^{]+|\{(?!\{)
+	token: null,
+	expression: null,
+	escape: /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,
+	trim: /^[\s+]+|[\s+]+$/g,
+	repeat: /(.*)\s+in\s+(.*)/,
+	func: /(.*)\((.*)\)/,
+	params: /,\s+|,|\s+,\s+/,
+	quote: /\"|\'/g,
+	content: /[^.|^\s]/gm
+};
+setRegEX();
 
 function isArray(value) {
 	return Object.prototype.toString.apply(value) === '[object Array]';
@@ -93,6 +102,16 @@ function nodeIsTemplate(node) {
 }
 function escapeRegExp(str) {
 	return str.replace(regex.escape, "\\$&");
+}
+function setRegEX(nonEscapedValue, isStartToken) {
+	// \{\{.+?\}\}|[^{]+|\{(?!\{)
+	var endSequence = "";
+	if (isStartToken && nonEscapedValue.length > 1) {
+		endSequence = "|\\" + nonEscapedValue.substr(0, 1) + "(?!\\" + nonEscapedValue.substr(1, 1) + ")";
+	}
+	regex.sequence = new RegExp(tokens.start() + ".+?" + tokens.end() + "|[^" + tokens.start() + "]+" + endSequence, "g");
+	regex.token = new RegExp(tokens.start() + ".*?" + tokens.end(), "g");
+	regex.expression = new RegExp(tokens.start() + "|" + tokens.end(), "gm");
 }
 function trim(value) {
 	return value.replace(regex.trim, '');
@@ -214,8 +233,9 @@ function updateScopeWithRepeaterData(repeaterValue, scope, data) {
 function getWatcherValue(exp, newValue) {
 	var node = exp.node || exp.attribute.node;
 	var watchers = node.template.watchers;
-	var nodeTarget = isTextNode(node.element) && node.parent ? node.parent.element : node.element;
+	var nodeTarget = node.element;
 	var watcherNode = watchers.get(nodeTarget);
+	if (!watcherNode && isTextNode(node.element) && node.parent) watcherNode = watchers.get(node.parent.element);
 	var watcher = watcherNode ? watcherNode : watchers.get(exp.pattern);
 	if (isFunction(watcher)) {
 		var watcherValue = watcher(exp.value, newValue, exp.pattern, node.scope, node, exp.attribute);
@@ -437,6 +457,15 @@ Node.prototype = {
 	dispose: function() {
 
 	},
+	getNode: function(element) {
+		if (element === this.element) return this;
+		else {
+			var i = -1, l = this.children.length;
+			while (++i < l) {
+				return this.children[i].getNode(element);
+			}
+		}
+	},
 	update: function() {
 		if (nodeIsTemplate(this)) return;
 		if (isDefined(this.interpolation)) {
@@ -608,6 +637,9 @@ var Attribute = function(name, value, node, data) {
 	this.interpolationName = new Interpolation(this.name, null, this);
 	this.interpolationValue = new Interpolation(this.value, null, this);
 	this.invalidate = false;
+	if (this.interpolationName && this.interpolationName.value.match(regex.token)) {
+		this.node.element.removeAttribute(this.interpolationName.value);
+	}
 };
 Attribute.prototype = {
 	toString: function() {
@@ -743,16 +775,19 @@ var templates = new HashMap();
 
 var Template = function(element) {
 	this.watchers = new HashMap();
-	this.element = element;
-	this.node;
-	this.compile();
+	this.node = null;
+	this.scope = null;
+	this.compile(element);
 };
 Template.prototype = {
 	toString: function() {
 		return '[object Template]';
 	},
-	compile: function() {
+	compile: function(element) {
+		if (element) this.element = element;
+		if (this.node) this.node.dispose();
 		this.node = compile(this, this.element);
+		this.scope = this.node.scope;
 	},
 	update: function(data) {
 		if (isDefined(data)) updateScopeWithData(this.node.scope, data);
@@ -766,8 +801,17 @@ Template.prototype = {
 		if (this.node) this.node.invalidateData();
 	},
 	watch: function(target, watcher) {
-		if (!isString(target) && !isElement(target)) return;
+		if ( (!isString(target) && !isElement(target)) || !isFunction(watcher)) return;
 		this.watchers.put(target, watcher);
+	},
+	unwatch: function(target) {
+		this.watchers.remove(target);
+	},
+	clearWatchers: function() {
+		this.watchers.dispose();
+	},
+	getNode: function(element) {
+		return this.node.getNode(element);
 	},
 	dispose: function() {
 		templates.remove(this.element);

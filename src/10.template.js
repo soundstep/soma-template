@@ -2,16 +2,19 @@ var templates = new HashMap();
 
 var Template = function(element) {
 	this.watchers = new HashMap();
-	this.element = element;
-	this.node;
-	this.compile();
+	this.node = null;
+	this.scope = null;
+	this.compile(element);
 };
 Template.prototype = {
 	toString: function() {
 		return '[object Template]';
 	},
-	compile: function() {
+	compile: function(element) {
+		if (element) this.element = element;
+		if (this.node) this.node.dispose();
 		this.node = compile(this, this.element);
+		this.scope = this.node.scope;
 	},
 	update: function(data) {
 		if (isDefined(data)) updateScopeWithData(this.node.scope, data);
@@ -25,8 +28,17 @@ Template.prototype = {
 		if (this.node) this.node.invalidateData();
 	},
 	watch: function(target, watcher) {
-		if (!isString(target) && !isElement(target)) return;
+		if ( (!isString(target) && !isElement(target)) || !isFunction(watcher)) return;
 		this.watchers.put(target, watcher);
+	},
+	unwatch: function(target) {
+		this.watchers.remove(target);
+	},
+	clearWatchers: function() {
+		this.watchers.dispose();
+	},
+	getNode: function(element) {
+		return this.node.getNode(element);
 	},
 	dispose: function() {
 		templates.remove(this.element);

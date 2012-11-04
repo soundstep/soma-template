@@ -7,31 +7,26 @@ var errors = soma.template.errors = {
 	REPEAT_WRONG_ARGUMENTS: "Error in soma.template, repeat attribute requires this syntax: 'item in items'."
 };
 
+var tokenStart = '{{';
+var tokenEnd = '}}';
+
 var settings = soma.template.settings = soma.template.settings || {};
 
 var tokens = settings.tokens = {
-	start:"{{",
-	end:"}}"
-};
-
-var regex = settings.regex = {
-	sequence: new RegExp(tokens.start + ".+?" + tokens.end + "|[^" + tokens.start + "]+", "g"), //    \{\{.+?\}\}|[^{]+|\{(?!\{)
-	token: new RegExp(tokens.start + ".*?" + tokens.end, "g"),
-	expression: new RegExp(tokens.start + "|" + tokens.end, "gm"),
-	escape: /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,
-	trim: /^[\s+]+|[\s+]+$/g,
-	repeat: /(.*)\s+in\s+(.*)/,
-	func: /(.*)\((.*)\)/,
-	params: /,\s+|,|\s+,\s+/,
-	quote: /\"|\'/g,
-	content: /[^.|^\s]/gm
-
-	// todo: need to escape the tokens when the user is settings them
-
-	// todo: info about the sequence regex: \{\{.+?\}\}|[^{]+|\{(?!\{)
-	// todo: need the last option: \{(?!\{) in case the tokens.start is at least 2 characters, for 1 character only the first options are enough
-	// this means substr the tokens, need to that on unescaped tokens
-
+	start: function(value) {
+		if (isDefined(value) && value !== '') {
+			tokenStart = escapeRegExp(value);
+			setRegEX(value, true);
+		}
+		return tokenStart;
+	},
+	end: function(value) {
+		if (isDefined(value) && value !== '') {
+			tokenEnd = escapeRegExp(value);
+			setRegEX(value, false);
+		}
+		return tokenEnd;
+	}
 };
 
 var attributes = settings.attributes = {
@@ -48,3 +43,17 @@ var vars = settings.vars = {
 	index: "$index",
 	key: "$key"
 };
+
+var regex = {
+	sequence: null, // \{\{.+?\}\}|[^{]+|\{(?!\{)
+	token: null,
+	expression: null,
+	escape: /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,
+	trim: /^[\s+]+|[\s+]+$/g,
+	repeat: /(.*)\s+in\s+(.*)/,
+	func: /(.*)\((.*)\)/,
+	params: /,\s+|,|\s+,\s+/,
+	quote: /\"|\'/g,
+	content: /[^.|^\s]/gm
+};
+setRegEX();

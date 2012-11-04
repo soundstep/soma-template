@@ -37,11 +37,9 @@ describe("template", function () {
 	});
 
 	it("create template", function () {
-
-		console.log(Template);
 		expect(tpl).not.toBeNull();
-		expect(tpl).not.toBeUndefined();
-		expect(tpl instanceof Template).toBeTruthy();
+		expect(tpl).toBeDefined();
+		expect(tpl).toEqual(jasmine.any(Template));
 	});
 
 });

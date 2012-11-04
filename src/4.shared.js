@@ -15,8 +15,9 @@ function updateScopeWithRepeaterData(repeaterValue, scope, data) {
 function getWatcherValue(exp, newValue) {
 	var node = exp.node || exp.attribute.node;
 	var watchers = node.template.watchers;
-	var nodeTarget = isTextNode(node.element) && node.parent ? node.parent.element : node.element;
+	var nodeTarget = node.element;
 	var watcherNode = watchers.get(nodeTarget);
+	if (!watcherNode && isTextNode(node.element) && node.parent) watcherNode = watchers.get(node.parent.element);
 	var watcher = watcherNode ? watcherNode : watchers.get(exp.pattern);
 	if (isFunction(watcher)) {
 		var watcherValue = watcher(exp.value, newValue, exp.pattern, node.scope, node, exp.attribute);

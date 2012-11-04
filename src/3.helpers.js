@@ -39,6 +39,16 @@ function nodeIsTemplate(node) {
 function escapeRegExp(str) {
 	return str.replace(regex.escape, "\\$&");
 }
+function setRegEX(nonEscapedValue, isStartToken) {
+	// \{\{.+?\}\}|[^{]+|\{(?!\{)
+	var endSequence = "";
+	if (isStartToken && nonEscapedValue.length > 1) {
+		endSequence = "|\\" + nonEscapedValue.substr(0, 1) + "(?!\\" + nonEscapedValue.substr(1, 1) + ")";
+	}
+	regex.sequence = new RegExp(tokens.start() + ".+?" + tokens.end() + "|[^" + tokens.start() + "]+" + endSequence, "g");
+	regex.token = new RegExp(tokens.start() + ".*?" + tokens.end(), "g");
+	regex.expression = new RegExp(tokens.start() + "|" + tokens.end(), "gm");
+}
 function trim(value) {
 	return value.replace(regex.trim, '');
 }
