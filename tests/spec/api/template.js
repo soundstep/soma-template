@@ -181,7 +181,11 @@ describe("template", function () {
 		p1.appendChild(p2);
 		ct.appendChild(p1);
 		tpl.compile(ct);
+
+		console.log(tpl.getNode(p2), tpl.node.children[0].children[0]);
+
 		expect(tpl.node.children[0].children[0].element).toEqual(p2);
+		expect(tpl.getNode(p1)).toEqual(tpl.node.children[0]);
 		expect(tpl.getNode(p2)).toEqual(tpl.node.children[0].children[0]);
 	});
 

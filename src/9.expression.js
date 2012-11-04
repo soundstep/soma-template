@@ -1,4 +1,5 @@
 var Expression = function(pattern, node, attribute) {
+	if (!isDefined(pattern)) return;
 	this.pattern = pattern;
 	this.node = node;
 	this.attribute = attribute;

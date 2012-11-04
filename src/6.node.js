@@ -37,7 +37,7 @@ Node.prototype = {
 		}
 	},
 	update: function() {
-		if (nodeIsTemplate(this)) return;
+		if (childNodeIsTemplate(this)) return;
 		if (isDefined(this.interpolation)) {
 			this.interpolation.update();
 		}
@@ -51,14 +51,14 @@ Node.prototype = {
 		this.updateChildren();
 	},
 	updateChildren: function() {
-		if (nodeIsTemplate(this) || this.repeater) return;
+		if (childNodeIsTemplate(this) || this.repeater) return;
 		var i = -1, l = this.children.length;
 		while (++i < l) {
 			this.children[i].update();
 		}
 	},
 	invalidateData: function() {
-		if (nodeIsTemplate(this)) return;
+		if (childNodeIsTemplate(this)) return;
 		this.invalidate = true;
 		var i, l;
 		if (this.attributes) {
@@ -80,7 +80,7 @@ Node.prototype = {
 		}
 	},
 	render: function() {
-		if (nodeIsTemplate(this)) return;
+		if (childNodeIsTemplate(this)) return;
 		if (this.invalidate) {
 			this.invalidate = false;
 			if (isTextNode(this.element)) {
@@ -101,7 +101,7 @@ Node.prototype = {
 		}
 	},
 	renderChildren: function() {
-		if (nodeIsTemplate(this)) return;
+		if (childNodeIsTemplate(this)) return;
 		var i = -1, l = this.children.length;
 		while (++i < l) {
 			this.children[i].render();

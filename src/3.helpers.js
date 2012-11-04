@@ -25,13 +25,11 @@ function isExpression(value) {
 function isNode(value) {
 	return value && isFunction(value.toString) && value.toString() === '[object Node]';
 }
-function isDate(value){
-	return toString.apply(value) === '[object Date]';
-}
 function isExpFunction(value) {
+	if (!isString(value)) return false;
 	return !!value.match(regex.func);
 }
-function nodeIsTemplate(node) {
+function childNodeIsTemplate(node) {
 	if (!node || !isElement(node.element)) return false;
 	if (node.parent && templates.get(node.element)) return true;
 	return false;
@@ -84,39 +82,6 @@ function removeClass(elm, className) {
 	}
 	removeClass(elm, className);
 }
-function equals(o1, o2) {
-	if (o1 === o2) return true;
-	if (o1 === null || o2 === null) return false;
-	if (o1 !== o1 && o2 !== o2) return true; // NaN === NaN
-	var t1 = typeof o1, t2 = typeof o2, length, key, keySet;
-	if (t1 == t2) {
-		if (t1 == 'object') {
-			if (isArray(o1)) {
-				if ((length = o1.length) == o2.length) {
-					for(key=0; key<length; key++) {
-						if (!equals(o1[key], o2[key])) return false;
-					}
-					return true;
-				}
-			} else if (isDate(o1)) {
-				return isDate(o2) && o1.getTime() == o2.getTime();
-			} else {
-				keySet = {};
-				for(key in o1) {
-					if (!isFunction(o1[key]) && !equals(o1[key], o2[key])) {
-						return false;
-					}
-					keySet[key] = true;
-				}
-				for(key in o2) {
-					if (!keySet[key] && key.charAt(0) !== '$' && !isFunction(o2[key])) return false;
-				}
-				return true;
-			}
-		}
-	}
-	return false;
-}
 function HashMap(){
 	var uuid = function(a,b){for(b=a='';a++<36;b+=a*51&52?(a^15?8^Math.random()*(a^20?16:4):4).toString(16):'-');return b;}
 	var data = {};
@@ -151,3 +116,5 @@ function HashMap(){
 		}
 	}
 }
+
+

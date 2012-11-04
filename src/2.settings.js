@@ -56,4 +56,3 @@ var regex = {
 	quote: /\"|\'/g,
 	content: /[^.|^\s]/gm
 };
-setRegEX();

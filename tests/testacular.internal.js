@@ -10,7 +10,7 @@ basePath = '';
 files = [
 	JASMINE,
 	JASMINE_ADAPTER,
-	"helpers/*.js",
+	"helpers/package.js",
 	"../src/2.settings.js",
 	"../src/3.helpers.js",
 	"../src/4.shared.js",
@@ -21,6 +21,7 @@ files = [
 	"../src/9.expression.js",
 	"../src/10.template.js",
 	"../src/11.export.js",
+	"helpers/dom.js",
 	'spec/internal/*.js'
 ];
 

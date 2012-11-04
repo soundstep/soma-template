@@ -43,6 +43,8 @@ function renderAllTemplates() {
 	}
 }
 
+setRegEX();
+
 // exports
 soma.template.create = createTemplate;
 soma.template.get = getTemplate;

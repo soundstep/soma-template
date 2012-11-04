@@ -14,6 +14,7 @@ Template.prototype = {
 		if (element) this.element = element;
 		if (this.node) this.node.dispose();
 		this.node = compile(this, this.element);
+		this.node.root = true;
 		this.scope = this.node.scope;
 	},
 	update: function(data) {

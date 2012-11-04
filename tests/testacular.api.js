@@ -10,8 +10,8 @@ basePath = '';
 files = [
 	JASMINE,
 	JASMINE_ADAPTER,
-	'helpers/*.js',
 	'../build/soma-template.js',
+	'helpers/*.js',
 	'spec/api/*.js'
 ];
 
