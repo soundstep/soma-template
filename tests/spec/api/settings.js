@@ -1,4 +1,4 @@
-describe("settings", function () {
+describe("api - settings", function () {
 
 	var settings;
 
@@ -70,6 +70,7 @@ describe("settings", function () {
 		t1.scope.name = 'john';
 		t1.render();
 		expect(t1.element.firstChild.innerHTML).toEqual('{{name}}');
+		settings.attributes.skip = 'data-skip';
 	});
 
 	it("change src", function () {
@@ -78,6 +79,7 @@ describe("settings", function () {
 		t1.scope.name = 'john';
 		t1.render();
 		expect(t1.element.firstChild.getAttribute('src')).toEqual('john');
+		settings.attributes.src = 'data-src';
 	});
 
 	it("change href", function () {
@@ -86,6 +88,7 @@ describe("settings", function () {
 		t1.scope.name = 'soundstep.com';
 		t1.render();
 		expect(t1.element.firstChild.getAttribute('href')).toEqual('soundstep.com');
+		settings.attributes.href = 'data-href';
 	});
 
 	it("change show", function () {
@@ -94,6 +97,7 @@ describe("settings", function () {
 		t1.scope.name = 'soundstep.com';
 		t1.render();
 		expect(t1.element.firstChild.style.display).toEqual('block');
+		settings.attributes.show = 'data-show';
 	});
 
 	it("change hide", function () {
@@ -102,6 +106,7 @@ describe("settings", function () {
 		t1.scope.name = 'soundstep.com';
 		t1.render();
 		expect(t1.element.firstChild.style.display).toEqual('none');
+		settings.attributes.hide = 'data-hide';
 	});
 
 	it("change cloak", function () {
@@ -110,34 +115,38 @@ describe("settings", function () {
 		t1.scope.name = 'soundstep.com';
 		t1.render();
 		expect(t1.element.firstChild.getAttribute('class')).not.toEqual('custom-cloak');
+		settings.attributes.cloak = 'data-cloak';
 	});
 
-	it("change cloak", function () {
+	it("change repeat", function () {
 		settings.attributes.repeat = 'custom-repeat';
 		var t1 = createTemplateWithContent('<span custom-repeat="item in items"></span>');
 		t1.scope.items = [1, 2, 3];
 		t1.render();
 		expect(t1.element.childNodes.length).toEqual(3);
+		settings.attributes.repeat = 'data-repeat';
 	});
 
 	it("change index", function () {
 		settings.vars.index = 'new-index';
-		var t1 = createTemplateWithContent('<span custom-repeat="item in items">{{new-index}}</span>');
+		var t1 = createTemplateWithContent('<span data-repeat="item in items">{{new-index}}</span>');
 		t1.scope.items = [1, 2, 3];
 		t1.render();
 		expect(t1.element.childNodes[0].firstChild.nodeValue).toEqual('0');
 		expect(t1.element.childNodes[1].firstChild.nodeValue).toEqual('1');
 		expect(t1.element.childNodes[2].firstChild.nodeValue).toEqual('2');
+		settings.vars.index = '$index';
 	});
 
 	it("change index", function () {
 		settings.vars.key = 'new-key';
-		var t1 = createTemplateWithContent('<span custom-repeat="item in items">{{new-key}}</span>');
+		var t1 = createTemplateWithContent('<span data-repeat="item in items">{{new-key}}</span>');
 		t1.scope.items = {item1:1, item2:2, item3:3};
 		t1.render();
 		expect(t1.element.childNodes[0].firstChild.nodeValue).toEqual('item1');
 		expect(t1.element.childNodes[1].firstChild.nodeValue).toEqual('item2');
 		expect(t1.element.childNodes[2].firstChild.nodeValue).toEqual('item3');
+		settings.vars.key = '$key';
 	});
 
 });

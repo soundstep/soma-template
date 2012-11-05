@@ -28,13 +28,24 @@ Node.prototype = {
 
 	},
 	getNode: function(element) {
+		var node;
 		if (element === this.element) return this;
+		else if (this.childrenRepeater.length > 0) {
+			var k = -1, kl = this.childrenRepeater.length;
+			while (++k < kl) {
+				node = this.childrenRepeater[k].getNode(element);
+
+				if (node) return node;
+			}
+		}
 		else {
 			var i = -1, l = this.children.length;
 			while (++i < l) {
-				return this.children[i].getNode(element);
+				node = this.children[i].getNode(element);
+				if (node) return node;
 			}
 		}
+		return null;
 	},
 	update: function() {
 		if (childNodeIsTemplate(this)) return;
@@ -122,6 +133,7 @@ Node.prototype = {
 						// no existing node
 						var newElement = this.element.cloneNode(true);
 						var newNode = getNodeFromElement(newElement, this.scope._createChild(), true);
+						newNode.parent = this;
 						newNode.template = this.template;
 						this.childrenRepeater[i] = newNode;
 						updateScopeWithRepeaterData(this.repeater, newNode.scope, data[i]);
@@ -163,6 +175,7 @@ Node.prototype = {
 					// no existing node
 					var newElement = this.element.cloneNode(true);
 					var newNode = getNodeFromElement(newElement, this.scope._createChild(), true);
+					newNode.parent = this.parent;
 					newNode.template = this.template;
 					this.childrenRepeater[count] = newNode;
 					updateScopeWithRepeaterData(this.repeater, newNode.scope, data[o]);

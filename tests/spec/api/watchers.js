@@ -1,4 +1,4 @@
-describe("watchers", function () {
+describe("api - watchers", function () {
 
 	beforeEach(function () {
 		createContainer();

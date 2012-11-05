@@ -1,4 +1,4 @@
-describe("helpers", function () {
+describe("internal - helpers", function () {
 
 	beforeEach(function () {
 		createContainer();

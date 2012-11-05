@@ -1,4 +1,4 @@
-describe("scope", function () {
+describe("internal - scope", function () {
 
 	beforeEach(function () {
 
@@ -31,7 +31,18 @@ describe("scope", function () {
 		expect(scope._children[0].name).toEqual('david');
 		expect(child.name).toEqual('david');
 		expect(child._parent.name).toEqual('john');
-		console.log(scope);
+	});
+
+	it("create scope with data", function () {
+		var scope = new Scope({data:1});
+		expect(scope.data).toEqual(1);
+	});
+
+	it("create child scope with data", function () {
+		var scope = new Scope({data:1});
+		var child = scope._createChild({data:2});
+		expect(scope.data).toEqual(1);
+		expect(child.data).toEqual(2);
 	});
 
 });
