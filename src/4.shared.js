@@ -16,6 +16,7 @@ function getWatcherValue(exp, newValue) {
 	var node = exp.node || exp.attribute.node;
 	var watchers = node.template.watchers;
 	var nodeTarget = node.element;
+	if (!watchers) return newValue;
 	var watcherNode = watchers.get(nodeTarget);
 	if (!watcherNode && isTextNode(node.element) && node.parent) watcherNode = watchers.get(node.parent.element);
 	var watcher = watcherNode ? watcherNode : watchers.get(exp.pattern);
@@ -182,5 +183,115 @@ function clearScope(scope) {
 			scope[key] = null;
 			delete scope[key];
 		}
+	}
+}
+
+function updateNodeChildren(node) {
+	if (childNodeIsTemplate(node) || node.repeater || !node.children) return;
+	var i = -1, l = node.children.length;
+	while (++i < l) {
+		node.children[i].update();
+	}
+}
+
+function renderNodeChildren(node) {
+	if (childNodeIsTemplate(node) || !node.children) return;
+	var i = -1, l = node.children.length;
+	while (++i < l) {
+		node.children[i].render();
+	}
+}
+
+function renderNodeRepeater(node) {
+	var data = getRepeaterData(node.repeater, node.scope);
+	if (isArray(data)) {
+		var i = -1;
+		var l1 = data.length;
+		var l2 = node.childrenRepeater.length;
+		var l = l1 > l2 ? l1 : l2;
+		while (++i < l) {
+			if (i < l1) {
+				var previousElement;
+				var existingChild = node.childrenRepeater[i];
+				if (!existingChild) {
+					// no existing node
+					var newElement = node.element.cloneNode(true);
+					var newNode = getNodeFromElement(newElement, node.scope._createChild(), true);
+					newNode.parent = node;
+					newNode.template = node.template;
+					node.childrenRepeater[i] = newNode;
+					updateScopeWithRepeaterData(node.repeater, newNode.scope, data[i]);
+					newNode.scope[vars.index] = i;
+					compile(node.template, newElement, node.parent, newNode);
+					newNode.update();
+					newNode.render();
+					if (!previousElement) {
+						if (node.previousSibling) insertAfter(node.previousSibling, newElement);
+						else if (node.nextSibling) insertBefore(node.nextSibling, newElement);
+						else node.parent.element.appendChild(newElement);
+					}
+					else insertAfter(previousElement, newElement);
+					previousElement = newNode.element;
+				}
+				else {
+					// existing node
+					updateScopeWithRepeaterData(node.repeater, existingChild.scope, data[i]);
+					existingChild.scope[vars.index] = i;
+					existingChild.update();
+					existingChild.render();
+					previousElement = existingChild.element;
+				}
+			}
+			else {
+				// todo: dispose node
+				node.parent.element.removeChild(node.childrenRepeater[i].element);
+			}
+		}
+		if (node.childrenRepeater.length > data.length) node.childrenRepeater.length = data.length;
+	}
+	else {
+		var count = -1;
+		for (var o in data) {
+			count++;
+			var previousElement;
+			var existingChild = node.childrenRepeater[count];
+			if (!existingChild) {
+				// no existing node
+				var newElement = node.element.cloneNode(true);
+				var newNode = getNodeFromElement(newElement, node.scope._createChild(), true);
+				newNode.parent = node.parent;
+				newNode.template = node.template;
+				node.childrenRepeater[count] = newNode;
+				updateScopeWithRepeaterData(node.repeater, newNode.scope, data[o]);
+				newNode.scope[vars.key] = o;
+				compile(node.template, newElement, node.parent, newNode);
+				newNode.update();
+				newNode.render();
+				if (!previousElement) {
+					if (node.previousSibling) insertAfter(node.previousSibling, newElement);
+					else if (node.nextSibling) insertBefore(node.nextSibling, newElement);
+					else node.parent.element.appendChild(newElement);
+				}
+				else insertAfter(previousElement, newElement);
+				previousElement = newNode.element;
+			}
+			else {
+				// existing node
+				updateScopeWithRepeaterData(node.repeater, existingChild.scope, data[o]);
+				existingChild.scope[vars.key] = o;
+				existingChild.update();
+				existingChild.render();
+				previousElement = existingChild.element;
+			}
+		}
+		var size = count;
+		while (count++ < node.childrenRepeater.length-1) {
+			// todo: dispose node
+			node.parent.element.removeChild(node.childrenRepeater[count].element);
+		}
+		node.childrenRepeater.length = size+1;
+	}
+	if (node.element.parentNode) {
+		node.element.parentNode.removeChild(node.element);
 	}
 }

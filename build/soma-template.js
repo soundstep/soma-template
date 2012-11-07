@@ -200,6 +200,7 @@ function getWatcherValue(exp, newValue) {
 	var node = exp.node || exp.attribute.node;
 	var watchers = node.template.watchers;
 	var nodeTarget = node.element;
+	if (!watchers) return newValue;
 	var watcherNode = watchers.get(nodeTarget);
 	if (!watcherNode && isTextNode(node.element) && node.parent) watcherNode = watchers.get(node.parent.element);
 	var watcher = watcherNode ? watcherNode : watchers.get(exp.pattern);
@@ -369,6 +370,116 @@ function clearScope(scope) {
 	}
 }
 
+function updateNodeChildren(node) {
+	if (childNodeIsTemplate(node) || node.repeater || !node.children) return;
+	var i = -1, l = node.children.length;
+	while (++i < l) {
+		node.children[i].update();
+	}
+}
+
+function renderNodeChildren(node) {
+	if (childNodeIsTemplate(node) || !node.children) return;
+	var i = -1, l = node.children.length;
+	while (++i < l) {
+		node.children[i].render();
+	}
+}
+
+function renderNodeRepeater(node) {
+	var data = getRepeaterData(node.repeater, node.scope);
+	if (isArray(data)) {
+		var i = -1;
+		var l1 = data.length;
+		var l2 = node.childrenRepeater.length;
+		var l = l1 > l2 ? l1 : l2;
+		while (++i < l) {
+			if (i < l1) {
+				var previousElement;
+				var existingChild = node.childrenRepeater[i];
+				if (!existingChild) {
+					// no existing node
+					var newElement = node.element.cloneNode(true);
+					var newNode = getNodeFromElement(newElement, node.scope._createChild(), true);
+					newNode.parent = node;
+					newNode.template = node.template;
+					node.childrenRepeater[i] = newNode;
+					updateScopeWithRepeaterData(node.repeater, newNode.scope, data[i]);
+					newNode.scope[vars.index] = i;
+					compile(node.template, newElement, node.parent, newNode);
+					newNode.update();
+					newNode.render();
+					if (!previousElement) {
+						if (node.previousSibling) insertAfter(node.previousSibling, newElement);
+						else if (node.nextSibling) insertBefore(node.nextSibling, newElement);
+						else node.parent.element.appendChild(newElement);
+					}
+					else insertAfter(previousElement, newElement);
+					previousElement = newNode.element;
+				}
+				else {
+					// existing node
+					updateScopeWithRepeaterData(node.repeater, existingChild.scope, data[i]);
+					existingChild.scope[vars.index] = i;
+					existingChild.update();
+					existingChild.render();
+					previousElement = existingChild.element;
+				}
+			}
+			else {
+				// todo: dispose node
+				node.parent.element.removeChild(node.childrenRepeater[i].element);
+			}
+		}
+		if (node.childrenRepeater.length > data.length) node.childrenRepeater.length = data.length;
+	}
+	else {
+		var count = -1;
+		for (var o in data) {
+			count++;
+			var previousElement;
+			var existingChild = node.childrenRepeater[count];
+			if (!existingChild) {
+				// no existing node
+				var newElement = node.element.cloneNode(true);
+				var newNode = getNodeFromElement(newElement, node.scope._createChild(), true);
+				newNode.parent = node.parent;
+				newNode.template = node.template;
+				node.childrenRepeater[count] = newNode;
+				updateScopeWithRepeaterData(node.repeater, newNode.scope, data[o]);
+				newNode.scope[vars.key] = o;
+				compile(node.template, newElement, node.parent, newNode);
+				newNode.update();
+				newNode.render();
+				if (!previousElement) {
+					if (node.previousSibling) insertAfter(node.previousSibling, newElement);
+					else if (node.nextSibling) insertBefore(node.nextSibling, newElement);
+					else node.parent.element.appendChild(newElement);
+				}
+				else insertAfter(previousElement, newElement);
+				previousElement = newNode.element;
+			}
+			else {
+				// existing node
+				updateScopeWithRepeaterData(node.repeater, existingChild.scope, data[o]);
+				existingChild.scope[vars.key] = o;
+				existingChild.update();
+				existingChild.render();
+				previousElement = existingChild.element;
+			}
+		}
+		var size = count;
+		while (count++ < node.childrenRepeater.length-1) {
+			// todo: dispose node
+			node.parent.element.removeChild(node.childrenRepeater[count].element);
+		}
+		node.childrenRepeater.length = size+1;
+	}
+	if (node.element.parentNode) {
+		node.element.parentNode.removeChild(node.element);
+	}
+}
+
 var Scope = function(data) {
 	function createChild(data) {
 		var obj = createObject(data);
@@ -421,7 +532,40 @@ Node.prototype = {
 		return '[object Node]';
 	},
 	dispose: function() {
-
+		var i, l;
+		if (this.children) {
+			i = -1; l = this.children.length;
+			while (++i < l) {
+				this.children[i].dispose();
+			}
+		}
+		if (this.childrenRepeater) {
+			i = 0; l = this.childrenRepeater.length;
+			while (++i < l) {
+				this.childrenRepeater[i].dispose();
+			}
+		}
+		if (this.attributes) {
+			i = 0; l = this.attributes.length;
+			while (++i < l) {
+				this.attributes[i].dispose();
+			}
+		}
+		if (this.interpolation) {
+			this.interpolation.dispose();
+		}
+		this.element = null;
+		this.scope = null;
+		this.attributes = null;
+		this.value = null;
+		this.interpolation = null;
+		this.repeater = null;
+		this.parent = null;
+		this.children = null;
+		this.childrenRepeater = null;
+		this.previousSibling = null;
+		this.nextSibling = null;
+		this.template = null;
 	},
 	getNode: function(element) {
 		var node;
@@ -451,18 +595,10 @@ Node.prototype = {
 		if (isDefined(this.attributes)) {
 			var i = -1, l = this.attributes.length;
 			while (++i < l) {
-				this.attributes[i].interpolationName.update();
-				this.attributes[i].interpolationValue.update();
+				this.attributes[i].update();
 			}
 		}
-		this.updateChildren();
-	},
-	updateChildren: function() {
-		if (childNodeIsTemplate(this) || this.repeater) return;
-		var i = -1, l = this.children.length;
-		while (++i < l) {
-			this.children[i].update();
-		}
+		updateNodeChildren(this);
 	},
 	invalidateData: function() {
 		if (childNodeIsTemplate(this)) return;
@@ -491,7 +627,7 @@ Node.prototype = {
 		if (this.invalidate) {
 			this.invalidate = false;
 			if (isTextNode(this.element)) {
-				this.element.nodeValue = this.interpolation.render();
+				this.value = this.element.nodeValue = this.interpolation.render();
 			}
 		}
 		if (this.attributes) {
@@ -501,110 +637,10 @@ Node.prototype = {
 			}
 		}
 		if (this.repeater) {
-			this.renderRepeater();
+			renderNodeRepeater(this);
 		}
 		else {
-			this.renderChildren();
-		}
-	},
-	renderChildren: function() {
-		if (childNodeIsTemplate(this)) return;
-		var i = -1, l = this.children.length;
-		while (++i < l) {
-			this.children[i].render();
-		}
-	},
-	renderRepeater: function() {
-		var data = getRepeaterData(this.repeater, this.scope);
-		if (isArray(data)) {
-			var i = -1;
-			var l1 = data.length;
-			var l2 = this.childrenRepeater.length;
-			var l = l1 > l2 ? l1 : l2;
-			while (++i < l) {
-				if (i < l1) {
-					var previousElement;
-					var existingChild = this.childrenRepeater[i];
-					if (!existingChild) {
-						// no existing node
-						var newElement = this.element.cloneNode(true);
-						var newNode = getNodeFromElement(newElement, this.scope._createChild(), true);
-						newNode.parent = this;
-						newNode.template = this.template;
-						this.childrenRepeater[i] = newNode;
-						updateScopeWithRepeaterData(this.repeater, newNode.scope, data[i]);
-						newNode.scope[vars.index] = i;
-						compile(this.template, newElement, this.parent, newNode);
-						newNode.update();
-						newNode.render();
-						if (!previousElement) {
-							if (this.previousSibling) insertAfter(this.previousSibling, newElement);
-							else if (this.nextSibling) insertBefore(this.nextSibling, newElement);
-							else this.parent.element.appendChild(newElement);
-						}
-						else insertAfter(previousElement, newElement);
-						previousElement = newNode.element;
-					}
-					else {
-						// existing node
-						updateScopeWithRepeaterData(this.repeater, existingChild.scope, data[i]);
-						existingChild.scope[vars.index] = i;
-						existingChild.update();
-						existingChild.render();
-						previousElement = existingChild.element;
-					}
-				}
-				else {
-					// todo: dispose node
-					this.parent.element.removeChild(this.childrenRepeater[i].element);
-				}
-			}
-			if (this.childrenRepeater.length > data.length) this.childrenRepeater.length = data.length;
-		}
-		else {
-			var count = -1;
-			for (var o in data) {
-				count++;
-				var previousElement;
-				var existingChild = this.childrenRepeater[count];
-				if (!existingChild) {
-					// no existing node
-					var newElement = this.element.cloneNode(true);
-					var newNode = getNodeFromElement(newElement, this.scope._createChild(), true);
-					newNode.parent = this.parent;
-					newNode.template = this.template;
-					this.childrenRepeater[count] = newNode;
-					updateScopeWithRepeaterData(this.repeater, newNode.scope, data[o]);
-					newNode.scope[vars.key] = o;
-					compile(this.template, newElement, this.parent, newNode);
-					newNode.update();
-					newNode.render();
-					if (!previousElement) {
-						if (this.previousSibling) insertAfter(this.previousSibling, newElement);
-						else if (this.nextSibling) insertBefore(this.nextSibling, newElement);
-						else this.parent.element.appendChild(newElement);
-					}
-					else insertAfter(previousElement, newElement);
-					previousElement = newNode.element;
-				}
-				else {
-					// existing node
-					updateScopeWithRepeaterData(this.repeater, existingChild.scope, data[o]);
-					existingChild.scope[vars.key] = o;
-					existingChild.update();
-					existingChild.render();
-					previousElement = existingChild.element;
-				}
-			}
-			var size = count;
-			while (count++ < this.childrenRepeater.length-1) {
-				// todo: dispose node
-				this.parent.element.removeChild(this.childrenRepeater[count].element);
-			}
-			this.childrenRepeater.length = size+1;
-		}
-		if (this.element.parentNode) {
-			this.element.parentNode.removeChild(this.element);
+			renderNodeChildren(this);
 		}
 	}
 };
@@ -619,6 +655,19 @@ var Attribute = function(name, value, node, data) {
 Attribute.prototype = {
 	toString: function() {
 		return '[object Attribute]';
+	},
+	dispose: function() {
+		if (this.interpolationName) this.interpolationName.dispose();
+		if (this.interpolationValue) this.interpolationValue.dispose();
+		this.interpolationName = null;
+		this.interpolationValue = null;
+		this.name = null;
+		this.value = null;
+		this.node = null;
+	},
+	update: function() {
+		this.interpolationName.update();
+		this.interpolationValue.update();
 	},
 	render: function() {
 		if (this.node.repeater) return;
@@ -696,6 +745,9 @@ Interpolation.prototype = {
 	toString: function() {
 		return '[object Interpolation]';
 	},
+	dispose: function() {
+
+	},
 	update: function() {
 		var i = -1, l = this.expressions.length;
 		while (++i < l) {
@@ -735,7 +787,9 @@ Expression.prototype = {
 		return '[object Expression]';
 	},
 	update: function() {
-		var node = this.node || this.attribute.node;
+		var node = this.node;
+		if (!node && this.attribute) node = this.attribute.node;
+		if (!node && node.scope) return;
 		var newValue = this.getValue(node.scope);
 		newValue = getWatcherValue(this, newValue);
 		if (this.value !== newValue) {

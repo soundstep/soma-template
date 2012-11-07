@@ -24,6 +24,9 @@ Interpolation.prototype = {
 	toString: function() {
 		return '[object Interpolation]';
 	},
+	dispose: function() {
+
+	},
 	update: function() {
 		var i = -1, l = this.expressions.length;
 		while (++i < l) {

@@ -139,6 +139,69 @@ describe("api - node", function () {
 		expect(tpl.node.children[0].nextSibling).toEqual(tpl.node.children[1].element);
 	});
 
+	it("get node from element", function () {
+		var p1 = doc.createElement('p');
+		var p1b = doc.createElement('p');
+		var p2 = doc.createElement('p');
+		p1.appendChild(p2);
+		ct.appendChild(p1);
+		ct.appendChild(p1b);
+		tpl.compile(ct);
+		expect(tpl.getNode(p1)).toEqual(tpl.node.children[0]);
+		expect(tpl.getNode(p1b)).toEqual(tpl.node.children[1]);
+		expect(tpl.getNode(p2)).toEqual(tpl.node.children[0].children[0]);
+	});
 
+	it("get node child repeater from element", function () {
+		tpl.element.innerHTML = '<div data-repeat="item in items">{{$index}}</div>';
+		tpl.compile();
+		tpl.scope.items = [1, 2, 3];
+		tpl.render();
+		expect(tpl.getNode(tpl.element.childNodes[0])).toEqual(tpl.node.children[0].childrenRepeater[0])
+		expect(tpl.getNode(tpl.element.childNodes[1])).toEqual(tpl.node.children[0].childrenRepeater[1])
+		expect(tpl.getNode(tpl.element.childNodes[2])).toEqual(tpl.node.children[0].childrenRepeater[2])
+	});
+
+	it("values pre-rendering", function () {
+		ct.innerHTML = '<p>{{name}}</p>';
+		tpl.compile();
+		tpl.scope.name = 'john';
+		tpl.node.children[0].children[0].update();
+		console.log(ct);
+		expect(ct.innerHTML).toEqual('<p>{{name}}</p>');
+		expect(tpl.node.children[0].children[0].value).toEqual('{{name}}');
+	});
+
+	it("values post-rendering", function () {
+		ct.innerHTML = '<p>{{name}}</p>';
+		tpl.compile();
+		tpl.scope.name = 'john';
+		tpl.node.children[0].children[0].update();
+		tpl.node.children[0].children[0].render();
+		expect(ct.innerHTML).toEqual('<p>john</p>');
+		expect(tpl.node.children[0].children[0].value).toEqual('john');
+	});
+
+	it("dispose", function() {
+		tpl.element.innerHTML = '{{name}}<div data-repeat="item in items">{{$index}}</div><div><p>{{age}}</p></div>';
+		tpl.compile();
+		tpl.scope.items = [1, 2, 3];
+		tpl.scope.name = 'john';
+		tpl.scope.age = 21;
+		tpl.render();
+		tpl.node.dispose();
+		expect(tpl.node.element).toBeNull();
+		expect(tpl.node.scope).toBeNull();
+		expect(tpl.node.attributes).toBeNull();
+		expect(tpl.node.value).toBeNull();
+		expect(tpl.node.interpolation).toBeNull();
+		expect(tpl.node.repeater).toBeNull();
+		expect(tpl.node.parent).toBeNull();
+		expect(tpl.node.children).toBeNull();
+		expect(tpl.node.childrenRepeater).toBeNull();
+		expect(tpl.node.previousSibling).toBeNull();
+		expect(tpl.node.nextSibling).toBeNull();
+		expect(tpl.node.template).toBeNull();
+	});
 
 });

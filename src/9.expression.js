@@ -15,7 +15,9 @@ Expression.prototype = {
 		return '[object Expression]';
 	},
 	update: function() {
-		var node = this.node || this.attribute.node;
+		var node = this.node;
+		if (!node && this.attribute) node = this.attribute.node;
+		if (!node && node.scope) return;
 		var newValue = this.getValue(node.scope);
 		newValue = getWatcherValue(this, newValue);
 		if (this.value !== newValue) {

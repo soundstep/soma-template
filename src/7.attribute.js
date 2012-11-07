@@ -10,6 +10,19 @@ Attribute.prototype = {
 	toString: function() {
 		return '[object Attribute]';
 	},
+	dispose: function() {
+		if (this.interpolationName) this.interpolationName.dispose();
+		if (this.interpolationValue) this.interpolationValue.dispose();
+		this.interpolationName = null;
+		this.interpolationValue = null;
+		this.name = null;
+		this.value = null;
+		this.node = null;
+	},
+	update: function() {
+		this.interpolationName.update();
+		this.interpolationValue.update();
+	},
 	render: function() {
 		if (this.node.repeater) return;
 		var element = this.node.element;

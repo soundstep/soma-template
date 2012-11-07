@@ -175,27 +175,4 @@ describe("api - template", function () {
 		expect(tpl.node.children[0].interpolation.expressions[0].value).toEqual('john');
 	});
 
-	it("get node from element", function () {
-		var p1 = doc.createElement('p');
-		var p1b = doc.createElement('p');
-		var p2 = doc.createElement('p');
-		p1.appendChild(p2);
-		ct.appendChild(p1);
-		ct.appendChild(p1b);
-		tpl.compile(ct);
-		expect(tpl.getNode(p1)).toEqual(tpl.node.children[0]);
-		expect(tpl.getNode(p1b)).toEqual(tpl.node.children[1]);
-		expect(tpl.getNode(p2)).toEqual(tpl.node.children[0].children[0]);
-	});
-
-	it("get node child repeater from element", function () {
-		tpl.element.innerHTML = '<div data-repeat="item in items">{{$index}}</div>';
-		tpl.compile();
-		tpl.scope.items = [1, 2, 3];
-		tpl.render();
-		expect(tpl.getNode(tpl.element.childNodes[0])).toEqual(tpl.node.children[0].childrenRepeater[0])
-		expect(tpl.getNode(tpl.element.childNodes[1])).toEqual(tpl.node.children[0].childrenRepeater[1])
-		expect(tpl.getNode(tpl.element.childNodes[2])).toEqual(tpl.node.children[0].childrenRepeater[2])
-	});
-
 });
