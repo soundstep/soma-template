@@ -57,7 +57,7 @@ describe("internal - interpolation", function () {
 		expect(int.expressions.length).toEqual(0);
 	});
 
-	it("update no expression", function () {
+	it("render no expression", function () {
 		var int = new Interpolation('string', null, null);
 		int.update();
 		expect(int.value).toEqual('string');
@@ -112,7 +112,13 @@ describe("internal - interpolation", function () {
 	});
 
 	it("dispose", function () {
-
+		var int = new Interpolation('{{name}} is my name, {{age}} is my age, {{genre}} is my genre.', node, null);
+		int.dispose();
+		expect(int.value).toBeNull();
+		expect(int.node).toBeNull();
+		expect(int.attribute).toBeNull();
+		expect(int.sequence).toBeNull();
+		expect(int.expressions).toBeNull();
 	});
 
 });

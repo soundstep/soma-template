@@ -14,6 +14,9 @@ Expression.prototype = {
 	toString: function() {
 		return '[object Expression]';
 	},
+	dispose: function() {
+
+	},
 	update: function() {
 		var node = this.node;
 		if (!node && this.attribute) node = this.attribute.node;

@@ -25,7 +25,17 @@ Interpolation.prototype = {
 		return '[object Interpolation]';
 	},
 	dispose: function() {
-
+		if (this.expressions) {
+			var i = -1, l = this.expressions.length;
+			while (++i < l) {
+				this.expressions[i].dispose();
+			}
+		}
+		this.value = null;
+		this.node = null;
+		this.attribute = null;
+		this.sequence = null;
+		this.expressions = null;
 	},
 	update: function() {
 		var i = -1, l = this.expressions.length;
