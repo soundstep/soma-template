@@ -278,7 +278,85 @@ describe("internal - shared", function () {
 	});
 
 	it("hasInterpolation", function () {
+		expect(hasInterpolation('a string')).toBeFalsy();
+		expect(hasInterpolation('an {{interpolation}} string')).toBeTruthy();
+	});
 
+	it("hasContent", function () {
+		expect(hasContent('')).toBeFalsy();
+		expect(hasContent(' ')).toBeFalsy();
+		expect(hasContent('	')).toBeFalsy();
+		expect(hasContent('\n')).toBeFalsy();
+		expect(hasContent('string')).toBeTruthy();
+	});
+
+	it("isElementValid", function () {
+		expect(isElementValid('')).toBeFalsy();
+		expect(isElementValid('string')).toBeFalsy();
+		expect(isElementValid({})).toBeFalsy();
+		expect(isElementValid(ct)).toBeTruthy();
+		ct.innerHTML = "text";
+		expect(isElementValid(ct.firstChild)).toBeTruthy();
+	});
+
+	it("compile", function () {
+		ct.innerHTML = '<p class="{{cl}}">{{name}}</p>';
+		var n = compile(tpl, ct, null, null);
+		expect(n).toBeDefined();
+		expect(n.template).toEqual(tpl);
+		expect(n.children.length).toEqual(1);
+		expect(n.children[0].attributes.length).toEqual(1);
+		expect(n.children[0].attributes[0].name).toEqual('class');
+		expect(n.children[0].attributes[0].value).toEqual('{{cl}}');
+		expect(n.children[0].children[0].interpolation).toBeDefined();
+		expect(n.children[0].children[0].interpolation.value).toEqual('{{name}}');
+	});
+
+	it("updateScopeWithData", function() {
+		var scope = new Scope();
+		updateScopeWithData(scope, {item: "string"});
+		expect(scope.item).toEqual('string');
+	});
+
+	it("clearScope", function() {
+		var scope = new Scope();
+		scope.item = "string";
+		clearScope(scope);
+		expect(scope.item).toBeUndefined();
+		expect(scope._parent).toBeNull();
+		expect(scope._children).toEqual([]);
+		expect(typeof scope._createChild).toEqual('function');
+	});
+
+	it("updateNodeChildren", function() {
+		ct.innerHTML = '<p class="{{cl}}">{{name}}</p>';
+		tpl.compile();
+		tpl.scope.cl = "myClass";
+		tpl.scope.name = "john";
+		updateNodeChildren(tpl.node);
+		expect(tpl.node.children[0].attributes[0].interpolationValue.render()).toEqual('myClass');
+		expect(tpl.node.children[0].children[0].interpolation.render()).toEqual('john');
+	});
+
+	it("renderNodeChildren", function() {
+		ct.innerHTML = '<p class="{{cl}}">{{name}}</p>';
+		tpl.compile();
+		tpl.scope.cl = "myClass";
+		tpl.scope.name = "john";
+		updateNodeChildren(tpl.node);
+		renderNodeChildren(tpl.node);
+		expect(tpl.node.children[0].attributes[0].value).toEqual('myClass');
+		expect(tpl.node.children[0].children[0].value).toEqual('john');
+	});
+
+	it("renderNodeRepeater", function() {
+		ct.innerHTML = '<p data-repeat="item in items">{{item}}</p>';
+		tpl.compile();
+		tpl.scope.items = [1, 2, 3];
+		renderNodeRepeater(tpl.node.children[0]);
+		expect(tpl.node.children[0].childrenRepeater[0].element.innerHTML).toEqual('1');
+		expect(tpl.node.children[0].childrenRepeater[1].element.innerHTML).toEqual('2');
+		expect(tpl.node.children[0].childrenRepeater[2].element.innerHTML).toEqual('3');
 	});
 
 });

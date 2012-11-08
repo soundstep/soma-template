@@ -214,9 +214,9 @@ function getWatcherValue(exp, newValue) {
 }
 
 function getValue(data, pathString, accessor, params, isFunc, paramsFound, functionFound) {
-	console.log('>>> SEARCH in', data);
 	var pathParts = pathString.split('.');
 	var path = data;
+	// search path
 	if (pathParts[0] !== "") {
 		var i = -1, l = pathParts.length;
 		while (++i < l) {
@@ -227,18 +227,13 @@ function getValue(data, pathString, accessor, params, isFunc, paramsFound, funct
 			path = path[pathParts[i]];
 		}
 	}
-//	if (!path) {
-//		if (data._parent) {
-//			return getValue(data._parent, pathString, accessor, params, isFunc, paramsFound, functionFound);
-//		}
-//		else return undefined;
-//	}
-
 	if (!isFunc && path) {
+		// not a function
 		if (!isDefined(path[accessor]) && data._parent) return getValue(data._parent, pathString, accessor, params, isFunc, paramsFound, functionFound);
 		else return path[accessor];
 	}
 	else {
+		// function, search for params
 		var args = [];
 		if (isDefined(params)) {
 			if (paramsFound) args = paramsFound;
@@ -246,32 +241,26 @@ function getValue(data, pathString, accessor, params, isFunc, paramsFound, funct
 				var i = -1, l = params.length;
 				while (++i < l) {
 					var p = params[i];
-					console.log('search', params[i], "in", data);
 					if (p.match(regex.quote)) {
 						args.push(p.replace(regex.quote, ''));
 					}
 					else {
 						var exp = new Expression(p);
 						args.push(exp.getValue(data));
-						if (exp.getValue(data)) {
-							console.log('FOUND PARAM');
-						}
 					}
 				}
 			}
 		}
-		console.log('args', args, path, accessor);
 		if (!path && data._parent) {
+			// no path found, search in parent
 			return getValue(data._parent, pathString, accessor, params, isFunc, args, functionFound);
 		}
-		if (isFunction(path[accessor])) {
-			console.log('FOUND FUNCTION');
-		}
 		if (!isFunction(path[accessor])) {
-			console.log('NONO');
+			// not a function
 			if (data._parent) return getValue(data._parent, pathString, accessor, params, isFunc, args, functionFound);
 			else return undefined;
 		}
+		// found path and params
 		return path[accessor].apply(null, args);
 	}
 	return undefined;
