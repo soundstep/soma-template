@@ -8,7 +8,6 @@ var Expression = function(pattern, node, attribute) {
 	this.accessor = getExpressionAccessor(this.pattern);
 	this.params = !this.isFunction ? null : getParamsFromString(this.pattern.match(regex.func)[2]);
 	this.value;
-	this.watchers = [];
 };
 Expression.prototype = {
 	toString: function() {

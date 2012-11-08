@@ -213,25 +213,29 @@ function getWatcherValue(exp, newValue) {
 	return newValue;
 }
 
-function getValue(data, pathString, accessor, params, isFunc, paramsFound) {
+function getValue(data, pathString, accessor, params, isFunc, paramsFound, functionFound) {
+	console.log('>>> SEARCH in', data);
 	var pathParts = pathString.split('.');
 	var path = data;
 	if (pathParts[0] !== "") {
 		var i = -1, l = pathParts.length;
 		while (++i < l) {
 			if (!path) {
-				if (data._parent) return getValue(data._parent, pathString, accessor, params, isFunc, paramsFound);
+				if (data._parent) return getValue(data._parent, pathString, accessor, params, isFunc, paramsFound, functionFound);
 				else return undefined;
 			}
 			path = path[pathParts[i]];
 		}
 	}
-	if (!path) {
-		if (data._parent) return getValue(data._parent, pathString, accessor, params, isFunc, paramsFound);
-		else return undefined;
-	}
-	if (!isFunc) {
-		if (!isDefined(path[accessor]) && data._parent) return getValue(data._parent, pathString, accessor, params, isFunc, paramsFound);
+//	if (!path) {
+//		if (data._parent) {
+//			return getValue(data._parent, pathString, accessor, params, isFunc, paramsFound, functionFound);
+//		}
+//		else return undefined;
+//	}
+
+	if (!isFunc && path) {
+		if (!isDefined(path[accessor]) && data._parent) return getValue(data._parent, pathString, accessor, params, isFunc, paramsFound, functionFound);
 		else return path[accessor];
 	}
 	else {
@@ -242,18 +246,30 @@ function getValue(data, pathString, accessor, params, isFunc, paramsFound) {
 				var i = -1, l = params.length;
 				while (++i < l) {
 					var p = params[i];
+					console.log('search', params[i], "in", data);
 					if (p.match(regex.quote)) {
 						args.push(p.replace(regex.quote, ''));
 					}
 					else {
 						var exp = new Expression(p);
 						args.push(exp.getValue(data));
+						if (exp.getValue(data)) {
+							console.log('FOUND PARAM');
+						}
 					}
 				}
 			}
 		}
+		console.log('args', args, path, accessor);
+		if (!path && data._parent) {
+			return getValue(data._parent, pathString, accessor, params, isFunc, args, functionFound);
+		}
+		if (isFunction(path[accessor])) {
+			console.log('FOUND FUNCTION');
+		}
 		if (!isFunction(path[accessor])) {
-			if (data._parent) return getValue(data._parent, pathString, accessor, params, isFunc, args);
+			console.log('NONO');
+			if (data._parent) return getValue(data._parent, pathString, accessor, params, isFunc, args, functionFound);
 			else return undefined;
 		}
 		return path[accessor].apply(null, args);
@@ -790,7 +806,6 @@ var Expression = function(pattern, node, attribute) {
 	this.accessor = getExpressionAccessor(this.pattern);
 	this.params = !this.isFunction ? null : getParamsFromString(this.pattern.match(regex.func)[2]);
 	this.value;
-	this.watchers = [];
 };
 Expression.prototype = {
 	toString: function() {

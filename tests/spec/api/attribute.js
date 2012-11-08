@@ -17,7 +17,6 @@ describe("api - attribute", function () {
 		expect(divAttributes).toBeDefined();
 		expect(divAttributes).not.toBeNull();
 		expect(divAttributes.length).toEqual(4);
-		expect()
 	});
 
 	it("name values pre-rendering", function () {

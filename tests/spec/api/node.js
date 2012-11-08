@@ -167,7 +167,6 @@ describe("api - node", function () {
 		tpl.compile();
 		tpl.scope.name = 'john';
 		tpl.node.children[0].children[0].update();
-		console.log(ct);
 		expect(ct.innerHTML).toEqual('<p>{{name}}</p>');
 		expect(tpl.node.children[0].children[0].value).toEqual('{{name}}');
 	});
