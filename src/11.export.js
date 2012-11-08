@@ -43,7 +43,9 @@ function renderAllTemplates() {
 	}
 }
 
-setRegEX();
+// set regex
+tokens.start(tokenStart);
+tokens.end(tokenEnd);
 
 // exports
 soma.template.create = createTemplate;

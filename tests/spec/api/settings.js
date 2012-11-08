@@ -21,8 +21,8 @@ describe("api - settings", function () {
 	it("tokens values", function () {
 		expect(settings.tokens).toBeDefined();
 		expect(settings.tokens).toEqual(jasmine.any(Object));
-		expect(settings.tokens.start()).toEqual('{{');
-		expect(settings.tokens.end()).toEqual('}}');
+		expect(settings.tokens.start()).toEqual('\\{\\{');
+		expect(settings.tokens.end()).toEqual('\\}\\}');
 	});
 
 	it("attributes values", function () {

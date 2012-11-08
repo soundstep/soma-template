@@ -38,10 +38,12 @@ function escapeRegExp(str) {
 	return str.replace(regex.escape, "\\$&");
 }
 function setRegEX(nonEscapedValue, isStartToken) {
-	// \{\{.+?\}\}|[^{]+|\{(?!\{)
+	// \{\{.+?\}\}|[^{]+|\{(?!\{)[^{]*
+	var unescapedCurrentStartToken = tokens.start().replace(/\\/g, '');
 	var endSequence = "";
-	if (isStartToken && nonEscapedValue.length > 1) {
-		endSequence = "|\\" + nonEscapedValue.substr(0, 1) + "(?!\\" + nonEscapedValue.substr(1, 1) + ")";
+	var ts = isStartToken ? nonEscapedValue : unescapedCurrentStartToken;
+	if (ts.length > 1) {
+		endSequence = "|\\" + ts.substr(0, 1) + "(?!\\" + ts.substr(1, 1) + ")[^" + ts.substr(0, 1) + "]*";
 	}
 	regex.sequence = new RegExp(tokens.start() + ".+?" + tokens.end() + "|[^" + tokens.start() + "]+" + endSequence, "g");
 	regex.token = new RegExp(tokens.start() + ".*?" + tokens.end(), "g");
