@@ -29,15 +29,61 @@ function getWatcherValue(exp, newValue) {
 	return newValue;
 }
 
-function getValue(data, pathString, accessor, params, isFunc, paramsFound, functionFound) {
+function getScopeFromPattern(scope, pattern) {
+	var depth = getScopeDepth(pattern);
+	var scopeTarget = scope;
+	while (depth > 0) {
+		scopeTarget = scopeTarget._parent ? scopeTarget._parent : scopeTarget;
+		depth--;
+	}
+	return scopeTarget;
+}
+
+function getParameterValue(scope, pattern) {
+	if (pattern.match(regex.quote)) {
+		return pattern.replace(regex.quote, '');
+	}
+	var scopeTarget = getScopeFromPattern(scope, pattern);
+	var exp = new Expression(pattern);
+	var pathParts = exp.path.split('.');
+	var path = scopeTarget;
+	if (pathParts[0] !== "") {
+		var i = -1, l = pathParts.length;
+		while (++i < l) {
+			if (!path) {
+				if (scopeTarget._parent) return getParameterValue(scopeTarget._parent, pattern);
+				else return undefined;
+			}
+			path = path[pathParts[i]];
+		}
+	}
+	if ( (!isDefined(path) || !isDefined(path[exp.accessor])) && scopeTarget._parent) {
+		// no path found, search in parent
+		return getParameterValue(scopeTarget._parent, pattern);
+	}
+	return path[exp.accessor];
+}
+
+function getValue(scope, pattern, pathString, accessor, params, isFunc, paramsFound) {
+	// find params
+	var paramsValues = [];
+	if (!paramsFound && params) {
+		var j = -1, jl = params.length;
+		while (++j < jl) {
+			paramsValues.push(getParameterValue(scope, params[j]));
+		}
+	}
+	else paramsValues = paramsFound;
+	// find accessor
+	var scopeTarget = getScopeFromPattern(scope, pattern);
 	var pathParts = pathString.split('.');
-	var path = data;
+	var path = scopeTarget;
 	// search path
 	if (pathParts[0] !== "") {
 		var i = -1, l = pathParts.length;
 		while (++i < l) {
 			if (!path) {
-				if (data._parent) return getValue(data._parent, pathString, accessor, params, isFunc, paramsFound, functionFound);
+				if (scopeTarget._parent) return getValue(scopeTarget._parent, pattern, pathString, accessor, params, isFunc, paramsValues);
 				else return undefined;
 			}
 			path = path[pathParts[i]];
@@ -45,55 +91,45 @@ function getValue(data, pathString, accessor, params, isFunc, paramsFound, funct
 	}
 	if (!isFunc && path) {
 		// not a function
-		if (!isDefined(path[accessor]) && data._parent) return getValue(data._parent, pathString, accessor, params, isFunc, paramsFound, functionFound);
+		if (!isDefined(path[accessor]) && scopeTarget._parent) return getValue(scopeTarget._parent, pattern, pathString, accessor, params, isFunc, paramsValues);
 		else return path[accessor];
 	}
 	else {
-		// function, search for params
-		var args = [];
-		if (isDefined(params)) {
-			if (paramsFound) args = paramsFound;
-			else {
-				var i = -1, l = params.length;
-				while (++i < l) {
-					var p = params[i];
-					if (p.match(regex.quote)) {
-						args.push(p.replace(regex.quote, ''));
-					}
-					else {
-						var exp = new Expression(p);
-						args.push(exp.getValue(data));
-					}
-				}
-			}
-		}
-		if (!path && data._parent) {
+		if ( (!isDefined(path) || !isDefined(path[accessor])) && scopeTarget._parent) {
 			// no path found, search in parent
-			return getValue(data._parent, pathString, accessor, params, isFunc, args, functionFound);
+			return getValue(scopeTarget._parent, pattern, pathString, accessor, params, isFunc, paramsValues);
 		}
 		if (!isFunction(path[accessor])) {
 			// not a function
-			if (data._parent) return getValue(data._parent, pathString, accessor, params, isFunc, args, functionFound);
+			if (scopeTarget._parent) return getValue(scopeTarget._parent, pattern, pathString, accessor, params, isFunc, paramsValues);
 			else return undefined;
 		}
 		// found path and params
-		return path[accessor].apply(null, args);
+		return path[accessor].apply(null, paramsValues);
 	}
 	return undefined;
 }
 
 function getExpressionPath(value) {
 	var val = value.split('(')[0];
+	val = trimScopeDepth(val);
 	return val.substr(0, val.lastIndexOf("."));
 }
 
 function getExpressionAccessor(value) {
 	var val = value.split('(')[0];
+	val = trimScopeDepth(val);
 	return val.substring(val.lastIndexOf(".")).replace('.', '');
 }
 
 function getParamsFromString(value) {
 	return trimArray(value.split(regex.params));
+}
+
+function getScopeDepth(value) {
+	var val = value.split('(')[0];
+	var matches = val.match(regex.depth);
+	return !matches ? 0 : matches.length;
 }
 
 function getNodeFromElement(element, scope, isRepeaterDescendant) {
@@ -231,11 +267,19 @@ function renderNodeRepeater(node) {
 					newNode.update();
 					newNode.render();
 					if (!previousElement) {
-						if (node.previousSibling) insertAfter(node.previousSibling, newElement);
-						else if (node.nextSibling) insertBefore(node.nextSibling, newElement);
-						else node.parent.element.appendChild(newElement);
+						if (node.previousSibling) {
+							insertAfter(node.previousSibling, newElement);
+						}
+						else if (node.nextSibling) {
+							insertBefore(node.nextSibling, newElement);
+						}
+						else {
+							node.parent.element.appendChild(newElement);
+						}
 					}
-					else insertAfter(previousElement, newElement);
+					else {
+						insertAfter(previousElement, newElement);
+					}
 					previousElement = newNode.element;
 				}
 				else {

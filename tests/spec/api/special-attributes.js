@@ -11,7 +11,7 @@ describe("api - special attributes", function () {
 	});
 
 	it("special attributes", function () {
-		// $index and $key
+		// data-repeat and others
 	});
 
 });

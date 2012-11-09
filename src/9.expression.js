@@ -1,6 +1,7 @@
 var Expression = function(pattern, node, attribute) {
 	if (!isDefined(pattern)) return;
 	this.pattern = pattern;
+	this.depth = getScopeDepth(this.pattern);
 	this.node = node;
 	this.attribute = attribute;
 	this.isFunction = isExpFunction(this.pattern);
@@ -14,7 +15,13 @@ Expression.prototype = {
 		return '[object Expression]';
 	},
 	dispose: function() {
-
+		this.pattern = null;
+		this.node = null;
+		this.attribute = null;
+		this.path = null;
+		this.accessor = null;
+		this.params = null;
+		this.value = null;
 	},
 	update: function() {
 		var node = this.node;
@@ -28,6 +35,6 @@ Expression.prototype = {
 		}
 	},
 	getValue: function(scope) {
-		return getValue(scope, this.path, this.accessor, this.params, this.isFunction);
+		return getValue(scope, this.pattern, this.path, this.accessor, this.params, this.isFunction);
 	}
 };

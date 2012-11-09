@@ -144,4 +144,17 @@ describe("internal - expression", function () {
 		expect(exp.path).toEqual('d1.d2');
 	});
 
+	it("dispose", function () {
+		var exp = new Expression('d1.d2.name(john.david, 21.22)', node);
+		exp.dispose();
+		expect(exp.pattern).toBeNull();
+		expect(exp.node).toBeNull();
+		expect(exp.attribute).toBeNull();
+		expect(exp.path).toBeNull();
+		expect(exp.accessor).toBeNull();
+		expect(exp.params).toBeNull();
+		expect(exp.value).toBeNull();
+	});
+
+
 });

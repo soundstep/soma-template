@@ -143,8 +143,11 @@ describe("internal - helpers", function () {
 		expect(trimTokens('{{name}}')).toEqual('name');
 	});
 
-	it("insert before", function () {
-
+	it("trim depth", function () {
+		expect(trimScopeDepth('')).toEqual('');
+		expect(trimScopeDepth('name')).toEqual('name');
+		expect(trimScopeDepth('../name')).toEqual('name');
+		expect(trimScopeDepth('../../name')).toEqual('name');
 	});
 
 	it("insert after", function () {

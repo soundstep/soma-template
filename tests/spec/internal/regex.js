@@ -165,6 +165,13 @@ describe("internal - regex", function () {
 		expect(regex.content.test('\nstring')).toBeTruthy();
 	});
 
+	it("depth", function () {
+		// regex.depth (match) is used to find the parent scope
+		expect("name".match(regex.depth)).toBeNull();
+		expect("../name".match(regex.depth)).toEqual(['../']);
+		expect("../../name".match(regex.depth)).toEqual(['../', '../']);
+	});
+
 	it("change token start regex 1 character", function () {
 		settings.tokens.start('[');
 		expect(settings.tokens.start()).toEqual('\\[');

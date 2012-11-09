@@ -45,7 +45,7 @@ var vars = settings.vars = {
 };
 
 var regex = {
-	sequence: null, // \{\{.+?\}\}|[^{]+|\{(?!\{)
+	sequence: null,
 	token: null,
 	expression: null,
 	escape: /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,
@@ -54,5 +54,6 @@ var regex = {
 	func: /(.*)\((.*)\)/,
 	params: /,\s+|,|\s+,\s+/,
 	quote: /\"|\'/g,
-	content: /[^.|^\s]/gm
+	content: /[^.|^\s]/gm,
+	depth: /..\//g
 };

@@ -188,4 +188,19 @@ describe("api - expression", function () {
 		expect(ct.innerHTML).toEqual('valid');
 	});
 
+	it("depth scope", function () {
+		ct.innerHTML = '<div data-repeat="item in items">{{../item.name}}</div>';
+		tpl.compile();
+		tpl.scope.items = [
+			{name: 'child1'},
+			{name: 'child2'},
+			{name: 'child3'}
+		];
+		tpl.scope.item = {name: 'parent name'};
+		tpl.render();
+		expect(ct.childNodes[0].innerHTML).toEqual('parent name');
+		expect(ct.childNodes[1].innerHTML).toEqual('parent name');
+		expect(ct.childNodes[2].innerHTML).toEqual('parent name');
+	});
+
 });

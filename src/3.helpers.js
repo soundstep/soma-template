@@ -38,7 +38,7 @@ function escapeRegExp(str) {
 	return str.replace(regex.escape, "\\$&");
 }
 function setRegEX(nonEscapedValue, isStartToken) {
-	// \{\{.+?\}\}|[^{]+|\{(?!\{)[^{]*
+	// sequence: \{\{.+?\}\}|[^{]+|\{(?!\{)[^{]*
 	var unescapedCurrentStartToken = tokens.start().replace(/\\/g, '');
 	var endSequence = "";
 	var ts = isStartToken ? nonEscapedValue : unescapedCurrentStartToken;
@@ -59,6 +59,9 @@ function trimArray(value) {
 }
 function trimTokens(value) {
 	return value.replace(regex.expression, '');
+}
+function trimScopeDepth(value) {
+	return value.replace(regex.depth, '');
 }
 function insertBefore(referenceNode, newNode) {
 	if (!referenceNode.parentNode) return;
