@@ -172,6 +172,21 @@ describe("internal - regex", function () {
 		expect("../../name".match(regex.depth)).toEqual(['../', '../']);
 	});
 
+	it("string", function () {
+		// regex.string (test) is used to find if a pattern is a string
+		expect(regex.string.test('')).toBeFalsy();
+		expect(regex.string.test('name')).toBeFalsy();
+		expect(regex.string.test('func(var)')).toBeFalsy();
+		expect(regex.string.test('func("str")')).toBeFalsy();
+		expect(regex.string.test("func('str')")).toBeFalsy();
+		expect(regex.string.test('"name"')).toBeTruthy();
+		expect(regex.string.test("'name'")).toBeTruthy();
+		expect(regex.string.test('"func(var)"')).toBeTruthy();
+		expect(regex.string.test("'func(var)'")).toBeTruthy();
+		expect(regex.string.test('"func("str")"')).toBeTruthy();
+		expect(regex.string.test("'func('str')'")).toBeTruthy();
+	});
+
 	it("change token start regex 1 character", function () {
 		settings.tokens.start('[');
 		expect(settings.tokens.start()).toEqual('\\[');

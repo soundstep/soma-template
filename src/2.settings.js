@@ -55,5 +55,6 @@ var regex = {
 	params: /,\s+|,|\s+,\s+/,
 	quote: /\"|\'/g,
 	content: /[^.|^\s]/gm,
-	depth: /..\//g
+	depth: /..\//g,
+	string: /^(\"|\')(.*)(\"|\')$/
 };

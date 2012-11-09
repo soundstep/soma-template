@@ -1,14 +1,24 @@
 var Expression = function(pattern, node, attribute) {
 	if (!isDefined(pattern)) return;
 	this.pattern = pattern;
-	this.depth = getScopeDepth(this.pattern);
+	this.isString = regex.string.test(pattern);
 	this.node = node;
 	this.attribute = attribute;
-	this.isFunction = isExpFunction(this.pattern);
-	this.path = getExpressionPath(this.pattern);
-	this.accessor = getExpressionAccessor(this.pattern);
-	this.params = !this.isFunction ? null : getParamsFromString(this.pattern.match(regex.func)[2]);
-	this.value;
+	this.value = this.isString ? this.pattern : undefined;
+	if (this.isString) {
+		this.isFunction = false;
+		this.depth = null;
+		this.path = null;
+		this.accessor = null;
+		this.params = null;
+	}
+	else {
+		this.isFunction = isExpFunction(this.pattern);
+		this.depth = getScopeDepth(this.pattern);
+		this.path = getExpressionPath(this.pattern);
+		this.accessor = getExpressionAccessor(this.pattern);
+		this.params = !this.isFunction ? null : getParamsFromString(this.pattern.match(regex.func)[2]);
+	}
 };
 Expression.prototype = {
 	toString: function() {

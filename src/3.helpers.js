@@ -52,6 +52,12 @@ function setRegEX(nonEscapedValue, isStartToken) {
 function trim(value) {
 	return value.replace(regex.trim, '');
 }
+function trimQuotes(value) {
+	if (regex.string.test(value)) {
+		return value.substr(1, value.length-2);
+	}
+	return value;
+}
 function trimArray(value) {
 	if (value[0] === "") value.shift();
 	if (value[value.length-1] === "") value.pop();

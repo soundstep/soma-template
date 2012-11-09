@@ -132,6 +132,15 @@ describe("internal - helpers", function () {
 		expect(trim(' 	\nstr 	\ning 	\n')).toEqual('str 	\ning');
 	});
 
+	it("trim quotes", function () {
+		expect(trimQuotes('')).toEqual('');
+		expect(trimQuotes('name')).toEqual('name');
+		expect(trimQuotes('"name"')).toEqual('name');
+		expect(trimQuotes("'name'")).toEqual('name');
+		expect(trimQuotes("'na'me'")).toEqual("na'me");
+		expect(trimQuotes('"na"me"')).toEqual('na"me');
+	});
+
 	it("trim array", function () {
 		expect(trimArray([1, '', 2])).toEqual([1, '', 2]);
 		expect(trimArray(['', 1, '', 2])).toEqual([1, '', 2]);
