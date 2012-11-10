@@ -1,0 +1,43 @@
+body {
+	margin: 0 15px 0 15px;
+}
+button.render, button.reset, button.data {
+	width: 115px;
+}
+button.render i, button.reset i, button.data i {
+	margin-right: 8px;
+}
+pre.prettyprint {
+	margin-bottom: 15px;
+}
+.buttons {
+	margin: 0 0 15px 0;
+}
+.hidden {
+	display: none;
+}
+.bs-docs-example {
+	position: relative;
+	margin: 15px 0;
+	padding: 39px 19px 14px;
+	background-color: white;
+	border: 1px solid #DDD;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+.bs-docs-example .title {
+	content: "Example";
+	position: absolute;
+	top: -1px;
+	left: -1px;
+	padding: 3px 7px;
+	font-size: 12px;
+	font-weight: bold;
+	background-color: whiteSmoke;
+	border: 1px solid #DDD;
+	color: #9DA0A4;
+	-webkit-border-radius: 4px 0 4px 0;
+	-moz-border-radius: 4px 0 4px 0;
+	border-radius: 4px 0 4px 0;
+}

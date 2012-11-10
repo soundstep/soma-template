@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>soma-template | sheet</title>
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" href="styles/styles.css">
+	<script type="text/javascript" src="../../build/soma-template.js"></script>
+	<script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+</head>
+<body>
+
+<div id="container-simple-text" class="bs-docs-example">
+	<div class="title">Text interpolation</div>
+	<div class="buttons">
+		<button class="btn btn-small render"></i>render</button>
+		<button class="btn btn-small data hidden"><i class="icon-random"></i>change data</button>
+		<button class="btn btn-small reset hidden"><i class="icon-remove"></i>reset</button>
+	</div>
+	<div><pre class="prettyprint">&lt;div&gt;Simple interpolation: {{hello}}!&lt;/div&gt;</pre></div>
+	<div id="simple-text" class="prettyprint">Simple interpolation: {{hello}}!</div>
+	<script type="text/javascript">
+		var tpl_simple_text = soma.template.create(document.getElementById('simple-text'));
+		tpl_simple_text.scope.hello = "Hello soma-template";
+		var count = 0;
+		$('#container-simple-text .render').click(function() {
+			tpl_simple_text.render();
+			$('#container-simple-text .render').hide();
+			$('#container-simple-text .data').show();
+			$('#container-simple-text .reset').show();
+		});
+		$('#container-simple-text .reset').click(function() {
+			count = 0;
+			$('#simple-text').html('Simple interpolation: {{hello}}!');
+			tpl_simple_text.compile();
+			tpl_simple_text.scope.hello = "Hello soma-template";
+			$('#container-simple-text .render').show();
+			$('#container-simple-text .data').hide();
+			$('#container-simple-text .reset').hide();
+		});
+		$('#container-simple-text .data').click(function() {
+			if (count++ % 2 == 0) {
+				tpl_simple_text.scope.hello = "Hello world";
+			}
+			else {
+				tpl_simple_text.scope.hello = "Hello soma-template";
+			}
+			tpl_simple_text.render();
+		});
+	</script>
+</div>
+
+
+</body>
+</html>
