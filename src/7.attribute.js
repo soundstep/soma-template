@@ -15,9 +15,10 @@ Attribute.prototype = {
 		if (this.interpolationValue) this.interpolationValue.dispose();
 		this.interpolationName = null;
 		this.interpolationValue = null;
+		this.node = null;
 		this.name = null;
 		this.value = null;
-		this.node = null;
+		this.previousName = null;
 	},
 	update: function() {
 		this.interpolationName.update();
@@ -28,6 +29,7 @@ Attribute.prototype = {
 		var element = this.node.element;
 		if (this.invalidate) {
 			this.invalidate = false;
+			this.previousName = this.name;
 			this.name = this.interpolationName.render() || this.name;
 			this.value = this.interpolationValue.render() || this.value;
 			if (this.name === attributes.src) {
@@ -38,7 +40,8 @@ Attribute.prototype = {
 			}
 			else {
 				this.node.element.removeAttribute(this.interpolationName.value);
-				renderAttribute(this.name, this.value);
+				if (this.previousName) this.node.element.removeAttribute(this.previousName);
+				renderAttribute(this.name, this.value, this.previousName);
 			}
 		}
 		// cloak

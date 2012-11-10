@@ -8,10 +8,16 @@ button.render i, button.reset i, button.data i {
 	margin-right: 8px;
 }
 pre.prettyprint {
-	margin-bottom: 15px;
+	margin-top: 15px;
+}
+.main {
+	margin: 15px 0 0 0;
 }
 .buttons {
 	margin: 0 0 15px 0;
+}
+.buttons .btn {
+	margin: 0 15px 0 0;
 }
 .hidden {
 	display: none;
@@ -34,10 +40,20 @@ pre.prettyprint {
 	padding: 3px 7px;
 	font-size: 12px;
 	font-weight: bold;
-	background-color: whiteSmoke;
+	background-color: #DBE7F8;
 	border: 1px solid #DDD;
-	color: #9DA0A4;
+	color: #1E2F3C;
 	-webkit-border-radius: 4px 0 4px 0;
 	-moz-border-radius: 4px 0 4px 0;
 	border-radius: 4px 0 4px 0;
+}
+
+.bold {
+	font-weight: bold;
+}
+.color1 {
+	color: #0C86CE;
+}
+.color2 {
+	color: #CC4E27;
 }

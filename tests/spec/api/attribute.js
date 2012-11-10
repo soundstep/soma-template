@@ -88,6 +88,18 @@ describe("api - attribute", function () {
 		expect(divAttributes[3].name).toEqual('single');
 	});
 
+	it("previous name", function () {
+		ct.innerHTML = '<div {{class}}="bold"></div>';
+		tpl.compile();
+		tpl.scope.class = 'class';
+		tpl.render();
+		expect(ct.firstChild.getAttribute('class')).toEqual('bold');
+		tpl.scope.class = 'data-class';
+		tpl.render();
+		expect(ct.firstChild.getAttribute('class')).toBeNull();
+		expect(ct.firstChild.getAttribute('data-class')).toEqual('bold');
+	});
+
 	it("dispose", function () {
 		ct.innerHTML = '<div {{name}}="{{value}}"></div>';
 		tpl.compile();

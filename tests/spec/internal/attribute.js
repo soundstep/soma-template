@@ -22,6 +22,7 @@ describe("internal - attribute", function () {
 		var node = new Node(ct, scope);
 		var attr = new Attribute('class', 'bold', node, scope);
 		expect(attr.name).toEqual('class');
+		expect(attr.previousName).toBeUndefined();
 		expect(attr.value).toEqual('bold');
 		expect(attr.node).toEqual(node);
 		expect(attr.invalidate).toBeFalsy();

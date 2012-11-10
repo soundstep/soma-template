@@ -4,51 +4,83 @@
 	<title>soma-template | sheet</title>
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
 	<link rel="stylesheet" href="styles/styles.css">
-	<script type="text/javascript" src="../../build/soma-template.js"></script>
-	<script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
 </head>
 <body>
 
-<div id="container-simple-text" class="bs-docs-example">
-	<div class="title">Text interpolation</div>
-	<div class="buttons">
-		<button class="btn btn-small render"></i>render</button>
-		<button class="btn btn-small data hidden"><i class="icon-random"></i>change data</button>
-		<button class="btn btn-small reset hidden"><i class="icon-remove"></i>reset</button>
-	</div>
-	<div><pre class="prettyprint">&lt;div&gt;Simple interpolation: {{hello}}!&lt;/div&gt;</pre></div>
-	<div id="simple-text" class="prettyprint">Simple interpolation: {{hello}}!</div>
-	<script type="text/javascript">
-		var tpl_simple_text = soma.template.create(document.getElementById('simple-text'));
-		tpl_simple_text.scope.hello = "Hello soma-template";
-		var count = 0;
-		$('#container-simple-text .render').click(function() {
-			tpl_simple_text.render();
-			$('#container-simple-text .render').hide();
-			$('#container-simple-text .data').show();
-			$('#container-simple-text .reset').show();
-		});
-		$('#container-simple-text .reset').click(function() {
-			count = 0;
-			$('#simple-text').html('Simple interpolation: {{hello}}!');
-			tpl_simple_text.compile();
-			tpl_simple_text.scope.hello = "Hello soma-template";
-			$('#container-simple-text .render').show();
-			$('#container-simple-text .data').hide();
-			$('#container-simple-text .reset').hide();
-		});
-		$('#container-simple-text .data').click(function() {
-			if (count++ % 2 == 0) {
-				tpl_simple_text.scope.hello = "Hello world";
-			}
-			else {
-				tpl_simple_text.scope.hello = "Hello soma-template";
-			}
-			tpl_simple_text.render();
-		});
-	</script>
+<div class="main">
+	<div class="buttons"></div>
 </div>
 
+<div data-id="text-interpolation" class="container bs-docs-example">
+	<div class="title">Text node</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<!--<div class="label label-info">Result</div>-->
+	<div class="tpl">Simple interpolation: {{greeting}}!</div>
+</div>
+
+<div data-id="attribute-value-interpolation" class="container bs-docs-example">
+	<div class="title">Attribute value</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl"><p class="bold {{color}}">Colored text</p></div>
+</div>
+
+<div data-id="attribute-name-interpolation" class="container bs-docs-example">
+	<div class="title">Attribute name</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl"><p {{class}}="color1">Render attribute class</p></div>
+</div>
+
+<div data-id="anything-anywhere" class="container bs-docs-example">
+	<div class="title">Anything anywhere</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl"><p cla{{name}}="{{value}}lor1">Ren{{text1}}er any{{text2}}ng an{{text3}}re</p></div>
+</div>
+
+<div data-id="text-interpolation-function" class="container bs-docs-example">
+	<div class="title">Interpolation with function</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl">Interpolation with function: {{greet()}}!</div>
+</div>
+
+<div data-id="text-interpolation-function-param-string" class="container bs-docs-example">
+	<div class="title">Interpolation with function and string parameter</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl">Interpolation with function (and string param): {{greet('Hello')}}!</div>
+</div>
+
+<div data-id="text-interpolation-function-param" class="container bs-docs-example">
+	<div class="title">Interpolation with function and parameter</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl">Interpolation with function (and param): {{greet(who)}}!</div>
+</div>
+
+<div data-id="text-interpolation-function-param-multiple" class="container bs-docs-example">
+	<div class="title">Interpolation with function and multiple parameters</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl">Interpolation with function (and multiple param): {{greet(who, 'Hello')}}!</div>
+</div>
+
+<script type="text/javascript" src="../../build/soma-template.js"></script>
+<script type="text/javascript" src="js/libs/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="js/libs/soma-v2.0.0.min.js"></script>
+<script type="text/javascript" src="js/app/dataset.js"></script>
+<script type="text/javascript" src="js/app.js"></script>
 
 </body>
 </html>
