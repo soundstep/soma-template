@@ -111,6 +111,7 @@ describe("api - special attributes", function () {
 		tpl.render();
 		expect(ct.firstChild.getAttribute('class')).not.toEqual('data-cloak');
 	});
+
 	it("data-repeat", function () {
 		ct.innerHTML =
 			'<ul>' +

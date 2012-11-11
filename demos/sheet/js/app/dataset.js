@@ -43,42 +43,16 @@
   }
 				}
 		    ],
-		    'text-interpolation-function-param-string': [
-			    {
-				    'greet': function(greeting) {
-    return greeting + ' soma-template';
-  }
-			    },
-			    {
-					'greet': function(greeting) {
-    return greeting + ' world';
-  }
-				}
-		    ],
 		    'text-interpolation-function-param': [
 			    {
 				    'who': 'soma-template',
-				    'greet': function(who) {
-    return 'Hello ' + who;
-  }
-			    },
-			    {
-				    'who': 'world',
-					'greet': function(who) {
-    return 'Hello ' + who;
-  }
-				}
-		    ],
-		    'text-interpolation-function-param-multiple': [
-			    {
-				    'who': 'soma-template',
-				    'greet': function(who, greeting) {
+				    'greet': function(greeting, who) {
     return greeting + ' ' + who;
   }
 			    },
 			    {
 				    'who': 'world',
-					'greet': function(who, greeting) {
+					'greet': function(greeting, who) {
     return greeting + ' ' + who;
   }
 				}

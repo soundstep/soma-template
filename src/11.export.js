@@ -26,7 +26,6 @@ function createTemplate(source, target) {
 	if (getTemplate(element)) {
 		getTemplate(element).dispose();
 		templates.remove(element);
-		console.log(getTemplate(element));
 	}
 	// create template
 	var template = new Template(element);

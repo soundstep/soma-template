@@ -101,16 +101,6 @@ describe("api - template", function () {
 		expect(soma.template.get(body)).toBeUndefined();
 	});
 
-	it("render all", function () {
-		var t1 = createTemplateWithContent('{{name}}');
-		var t2 = createTemplateWithContent('{{name}}');
-		t1.scope.name = "john";
-		t2.scope.name = "david";
-		soma.template.renderAll();
-		expect(t1.element.innerHTML).toEqual('john');
-		expect(t2.element.innerHTML).toEqual('david');
-	});
-
 	it("dispose template", function () {
 		tpl.dispose();
 		expect(soma.template.get(ct)).toBeUndefined();
@@ -163,16 +153,45 @@ describe("api - template", function () {
 		expect(tpl.node.children[0].interpolation.expressions[0].value).toEqual('john');
 	});
 
-	it("render template with data using scope", function () {
-		ct.innerHTML = '{{name}}';
-		tpl.compile(ct);
-		tpl.scope.name = 'john';
-		tpl.render();
-		expect(ct.innerHTML).toEqual('john');
-		expect(tpl.node.children[0].interpolation).not.toBeNull();
-		expect(tpl.node.children[0].interpolation.expressions.length).toEqual(1);
-		expect(tpl.node.children[0].interpolation.expressions[0].pattern).toEqual('name');
-		expect(tpl.node.children[0].interpolation.expressions[0].value).toEqual('john');
+	it("template in template render parent", function () {
+		var t1 = createTemplateWithContent('{{name}}');
+		var t2 = createTemplateWithContent('{{name}}');
+		t1.scope.name = "john";
+		t2.scope.name = "david";
+		t1.render();
+		expect(t1.element.innerHTML).toEqual('john');
+		expect(t2.element.innerHTML).toEqual('{{name}}');
+	});
+
+	it("template in template render child", function () {
+		var t1 = createTemplateWithContent('{{name}}');
+		var t2 = createTemplateWithContent('{{name}}');
+		t1.scope.name = "john";
+		t2.scope.name = "david";
+		t2.render();
+		expect(t1.element.innerHTML).toEqual('{{name}}');
+		expect(t2.element.innerHTML).toEqual('david');
+	});
+
+	it("template in template render both", function () {
+		var t1 = createTemplateWithContent('{{name}}');
+		var t2 = createTemplateWithContent('{{name}}');
+		t1.scope.name = "john";
+		t2.scope.name = "david";
+		t1.render();
+		t2.render();
+		expect(t1.element.innerHTML).toEqual('john');
+		expect(t2.element.innerHTML).toEqual('david');
+	});
+
+	it("render all", function () {
+		var t1 = createTemplateWithContent('{{name}}');
+		var t2 = createTemplateWithContent('{{name}}');
+		t1.scope.name = "john";
+		t2.scope.name = "david";
+		soma.template.renderAll();
+		expect(t1.element.innerHTML).toEqual('john');
+		expect(t2.element.innerHTML).toEqual('david');
 	});
 
 });

@@ -60,31 +60,34 @@ function getValue(scope, pattern, pathString, accessor, params, isFunc, paramsFo
 	else paramsValues = paramsFound;
 	// find scope
 	var scopeTarget = getScopeFromPattern(scope, pattern);
+	if (!scopeTarget) return undefined;
 	// search object
 	var pathParts = pathString.split('.');
 	var path = scopeTarget;
 	if (pathParts[0] !== "") {
 		var i = -1, l = pathParts.length;
 		while (++i < l) {
+			path = path[pathParts[i]];
 			if (!path) {
 				if (scopeTarget._parent) return getValue(scopeTarget._parent, pattern, pathString, accessor, params, isFunc, paramsValues);
 				else return undefined;
 			}
-			path = path[pathParts[i]];
 		}
 	}
-	if (!isFunc && path) {
-		// not a function
+	if (!isFunc) {
+		// pattern is a property
 		if (!isDefined(path[accessor]) && scopeTarget._parent) return getValue(scopeTarget._parent, pattern, pathString, accessor, params, isFunc, paramsValues);
 		else return path[accessor];
 	}
 	else {
-		if ( (!isDefined(path) || !isDefined(path[accessor])) && scopeTarget._parent) {
+		// pattern is a function
+		if (!isDefined(path[accessor])) {
 			// no path found, search in parent
-			return getValue(scopeTarget._parent, pattern, pathString, accessor, params, isFunc, paramsValues);
+			if (scopeTarget._parent) return getValue(scopeTarget._parent, pattern, pathString, accessor, params, isFunc, paramsValues);
+			else return undefined;
 		}
 		if (!isFunction(path[accessor])) {
-			// not a function
+			// value is not a function
 			if (scopeTarget._parent) return getValue(scopeTarget._parent, pattern, pathString, accessor, params, isFunc, paramsValues);
 			else return undefined;
 		}
