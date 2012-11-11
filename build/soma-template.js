@@ -937,6 +937,8 @@ function createTemplate(source, target) {
 	// existing template
 	if (getTemplate(element)) {
 		getTemplate(element).dispose();
+		templates.remove(element);
+		console.log(getTemplate(element));
 	}
 	// create template
 	var template = new Template(element);
@@ -963,5 +965,18 @@ tokens.end(tokenEnd);
 soma.template.create = createTemplate;
 soma.template.get = getTemplate;
 soma.template.renderAll = renderAllTemplates;
+
+// register for AMD module
+if (typeof define === 'function' && define.amd) {
+	define("soma-template", soma.template);
+}
+
+// export for node.js
+if (typeof exports !== 'undefined') {
+	if (typeof module !== 'undefined' && module.exports) {
+		exports = module.exports = soma.template;
+	}
+	exports = soma.template;
+}
 
 })(this['soma'] = this['soma'] || {});

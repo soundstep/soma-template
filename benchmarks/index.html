@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+<div id="ct-soma-template">{{content.path.value}}</div>
+
+<div id="ct-handlebars"></div>
+<script id="entry-template" type="text/x-handlebars-template">
+	{{content.path.value}}
+</script>
+
+<div id="report"></div>
+
+<script type="text/javascript" src="../build/soma-template.js"></script>
+<script type="text/javascript" src="js/handlebars.js"></script>
+<script type="text/javascript" src="js/benchmarks.js"></script>
+
+<script type="text/javascript">
+
+var report = document.getElementById('report');
+
+var ctSomaTemplate = document.getElementById('ct-soma-template');
+var tpl = soma.template.create(ctSomaTemplate);
+tpl.scope.content = {
+	path: {
+		value: 0
+	}
+};
+
+var ctHandlebars = document.getElementById('ct-handlebars');
+var source = document.getElementById('entry-template').innerHTML;
+var template = Handlebars.compile(source);
+var handlebarsData = {
+	content: {
+		path: {
+			value: 0
+		}
+	}
+};
+
+var count = 0;
+
+// benchmarks
+
+Benchmark.prototype.setup = function() {
+	count = 0;
+};
+
+var suite = new Benchmark.Suite;
+
+// add tests
+suite.add('[soma-template] render text node', function() {
+	tpl.scope.content.path.value = "new content" + count++;
+	tpl.render();
+})
+.add('[handlebars] render text node', function() {
+	handlebarsData.content.path.value = "new content" + count++;
+	ctHandlebars.innerHTML = template(handlebarsData);
+})
+.add('[soma-template] render unchanged text node', function() {
+	tpl.scope.content.path.value = "new content" + count;
+	tpl.render();
+})
+.add('[handlebars] render unchanged text node', function() {
+	handlebarsData.content.path.value = "new content" + count;
+	ctHandlebars.innerHTML = template(handlebarsData);
+})
+// add listeners
+.on('cycle', function(event) {
+	report.innerHTML += String(event.target) + '<br/>'
+	//console.log(String(event.target));
+})
+.on('complete', function() {
+	report.innerHTML += 'Fastest is ' + this.filter('fastest').pluck('name') + '<br/>'
+//	console.log('Fastest is ' + this.filter('fastest').pluck('name'));
+})
+// run async
+.run({ 'async': true });
+
+</script>
+
+</body>
+</html>
