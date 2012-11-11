@@ -104,6 +104,111 @@ describe("api - special attributes", function () {
 		expect(ct.firstChild.style.display).toEqual('block');
 	});
 
+	it("data-checked no value", function () {
+		ct.innerHTML = '<input type="checkbox" data-checked/>';
+		tpl.compile();
+		tpl.render();
+		expect(ct.firstChild.getAttribute('checked')).toEqual('checked');
+	});
+
+	it("data-checked true", function () {
+		ct.innerHTML = '<input type="checkbox" data-checked="true"/>';
+		tpl.compile();
+		tpl.render();
+		expect(ct.firstChild.getAttribute('checked')).toEqual('checked');
+	});
+
+	it("data-checked false", function () {
+		ct.innerHTML = '<input type="checkbox" data-checked="false"/>';
+		tpl.compile();
+		tpl.render();
+		expect(ct.firstChild.getAttribute('checked')).toBeNull();
+	});
+
+	it("data-disabled no value", function () {
+		ct.innerHTML = '<input type="checkbox" data-disabled/>';
+		tpl.compile();
+		tpl.render();
+		expect(ct.firstChild.getAttribute('disabled')).toEqual('disabled');
+	});
+
+	it("data-disabled true", function () {
+		ct.innerHTML = '<input type="checkbox" data-disabled="true"/>';
+		tpl.compile();
+		tpl.render();
+		expect(ct.firstChild.getAttribute('disabled')).toEqual('disabled');
+	});
+
+	it("data-disabled false", function () {
+		ct.innerHTML = '<input type="checkbox" data-disabled="false"/>';
+		tpl.compile();
+		tpl.render();
+		expect(ct.firstChild.getAttribute('disabled')).toBeNull();
+	});
+
+	it("data-multiple no value", function () {
+		ct.innerHTML = '<input type="checkbox" data-multiple/>';
+		tpl.compile();
+		tpl.render();
+		expect(ct.firstChild.getAttribute('multiple')).toEqual('multiple');
+	});
+
+	it("data-multiple true", function () {
+		ct.innerHTML = '<input type="checkbox" data-multiple="true"/>';
+		tpl.compile();
+		tpl.render();
+		expect(ct.firstChild.getAttribute('multiple')).toEqual('multiple');
+	});
+
+	it("data-multiple false", function () {
+		ct.innerHTML = '<input type="checkbox" data-multiple="false"/>';
+		tpl.compile();
+		tpl.render();
+		expect(ct.firstChild.getAttribute('multiple')).toBeNull();
+	});
+
+	it("data-readonly no value", function () {
+		ct.innerHTML = '<input type="checkbox" data-readonly/>';
+		tpl.compile();
+		tpl.render();
+		expect(ct.firstChild.getAttribute('readonly')).toEqual('readonly');
+	});
+
+	it("data-readonly true", function () {
+		ct.innerHTML = '<input type="checkbox" data-readonly="true"/>';
+		tpl.compile();
+		tpl.render();
+		expect(ct.firstChild.getAttribute('readonly')).toEqual('readonly');
+	});
+
+	it("data-readonly false", function () {
+		ct.innerHTML = '<input type="checkbox" data-readonly="false"/>';
+		tpl.compile();
+		tpl.render();
+		expect(ct.firstChild.getAttribute('readonly')).toBeNull();
+	});
+
+	it("data-selected no value", function () {
+		ct.innerHTML = '<input type="checkbox" data-selected/>';
+		tpl.compile();
+		tpl.render();
+		expect(ct.firstChild.getAttribute('selected')).toEqual('selected');
+	});
+
+	it("data-selected true", function () {
+		ct.innerHTML = '<input type="checkbox" data-selected="true"/>';
+		tpl.compile();
+		tpl.render();
+		expect(ct.firstChild.getAttribute('selected')).toEqual('selected');
+	});
+
+	it("data-selected false", function () {
+		ct.innerHTML = '<input type="checkbox" data-selected="false"/>';
+		tpl.compile();
+		tpl.render();
+		expect(ct.firstChild.getAttribute('selected')).toBeNull();
+	});
+
 	it("data-cloak", function () {
 		ct.innerHTML = '<div class="data-cloak">{{name}}</span>';
 		tpl.compile();

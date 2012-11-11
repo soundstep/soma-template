@@ -71,7 +71,14 @@
 	<p>text function + string params {{functions.fn2("hello", "world")}}</p>
 	<p>do a interpolation skip here: <span data-skip>{{test1}}</span> but not here: {{test1}}</p>
 	checked attribute on an input from boolean: <input type="checkbox" {{checked}}><br/>
-	checked attribute on an input from function: <input type="checkbox" {{functions.checked()}}>
+	checked attribute on an input from function: <input type="checkbox" {{functions.checked()}}><br/>
+	data-checked attribute: <input type="checkbox" data-checked="{{checkedBool}}"><br/>
+	data-disabled attribute: <button data-disabled="{{checkedBool}}">button</button><br/>
+	data-multiple attribute: <select data-multiple="{{checkedBool}}"><option>1</option><option>2</option><option>3</option></select><br/>
+	data-readonly attribute: <input type="text" data-readonly="{{checkedBool}}" value="{{checkedBool}}"><br/>
+	data-selected attribute: <select multiple="multiple"><option>1</option><option data-selected="{{checkedBool}}">2</option><option>3</option></select><br/>
+	data-selected attribute: <select><option>1</option><option data-selected="{{checkedBool}}">2</option><option>3</option></select><br/>
+	data-selected attribute: <select><option>1</option><option selected="{{checkedBool}}">2</option><option>3</option></select><br/>
 	<p><img data-src="{{img}}" width="60" height="60"></p>
 	<p data-hide="{{hideValue}}">HIDE ON VALUE, THIS SHOULD NOT APPEAR!!</p>
 	<p data-hide>HIDE ON VALUE, THIS SHOULD NOT APPEAR!!</p>
@@ -193,6 +200,7 @@
 			{val:"val B", hide: true},
 			{val:"val C", hide: false}
 		],
+		checkedBool: true,
 		hideValue: true,
 		showValue: true,
 		link: "www.google.com",
@@ -310,6 +318,7 @@
 			{val:"val 2", hide: false},
 			{val:"val 3", hide: true}
 		],
+		checkedBool: false,
 		hideValue: true,
 		showValue: true,
 		link: "http://www.google.com/",

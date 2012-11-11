@@ -141,6 +141,11 @@ function getNodeFromElement(element, scope, isRepeaterDescendant) {
 					name === settings.attributes.show ||
 					name === settings.attributes.hide ||
 					name === settings.attributes.href ||
+					name === settings.attributes.checked ||
+					name === settings.attributes.disabled ||
+					name === settings.attributes.multiple ||
+					name === settings.attributes.readonly ||
+					name === settings.attributes.selected ||
 					value.indexOf(settings.attributes.cloak) !== -1
 				) {
 				attributes.push(new Attribute(name, value, node));

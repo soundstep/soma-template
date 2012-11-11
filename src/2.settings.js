@@ -36,7 +36,12 @@ var attributes = settings.attributes = {
 	href: "data-href",
 	show: "data-show",
 	hide: "data-hide",
-	cloak: "data-cloak"
+	cloak: "data-cloak",
+	checked: "data-checked",
+	disabled: "data-disabled",
+	multiple: "data-multiple",
+	readonly: "data-readonly",
+	selected: "data-selected"
 };
 
 var vars = settings.vars = {

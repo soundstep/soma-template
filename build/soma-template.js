@@ -40,7 +40,12 @@ var attributes = settings.attributes = {
 	href: "data-href",
 	show: "data-show",
 	hide: "data-hide",
-	cloak: "data-cloak"
+	cloak: "data-cloak",
+	checked: "data-checked",
+	disabled: "data-disabled",
+	multiple: "data-multiple",
+	readonly: "data-readonly",
+	selected: "data-selected"
 };
 
 var vars = settings.vars = {
@@ -83,6 +88,9 @@ function isFunction(value) {
 }
 function isDefined(value) {
 	return value !== null && value !== undefined;
+}
+function isAttributeDefined(value) {
+	return (value === "" || value === true || value === "true" || !isDefined(value));
 }
 function isExpression(value) {
 	return value && isFunction(value.toString) && value.toString() === '[object Expression]';
@@ -338,6 +346,11 @@ function getNodeFromElement(element, scope, isRepeaterDescendant) {
 					name === settings.attributes.show ||
 					name === settings.attributes.hide ||
 					name === settings.attributes.href ||
+					name === settings.attributes.checked ||
+					name === settings.attributes.disabled ||
+					name === settings.attributes.multiple ||
+					name === settings.attributes.readonly ||
+					name === settings.attributes.selected ||
 					value.indexOf(settings.attributes.cloak) !== -1
 				) {
 				attributes.push(new Attribute(name, value, node));
@@ -718,11 +731,31 @@ Attribute.prototype = {
 		}
 		// hide
 		if (this.name === attributes.hide) {
-			element.style.display = (!isDefined(this.value) || this.value === "" || this.value === true || this.value === "true") ? "none" : "block";
+			element.style.display = isAttributeDefined(this.value) ? "none" : "block";
 		}
 		// show
 		if (this.name === attributes.show) {
-			element.style.display = (!isDefined(this.value) || this.value === "" || this.value === true || this.value === "true") ? "block" : "none";
+			element.style.display = isAttributeDefined(this.value) ? "block" : "none";
+		}
+		// checked
+		if (this.name === attributes.checked) {
+			renderSpecialAttribute(this.name, this.value, 'checked');
+		}
+		// disabled
+		if (this.name === attributes.disabled) {
+			renderSpecialAttribute(this.name, this.value, 'disabled');
+		}
+		// multiple
+		if (this.name === attributes.multiple) {
+			renderSpecialAttribute(this.name, this.value, 'multiple');
+		}
+		// readonly
+		if (this.name === attributes.readonly) {
+			renderSpecialAttribute(this.name, this.value, 'readonly');
+		}
+		// selected
+		if (this.name === attributes.selected) {
+			renderSpecialAttribute(this.name, this.value, 'selected');
 		}
 		// normal attribute
 		function renderAttribute(name, value) {
@@ -731,6 +764,15 @@ Attribute.prototype = {
 			}
 			else {
 				element.setAttribute(name, value);
+			}
+		}
+		// special attribute
+		function renderSpecialAttribute(name, value, attrName) {
+			if (isAttributeDefined(value)) {
+				element.setAttribute(attrName, attrName);
+			}
+			else {
+				element.removeAttribute(attrName);
 			}
 		}
 		// src attribute

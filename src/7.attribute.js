@@ -50,11 +50,31 @@ Attribute.prototype = {
 		}
 		// hide
 		if (this.name === attributes.hide) {
-			element.style.display = (!isDefined(this.value) || this.value === "" || this.value === true || this.value === "true") ? "none" : "block";
+			element.style.display = isAttributeDefined(this.value) ? "none" : "block";
 		}
 		// show
 		if (this.name === attributes.show) {
-			element.style.display = (!isDefined(this.value) || this.value === "" || this.value === true || this.value === "true") ? "block" : "none";
+			element.style.display = isAttributeDefined(this.value) ? "block" : "none";
+		}
+		// checked
+		if (this.name === attributes.checked) {
+			renderSpecialAttribute(this.name, this.value, 'checked');
+		}
+		// disabled
+		if (this.name === attributes.disabled) {
+			renderSpecialAttribute(this.name, this.value, 'disabled');
+		}
+		// multiple
+		if (this.name === attributes.multiple) {
+			renderSpecialAttribute(this.name, this.value, 'multiple');
+		}
+		// readonly
+		if (this.name === attributes.readonly) {
+			renderSpecialAttribute(this.name, this.value, 'readonly');
+		}
+		// selected
+		if (this.name === attributes.selected) {
+			renderSpecialAttribute(this.name, this.value, 'selected');
 		}
 		// normal attribute
 		function renderAttribute(name, value) {
@@ -63,6 +83,15 @@ Attribute.prototype = {
 			}
 			else {
 				element.setAttribute(name, value);
+			}
+		}
+		// special attribute
+		function renderSpecialAttribute(name, value, attrName) {
+			if (isAttributeDefined(value)) {
+				element.setAttribute(attrName, attrName);
+			}
+			else {
+				element.removeAttribute(attrName);
 			}
 		}
 		// src attribute

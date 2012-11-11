@@ -19,6 +19,9 @@ function isFunction(value) {
 function isDefined(value) {
 	return value !== null && value !== undefined;
 }
+function isAttributeDefined(value) {
+	return (value === "" || value === true || value === "true" || !isDefined(value));
+}
 function isExpression(value) {
 	return value && isFunction(value.toString) && value.toString() === '[object Expression]';
 }

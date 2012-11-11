@@ -35,6 +35,11 @@ describe("api - settings", function () {
 		expect(settings.attributes.show).toEqual('data-show');
 		expect(settings.attributes.hide).toEqual('data-hide');
 		expect(settings.attributes.cloak).toEqual('data-cloak');
+		expect(settings.attributes.checked).toEqual('data-checked');
+		expect(settings.attributes.disabled).toEqual('data-disabled');
+		expect(settings.attributes.multiple).toEqual('data-multiple');
+		expect(settings.attributes.readonly).toEqual('data-readonly');
+		expect(settings.attributes.selected).toEqual('data-selected');
 	});
 
 	it("attributes vars", function () {
@@ -94,7 +99,6 @@ describe("api - settings", function () {
 	it("change show", function () {
 		settings.attributes.show = 'custom-show';
 		var t1 = createTemplateWithContent('<span custom-show="true"></span>');
-		t1.scope.name = 'soundstep.com';
 		t1.render();
 		expect(t1.element.firstChild.style.display).toEqual('block');
 		settings.attributes.show = 'data-show';
@@ -103,7 +107,6 @@ describe("api - settings", function () {
 	it("change hide", function () {
 		settings.attributes.hide = 'custom-hide';
 		var t1 = createTemplateWithContent('<span custom-hide="true"></span>');
-		t1.scope.name = 'soundstep.com';
 		t1.render();
 		expect(t1.element.firstChild.style.display).toEqual('none');
 		settings.attributes.hide = 'data-hide';
@@ -112,10 +115,49 @@ describe("api - settings", function () {
 	it("change cloak", function () {
 		settings.attributes.cloak = 'custom-cloak';
 		var t1 = createTemplateWithContent('<span class="custom-cloak"></span>');
-		t1.scope.name = 'soundstep.com';
 		t1.render();
 		expect(t1.element.firstChild.getAttribute('class')).not.toEqual('custom-cloak');
 		settings.attributes.cloak = 'data-cloak';
+	});
+
+	it("change checked", function () {
+		settings.attributes.checked = 'custom-checked';
+		var t1 = createTemplateWithContent('<span custom-checked></span>');
+		t1.render();
+		expect(t1.element.firstChild.getAttribute('checked')).toEqual('checked');
+		settings.attributes.checked = 'data-checked';
+	});
+
+	it("change disabled", function () {
+		settings.attributes.disabled = 'custom-disabled';
+		var t1 = createTemplateWithContent('<span custom-disabled></span>');
+		t1.render();
+		expect(t1.element.firstChild.getAttribute('disabled')).toEqual('disabled');
+		settings.attributes.disabled = 'data-disabled';
+	});
+
+	it("change multiple", function () {
+		settings.attributes.multiple = 'custom-multiple';
+		var t1 = createTemplateWithContent('<span custom-multiple></span>');
+		t1.render();
+		expect(t1.element.firstChild.getAttribute('multiple')).toEqual('multiple');
+		settings.attributes.multiple = 'data-multiple';
+	});
+
+	it("change readonly", function () {
+		settings.attributes.readonly = 'custom-readonly';
+		var t1 = createTemplateWithContent('<span custom-readonly></span>');
+		t1.render();
+		expect(t1.element.firstChild.getAttribute('readonly')).toEqual('readonly');
+		settings.attributes.readonly = 'data-readonly';
+	});
+
+	it("change selected", function () {
+		settings.attributes.selected = 'custom-selected';
+		var t1 = createTemplateWithContent('<span custom-selected></span>');
+		t1.render();
+		expect(t1.element.firstChild.getAttribute('selected')).toEqual('selected');
+		settings.attributes.selected = 'data-selected';
 	});
 
 	it("change repeat", function () {
@@ -138,7 +180,7 @@ describe("api - settings", function () {
 		settings.vars.index = '$index';
 	});
 
-	it("change index", function () {
+	it("change key", function () {
 		settings.vars.key = 'new-key';
 		var t1 = createTemplateWithContent('<span data-repeat="item in items">{{new-key}}</span>');
 		t1.scope.items = {item1:1, item2:2, item3:3};

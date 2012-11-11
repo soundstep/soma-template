@@ -58,6 +58,16 @@ describe("internal - helpers", function () {
 		expect(isDefined()).toBeFalsy();
 	});
 
+	it("is attribute defined", function () {
+		expect(isAttributeDefined('')).toBeTruthy();
+		expect(isAttributeDefined(true)).toBeTruthy();
+		expect(isAttributeDefined('true')).toBeTruthy();
+		expect(isAttributeDefined(false)).toBeFalsy();
+		expect(isAttributeDefined('false')).toBeFalsy();
+		expect(isAttributeDefined(undefined)).toBeTruthy();
+		expect(isAttributeDefined(null)).toBeTruthy();
+	});
+
 	it("is expression", function () {
 		expect(isExpression(new Expression())).toBeTruthy();
 		expect(isExpression({})).toBeFalsy();
