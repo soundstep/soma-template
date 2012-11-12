@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>soma-template | sheet</title>
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" href="styles/styles.css">
+</head>
+<body>
+
+<div class="main">
+	<div class="buttons"></div>
+</div>
+
+<div data-id="text-interpolation" class="container bs-docs-example">
+	<div class="title">Text node</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<!--<div class="label label-info">Result</div>-->
+	<div class="tpl">Simple interpolation: {{greeting}}!</div>
+</div>
+
+<div data-id="attribute-value-interpolation" class="container bs-docs-example">
+	<div class="title">Attribute value</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl"><p class="bold {{color}}">Colored text</p></div>
+</div>
+
+<div data-id="attribute-name-interpolation" class="container bs-docs-example">
+	<div class="title">Attribute name</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl"><p {{class}}="color1">Render attribute class</p></div>
+</div>
+
+<div data-id="anything-anywhere" class="container bs-docs-example">
+	<div class="title">Anything anywhere</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl"><p cla{{name}}="{{value}}lor1">Ren{{text1}}er any{{text2}}ng an{{text3}}re</p></div>
+</div>
+
+<div data-id="text-interpolation-function" class="container bs-docs-example">
+	<div class="title">Interpolation with function</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl">Interpolation with function: {{greet()}}!</div>
+</div>
+
+<div data-id="text-interpolation-function-param" class="container bs-docs-example">
+	<div class="title">Interpolation with function and parameters</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl">Interpolation with function and params: {{greet('Hello', who)}}!</div>
+</div>
+
+<div data-id="text-interpolation-path" class="container bs-docs-example">
+	<div class="title">Path</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl">Access data with a dot notation: {{path.greet}} {{path.name(path.who)}}!</div>
+</div>
+
+<div data-id="data-repeat-array" class="container bs-docs-example">
+	<div class="title">Repeater on array</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl">
+	<div data-repeat="item in items">
+		<div>[{{$index}}] {{greet}} {{item.name}}!</div>
+	</div>
+</div>
+</div>
+
+<div data-id="data-repeat-object" class="container bs-docs-example">
+	<div class="title">Repeater on object</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl">
+	<div data-repeat="item in items">
+		<div>[{{$key}}] {{greet}} {{item}}!</div>
+	</div>
+</div>
+</div>
+
+<div data-id="data-repeat-parent-scope" class="container bs-docs-example">
+	<div class="title">Multiple repeaters and parent scope</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl">
+		<div data-repeat="section in sections">
+			<p>[{{$index}}] {{section.name}}</p>
+			<ul>
+				<li data-repeat="item in section.items">[{{../$index}}] [{{$index}}] {{item}} ({{../section.name}})</li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+<div data-id="watch-token" class="container-watch-token bs-docs-example">
+	<div class="title">Watch token</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div><pre class="js-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl">Watch my name: {{name}}</div>
+</div>
+
+<div data-id="watch-element" class="container-watch-element bs-docs-example">
+	<div class="title">Watch element</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div><pre class="js-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl"><p id="elementToWatch">Watch my name: {{name}}</p></div>
+</div>
+
+<div data-id="data-skip" class="container bs-docs-example">
+	<div class="title">Skip from an element</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl">Show my name: {{name}}, but not my age: <span data-skip="true">{{age}}</span></div>
+</div>
+
+<div data-id="data-src" class="container bs-docs-example">
+	<div class="title">Image source</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl"><img data-src="images/{{image}}"></div>
+</div>
+
+<div data-id="data-href" class="container bs-docs-example">
+	<div class="title">Link</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl"><a data-href="http://{{link}}" target="_blank">{{link}}</a></div>
+</div>
+
+<div data-id="data-cloak" class="container bs-docs-example">
+	<div class="title">Hide token before rendering</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div><pre class="prettyprint">.data-cloak {
+	display: none;
+}
+	</pre></div>
+	<div class="buttons"></div>
+	<div class="tpl">This token is shown: {{name}}, but not this one: <span class="data-cloak">{{age}}</span></div>
+</div>
+
+<div data-id="data-show-hide" class="container bs-docs-example">
+	<div class="title">Show and hide element</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl">Show and hide:
+		<div data-show="{{displayed}}">I was on screen!</div>
+		<div data-hide="{{displayed}}">And now it is me!</div>
+	</div>
+</div>
+
+<div data-id="data-checked" class="container bs-docs-example">
+	<div class="title">Checkbox checked</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl"><label class="checkbox"><input type="checkbox" data-checked="{{checked}}"> Checked or unchecked?</label></div>
+</div>
+
+<div data-id="data-disabled" class="container bs-docs-example">
+	<div class="title">Disable element</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl"><input type="text" data-disabled="{{disabled}}" value="Disable me"></div>
+</div>
+
+<div data-id="data-multiple" class="container bs-docs-example">
+	<div class="title">Simple or multiple select box</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl">
+	<select data-multiple="{{multiple}}">
+		<option>United Kingdom</option>
+		<option>France</option>
+		<option>Germany</option>
+	</select>
+</div>
+</div>
+
+<div data-id="data-readonly" class="container bs-docs-example">
+	<div class="title">Read only element</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl"><input type="text" data-readonly="{{readonly}}" value="Read only?"></div>
+</div>
+
+<script type="text/javascript" src="../../build/soma-template.js"></script>
+<script type="text/javascript" src="js/libs/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="js/libs/soma-v2.0.0.min.js"></script>
+<script type="text/javascript" src="js/app/dataset.js"></script>
+<script type="text/javascript" src="js/app.js"></script>
+
+</body>
+</html>

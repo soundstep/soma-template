@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Jasmine Spec Runner</title>
+	<link rel="stylesheet" type="text/css" href="lib/jasmine-1.2.0/jasmine.css">
+</head>
+
+<body>
+
+<script type="text/javascript" src="lib/jasmine-1.2.0/jasmine.js"></script>
+<script type="text/javascript" src="lib/jasmine-1.2.0/jasmine-html.js"></script>
+<script type="text/javascript" src="lib/jasmine-yeti-adaptor.js"></script>
+<script type="text/javascript" src="lib/jquery-1.8.2.min.js"></script>
+
+<script type="text/javascript" src="helpers/dom.js"></script>
+
+<!-- include spec files here... -->
+<script type="text/javascript" src="spec/api/template.js"></script>
+<script type="text/javascript" src="spec/api/watchers.js"></script>
+<script type="text/javascript" src="spec/api/settings.js"></script>
+<script type="text/javascript" src="spec/api/scope.js"></script>
+<script type="text/javascript" src="spec/api/node.js"></script>
+<script type="text/javascript" src="spec/api/attribute.js"></script>
+<script type="text/javascript" src="spec/api/interpolation.js"></script>
+<script type="text/javascript" src="spec/api/expression.js"></script>
+<script type="text/javascript" src="spec/api/special-attributes.js"></script>
+<script type="text/javascript" src="spec/api/variables.js"></script>
+<script type="text/javascript" src="spec/api/rendering.js"></script>
+
+<!-- include source files here... -->
+<script type="text/javascript" src="../build/soma-template.js"></script>
+
+<script type="text/javascript">
+	(function () {
+		var jasmineEnv = jasmine.getEnv();
+		jasmineEnv.updateInterval = 1000;
+
+		var htmlReporter = new jasmine.HtmlReporter();
+
+		jasmineEnv.addReporter(htmlReporter);
+
+		jasmineEnv.specFilter = function (spec) {
+			return htmlReporter.specFilter(spec);
+		};
+
+		var currentWindowOnload = window.onload;
+
+		window.onload = function () {
+			if (currentWindowOnload) {
+				currentWindowOnload();
+			}
+			execJasmine();
+		};
+
+		function execJasmine() {
+			if (window.$yetify !== undefined) {
+				BUNYIP.hookup(jasmineEnv);
+			}
+			jasmineEnv.execute();
+		}
+
+	})();
+</script>
+
+</body>
+</html>
