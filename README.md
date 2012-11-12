@@ -1,6 +1,3 @@
-soma-template
-=============
-
 ## More info
 
 Please visit the [soma-template](http://soundstep.github.com/soma-template/) site.
