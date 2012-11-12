@@ -3,9 +3,19 @@
     var Application = soma.Application.extend({
 	    init: function() {
 		    this.injector.mapClass('dataset', ns.DataSet, true);
-		    var containers = this.mediators.create(ContainerMediator, $('.container'));
+		    var containers = this.createMediators();
 		    this.injector.mapValue('containers', containers);
 		    this.mediators.create(MainMediator, $('.main'));
+		    // watchers
+
+	    },
+	    createMediators: function() {
+		    var containers = this.mediators.create(ContainerMediator, $('.container'));
+		    var watchToken = this.mediators.create(ContainerMediatorWatchToken, $('.container-watch-token'));
+		    var watchElement = this.mediators.create(ContainerMediatorWatchElement, $('.container-watch-element'));
+		    containers = containers.concat(watchToken);
+		    containers = containers.concat(watchElement);
+		    return containers;
 	    }
     });
 
@@ -61,13 +71,14 @@
 		var renderButton = $('.render', scope);
 		var dataButton = $('.data', scope);
 		var resetButton = $('.reset', scope);
-		var template = soma.template.create(tpl[0]);
+
+		this.template = soma.template.create(tpl[0]);
 
 		var count = 0;
 		tplPrint.html(tplOuterPrint);
 		// print default data
 		var data = dataset.getData(id, 0);
-		template.update(data);
+		this.template.update(data);
 		dataPrint.html(stringify(data));
 
 		renderButton.click(function() {
@@ -84,7 +95,7 @@
 
 		this.render = function() {
 			var data = dataset.getData(id, count);
-			template.render(data);
+			this.template.render(data);
 			// data print
 			dataPrint.html(stringify(data));
 			dataPrint.show();
@@ -97,7 +108,7 @@
 		this.reset = function() {
 			count = 0;
 			tpl.html(tplCache);
-			template.compile();
+			this.template.compile();
 			// buttons
 			renderButton.show();
 			dataButton.hide();
@@ -108,10 +119,41 @@
 			var data = dataset.getData(id, ++count % 2);
 			// data print
 			dataPrint.html(stringify(data));
-			template.render(data);
+			this.template.render(data);
 		};
 
 	};
+
+	var ContainerMediatorWatchToken = function(scope, dataset) {
+		ContainerMediator.call(this, scope, dataset);
+
+		var jsStr = "template.watch('name', function(oldValue, newValue) {\n";
+		jsStr += '    return newValue + " has been watched!";\n';
+		jsStr += '});';
+		$('.js-print', scope).html(jsStr);
+
+		this.template.watch('name', function(oldValue, newValue) {
+			return newValue + " has been watched!";
+		});
+
+	};
+	soma.inherit(ContainerMediator, ContainerMediatorWatchToken.prototype);
+
+	var ContainerMediatorWatchElement = function(scope, dataset) {
+		ContainerMediator.call(this, scope, dataset);
+
+		var jsStr = "var element = document.getElementById('elementToWatch');\n";
+		jsStr += "template.watch(element, function(oldValue, newValue) {\n";
+		jsStr += '    return newValue + " has been watched!";\n';
+		jsStr += '});';
+		$('.js-print', scope).html(jsStr);
+
+		this.template.watch(document.getElementById('elementToWatch'), function(oldValue, newValue) {
+			return newValue + " has been watched!";
+		});
+
+	};
+	soma.inherit(ContainerMediator, ContainerMediatorWatchElement.prototype);
 
 	function stringify(data) {
 		if (!data) return "";
@@ -122,6 +164,7 @@
 		var regAngles = /(<)([^>]+)(>)/gm;
 		var regTokens = /(\{\{.+?\}\})/g
 		value = value.replace(regAngles, '&lt;$2&gt;');
+		value = value.replace(/\t/gm, '  ');
 		value = value.replace(regTokens, '<span class="text-info">$1</span>')
 		return value;
 	}

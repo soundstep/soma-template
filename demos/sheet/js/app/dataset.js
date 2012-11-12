@@ -56,6 +56,132 @@
     return greeting + ' ' + who;
   }
 				}
+		    ],
+		    'text-interpolation-path':[
+			    {
+				    path: {
+					    greet: 'Hello',
+					    who: 'soma-template',
+					    name: function (who) {
+      return ' ' + who;
+    }
+				    }
+			    },
+			    {
+				    path: {
+					    greet: 'Hello',
+					    who: 'world',
+					    name: function (who) {
+      return ' ' + who;
+    }
+				    }
+			    }
+		    ],
+		    'data-repeat-array': [
+			    {
+				    'greet': 'Hello',
+				    'items': [
+					    { 'name': 'John' },
+					    { 'name': 'David' },
+					    { 'name': 'Mike' }
+				    ]
+			    },
+			    {
+				    'greet': 'Hi',
+				    'items': [
+					    { 'name': 'Olivia' },
+					    { 'name': 'Emily' },
+					    { 'name': 'Helen' }
+				    ]
+			    }
+		    ],
+		    'data-repeat-object': [
+			    {
+				    'greet': 'Hello',
+				    'items': {
+					    'name1': 'John',
+					    'name2': 'David',
+					    'name3': 'Mike'
+				    }
+			    },
+			    {
+				    'greet': 'Hi',
+				    'items': {
+					    'name1': 'Olivia',
+					    'name2': 'Emily',
+					    'name3': 'Helen'
+				    }
+			    }
+		    ],
+		    'data-repeat-parent-scope': [
+			    {
+				    'sections': [
+					    {
+						    'name': 'Male',
+						    'items': [ 'John', 'David', 'Mike' ]
+					    },
+					    {
+						    'name': 'Female',
+						    'items': [ 'Olivia', 'Emily', 'Helen' ]
+					    }
+				    ]
+			    },
+			    {
+				    'sections': [
+					    {
+						    'name': 'Animal',
+						    'items': [ 'Dog', 'Cat', 'Mouse' ]
+					    },
+					    {
+						    'name': 'Bird',
+						    'items': [ 'Parrot', 'Pigeon', 'Eagle' ]
+					    }
+				    ]
+			    }
+		    ],
+		    'watch-token': [
+			    { 'name': 'John' },
+			    { 'name': 'David' }
+		    ],
+		    'watch-element': [
+			    { 'name': 'John' },
+			    { 'name': 'David' }
+		    ],
+		    'data-skip': [
+			    { 'name': 'John', 'age': 20 },
+			    { 'name': 'David', 'age': 30 }
+		    ],
+		    'data-src': [
+			    { 'image': 'image1.jpg' },
+			    { 'image': 'image2.jpg' }
+		    ],
+		    'data-href': [
+			    { 'link': 'www.soundstep.com' },
+			    { 'link': 'github.com/soundstep' }
+		    ],
+		    'data-cloak': [
+			    { 'name': 'John', 'age': 20 },
+			    { 'name': 'David', 'age': 30 }
+		    ],
+		    'data-show-hide': [
+			    { 'displayed': true },
+			    { 'displayed': false }
+		    ],
+		    'data-checked': [
+			    { 'checked': true },
+			    { 'checked': false }
+		    ],
+		    'data-disabled': [
+			    { 'disabled': true },
+			    { 'disabled': false }
+		    ],
+		    'data-multiple': [
+			    { 'multiple': true },
+			    { 'multiple': false }
+		    ],
+		    'data-readonly': [
+			    { 'readonly': true },
+			    { 'readonly': false }
 		    ]
 	    };
 
