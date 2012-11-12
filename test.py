@@ -1,8 +1,9 @@
-#!/usr/bin/python
-
 from pygments import highlight
-from pygments.lexers import PythonLexer
+from pygments.lexers import JavascriptLexer
 from pygments.formatters import HtmlFormatter
 
-code = 'print "Hello World"'
-print highlight(code, PythonLexer(), HtmlFormatter())
+code = 'function HelloWorld() {\n\
+	alert("hello");\n\
+}'
+
+print highlight(code, JavascriptLexer(), HtmlFormatter())
