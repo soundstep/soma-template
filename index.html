@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="chrome=1">
@@ -28,82 +28,30 @@
 
 	<section>
 
-		<h3>What is soma-template?</h3>
+		<h1>What is soma-template?</h1>
 		
 		<p>A web template engine is a solution that is used to process web templates and content to produce an HTML output.</p>
 		<p>While this is true for the most common web template engine, soma-template differs about the output process. soma-template will also produce an HTML output, but more precisely, will manipulate DOM nodes rather than producing a string that will be injected in the DOM.</p>
 		<p>This results in a workflow that stays close to a normal HTML development as the template can be directly part of the DOM itself.</p>
 		<p>soma-template is a lightweight library (4.7 KB). It is tested and works in all modern browsers and in Internet Explorer from version 7. Its performance will be directly related to the DOM manipulation performance of the browser itself. This is why today the library is very fast on <a href="https://www.google.com/intl/en/chrome/browser/" target="_blank">Google Chrome</a>, which I recommend.</p>
 
-		<h3>Inspiration</h3>
+		<h1>Inspiration</h1>
 
 		<p>The library probably wouldn't have been created without the fully featured framework developed by Google: <a href="http://angularjs.org/" target="_blank">AngularJS</a>. While the code itself has nothing to do with AngularJS, the concept has been greatly inspired by its template system. Not all the features have been implemented, for example there's no javascript parser built-in. The library has been kept to a minimum to do a single job: update the DOM with content.</p>
 		<p>The primary goal is to update the DOM with the native API, with a minimal destruction of the nodes. I also believe, as other developers, that DOM-based template engines are the future and will probably be one day be implemented in the browser itself. Google is probably working on that already as stated in this <a href="http://blog.stevensanderson.com/2012/08/01/rich-javascript-applications-the-seven-frameworks-throne-of-js-2012/">excellent post by Steven Sanderson</a>.</p>
 		<p>So, a big thanks to the AngularJS team for a great inspiration, at least to me.</p>
 
-		<h3>Installation</h3>
+		<h1>Installation</h1>
 
-		<p>A development or minified version of soma-template can be found in the <a href="https://github.com/soundstep/soma-template/tree/master/build">Github repo</a>, or you can also install it using npm:</p>
-		<div class="codehilite"><pre><span class="nx">$</span> <span class="nx">npm</span> <span class="nx">install</span> <span class="nx">soma</span><span class="o">-</span><span class="nx">template</span></pre></div>
-		<p>Add the script to your page:</p>
+		<h3>Browser application</h3>
+		<p>A development or minified version of soma-template can be found in the <a href="https://github.com/soundstep/soma-template/tree/master/build">Github repo</a>. You can also download a <a href="https://github.com/soundstep/soma-template/zipball/master">zip file</a> containing everything. Finally, add the script to your page:</p>
 		<div class="codehilite"><pre><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src=</span><span class="s">&quot;soma-template.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span></pre></div>
-		<p>Or include in a node.js application:</p>
-		var template = require('soma-template').
+		<h3>Node.js</h3>
+		<div class="codehilite"><pre><span class="nx">$</span> <span class="nx">npm</span> <span class="nx">install</span> <span class="nx">soma</span><span class="o">-</span><span class="nx">template</span></pre></div>
+		<div class="codehilite"><pre><span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;soma-template&quot;</span><span class="p">);</span></pre></div>
 
-
-
-		<p>While this is true for the most common web template engine, soma-template differs about the output process. soma-template will also produce an HTML output, but more precisely, will manipulate DOM nodes rather than producing a string that will be injected in the DOM.</p>
-		<p>This results in a workflow that stays close to a normal HTML development as the template can be directly part of the DOM itself.</p>
 	</section>
 
-	<section>
-		<h3>Welcome to GitHub Pages.</h3>
-
-		<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author
-			your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish.
-			After your page is generated, you can check out the new branch:</p>
-
-<pre><code>$ cd your_repo_root/repo_name
-	$ git fetch origin
-	$ git checkout gh-pages
-</code></pre>
-
-<pre><code>
-	function HelloThere() {
-	alert('ok');
-	}
-</code></pre>
-
-		<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-
-		<h3>Designer Templates</h3>
-
-		<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through
-			them. You can easily go back to edit your page before publishing. After publishing your page, you can
-			revisit the page generator and switch to another theme. Your Page content will be preserved if it remained
-			markdown format.</p>
-
-		<h3>Rather Drive Stick?</h3>
-
-		<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your
-			repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support
-			Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it
-			easy to create site-wide headers and footers without having to copy them across every page. It also offers
-			intelligent blog support and other advanced templating features.</p>
-
-		<h3>Authors and Contributors</h3>
-
-		<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate
-			a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub
-			Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>),
-			PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner
-			(<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-		<h3>Support or Contact</h3>
-
-		<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a>
-			or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-	</section>
 	<footer>
 		<p>This project is maintained by <a href="https://github.com/soundstep">soundstep</a></p>
 
