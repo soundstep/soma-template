@@ -39,31 +39,135 @@
 		<p>This results in a workflow that stays close to a normal HTML development as the template can be directly part of the DOM itself.</p>
 		<p>soma-template is a lightweight library (4.7 KB). It is tested and works in all modern browsers and in Internet Explorer from version 7. Its performance will be directly related to the DOM manipulation performance of the browser itself. This is why today the library is very fast on <a href="https://www.google.com/intl/en/chrome/browser/" target="_blank">Google Chrome</a>, which I recommend.</p>
 
+	</section>
+
+	<section>
+
 		<h1>Inspiration</h1>
 
 		<p>The library probably wouldn't have been created without the fully featured framework developed by Google: <a href="http://angularjs.org/" target="_blank">AngularJS</a>. While the code itself has nothing to do with AngularJS, the concept has been greatly inspired by its template system and some similarities can be found. The library has been kept to a minimum to do a single job: update the DOM with content.</p>
 		<p>The primary goal is to use the native DOM API, with a minimal destruction of the nodes. I also believe, as other developers, that DOM-based template engines are the future and will probably be one day be implemented in the browser itself. Google is probably working on that already as stated in this <a href="http://blog.stevensanderson.com/2012/08/01/rich-javascript-applications-the-seven-frameworks-throne-of-js-2012/">excellent post by Steven Sanderson</a>.</p>
 		<p>So, a big thanks to the AngularJS team for a great inspiration, at least to me.</p>
 
+	</section>
+
+	<section>
+
 		<h1>Installation</h1>
 
 		<h3>Browser application</h3>
-
-		<p>Download soma-template.js</p>
-
-		<p>
-			<a href="https://raw.github.com/soundstep/soma-template/master/build/soma-template.js" class="button icon tag" target="_blank">uncompressed</a>
-			<a href="https://raw.github.com/soundstep/soma-template/master/build/soma-template-v0.0.1.min.js" class="button icon tag" target="_blank">minified</a>
-		</p>
-
+		<p><a href="https://github.com/soundstep/soma-template/tree/master/build" class="button icon tag" target="_blank">download soma-template</a></p>
 		<p>You can also download a <a href="https://github.com/soundstep/soma-template/zipball/master">zip file</a> containing everything. Finally, add the script to your page:</p>
-
 		<div class="codehilite"><pre><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src=</span><span class="s">&quot;soma-template.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span></pre></div>
 		<h3>Node.js</h3>
 		<div class="codehilite"><pre><span class="nx">$</span> <span class="nx">npm</span> <span class="nx">install</span> <span class="nx">soma</span><span class="o">-</span><span class="nx">template</span></pre></div>
 		<div class="codehilite"><pre><span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;soma-template&quot;</span><span class="p">);</span></pre></div>
 
 	</section>
+
+	<section>
+
+		<h1>What is a template</h1>
+
+		<p>A template is a DOM element that contains tokens, and these tokens will be replaced by data provided to the template. Here is an example:</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;template&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;p&gt;</span>My name is <span class="cp">{{</span><span class="nv">name</span><span class="cp">}}</span>.<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span></pre></div>
+		<p>A token is an identifier surrounded by double curly braces (customizable). In this example "name" is the identifier and the template engine will try to find data to replace the token in the DOM element.</p>
+
+	</section>
+
+	<section>
+
+		<h1>Create a template instance</h1>
+
+		<p>There are three ways to create a template.</p>
+		<h3>Targeting a dom element</h3>
+		<p>This is the easiest way, and the one I recommend. The template is part of the DOM and a reference to it can be sent to the create function. A template instance will be returned, this is what will be used to render data inside it.</p>
+		<p>Note that the tokens will appear in the DOM but the template engine provide a way to easily hide elements (such as the template itself) until the template is rendered. See the class name "data-cloak".</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;&lt;p&gt;</span>My name is <span class="cp">{{</span><span class="nv">name</span><span class="cp">}}</span>.<span class="nt">&lt;/p&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+  <span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<h3>Providing a string</h3>
+		<p>Instead of using an element directly, you can also send a string that represents the template. The template engine will inject the string as a real element inside the DOM, this is why you also need to specify an element target when you use a string template.</p>
+		<p>Note that even if you create a template using a string, rendering data inside the template will be done in the same manner: using native DOM manipulation. More specifically, the DOM property <code>innerHTML</code> is never used to render a template in soma-template.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+  <span class="kd">var</span> <span class="nx">templateString</span> <span class="o">=</span> <span class="s1">&#39;&lt;p&gt;My name is {{name}}.&lt;/p&gt;&#39;<span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">templateString</span><span class="p">,</span> <span class="nx">target</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<h3>Using a script tag</h3>
+		<p>This method is similar to other template engines. Elements can be surrounded by script tags and to be injected in the DOM. There is no major advantage using this method as the template will inject it in the DOM as soon as you create the template instance. However this makes you able to compile it at a chosen moment and before that, it will never appear in the DOM.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;script </span><span class="na">id=</span><span class="s">&quot;source&quot;</span> <span class="na">type=</span><span class="s">&quot;text/x-soma-template&quot;</span><span class="nt">&gt;</span>
+  <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="cp">{{</span><span class="nv">name</span><span class="cp">}}</span><span class="o">&lt;/p&gt;</span>
+<span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+  <span class="kd">var</span> <span class="nx">source</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">source</span><span class="p">,</span> <span class="nx">target</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+
+		<h1>Render a template</h1>
+
+		<p>Rendering a template is the action of sending data inside the template so it can find information to replace the tokens.</p>
+		<p>This part will be much different than other template engines. The JSON format can of course still be used, but the way that it is sent to the template is different.</p>
+		<p>The template instance is providing a property called <code>scope</code>. There is at least one scope per template, which is nothing more than an object with some special properties for the template engine.</p>
+		<p>There can be more than one scope in some cases, see the special attribute <code>data-repeat</code>. The scope is the object that will be used to provide the data. In other words, the data is not sent to the template but assigned to the scope in a very easy and natural manner.</p>
+		<h3>Simple rendering</h3>
+		<p>Here is an example where a value is provided for an identifier named "name" (to keep the code short and simple, a <code>template</code> variable is used to refer to a template instance, see previous examples).</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;&lt;p&gt;</span>My name is <span class="cp">{{</span><span class="nv">name</span><span class="cp">}}</span> and my age is <span class="cp">{{</span><span class="nv">age</span><span class="cp">}}</span>.<span class="nt">&lt;/p&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;John&quot;</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">age</span> <span class="o">=</span> <span class="mi">21</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p>This will result in the following:</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;&lt;p&gt;</span>My name is John and my age is 21.<span class="nt">&lt;/p&gt;&lt;/div&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/c00Dvm?p=preview"class="button icon edit" target="_blank">try it yourself</a></p>
+		<h3>JSON rendering</h3>
+		<p>Another example with data received from an API call. The response can simply be assigned to a scope property and accessed using a dot notation.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;p&gt;</span><span class="cp">{{</span><span class="nv">tweets.results.length</span><span class="cp">}}</span> tweets retrieved
+  in <span class="cp">{{</span><span class="nv">tweets.completed_in</span><span class="cp">}}</span> seconds.<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">));</span>
+  <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+    <span class="nx">type</span><span class="o">:</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span>
+	<span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;http://search.twitter.com/search.json?q=template&#39;</span><span class="p">,</span>
+	  <span class="nx">dataType</span><span class="o">:</span><span class="s1">&#39;jsonp&#39;</span><span class="p">,</span>
+	  <span class="nx">success</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+	    <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">tweets</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+	    <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+	  <span class="p">}</span>
+  <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/kmuiYF?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+
+	</section>
+
+
+
+		<!-- jsdom
+		<div class="codehilite"><pre><span class="kd">var</span> <span class="nx">jsdom</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;jsdom&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./soma-template&quot;</span><span class="p">);</span>
+<span class="nx">jsdom</span><span class="p">.</span><span class="nx">env</span><span class="p">(</span>
+  <span class="s1">&#39;&lt;div id=&quot;ct&quot;&gt;My name is: {{name}}&lt;/div&gt;&#39;</span><span class="p">,</span>
+  <span class="p">[</span><span class="s2">&quot;http://code.jquery.com/jquery.js&quot;</span><span class="p">],</span>
+  <span class="kd">function</span><span class="p">(</span><span class="nx">errors</span><span class="p">,</span> <span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nb">document</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nb">document</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">tpl</span> <span class="o">=</span> <span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;ct&quot;</span><span class="p">));</span>
+    <span class="nx">tpl</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;john&quot;</span><span class="p">;</span>
+    <span class="nx">tpl</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;ct&quot;</span><span class="p">).</span><span class="nx">innerHTML</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">);</span>
+</pre></div>
+	-->
 
 	<footer>
 		<p>

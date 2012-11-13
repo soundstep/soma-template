@@ -9,7 +9,8 @@
 .codehilite .x { color: #d0d0d0 } /* Other */
 .codehilite .p { color: #d0d0d0 } /* Punctuation */
 .codehilite .cm { color: #999999; font-style: italic } /* Comment.Multiline */
-.codehilite .cp { color: #cd2828; font-weight: bold } /* Comment.Preproc */
+/*.codehilite .cp { color: #cd2828; font-weight: bold } *//* Comment.Preproc */
+.codehilite .cp { color: #40ffff; font-weight: bold } /* Comment.Preproc */
 .codehilite .c1 { color: #999999; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #e50808; font-weight: bold; background-color: #520000 } /* Comment.Special */
 .codehilite .gd { color: #d22323 } /* Generic.Deleted */

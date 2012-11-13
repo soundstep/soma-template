@@ -3,7 +3,7 @@
 body {
 	padding: 50px;
 	font: 14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-	color: #777;
+	color: #676767;
 	font-weight: 300;
 }
 
@@ -62,8 +62,11 @@ blockquote {
 
 code, pre {
 	font-family: Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal;
-	color: #333;
+	color: #FFF;
 	font-size: 12px;
+}
+code {
+	color: #646464;
 }
 
 pre {
@@ -222,6 +225,12 @@ a:hover {
 
 a:hover, a:active {
 	outline: 0; }
+
+.plunkr {
+	width: 100%;
+	height: 300px;
+	border: 1px solid #5299CC;
+}
 
 /*QUERY*/
 
