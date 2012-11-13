@@ -523,17 +523,11 @@ var Scope = function(data) {
 		return obj;
 	}
 	function createObject(data) {
-		var obj = {
-			_parent: null,
-			_children: [],
-			_createChild: function(data) {
-				return createChild.apply(obj, arguments);
-			}
-		};
-		if (data && isObject(data)) {
-			for (var i in data) {
-				obj[i] = data[i];
-			}
+		var obj = data || {};
+		obj._parent = null;
+		obj._children = [];
+		obj._createChild = function(data) {
+			return createChild.apply(obj, arguments);
 		}
 		return obj;
 	}
