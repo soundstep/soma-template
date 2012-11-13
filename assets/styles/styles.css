@@ -37,6 +37,9 @@ a {
 	font-weight: 400;
 	text-decoration: none;
 }
+a:hover {
+	color: #69CDFF;
+}
 
 a small {
 	font-size: 11px;
@@ -183,9 +186,44 @@ footer {
 	bottom: 50px;
 }
 
+/*CUSTOM*/
+
 .hidden {
 	display: none;
 }
+
+.button {
+	box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4);
+	-moz-box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4);
+	-webkit-box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4);
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none; }
+a,
+a:hover {
+	-webkit-transition: color 0.2s ease-out;
+	-moz-transition: color 0.2s ease-out;
+	-o-transition: color 0.2s ease-out;
+	transition: color 0.2s ease-out; }
+
+::-moz-selection {
+	background: #39c;
+	color: #fff;
+	text-shadow: none; }
+
+::selection {
+	background: #39c;
+	color: #fff;
+	text-shadow: none; }
+
+a:hover, a:active {
+	outline: 0; }
+
+/*QUERY*/
 
 @media print, screen and (max-width: 960px) {
 
@@ -247,7 +285,7 @@ footer {
 	}
 
 	header ul {
-		display: none;
+		/*display: none;*/
 	}
 }
 

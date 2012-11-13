@@ -35,7 +35,8 @@ describe("api - template", function () {
 
 	it("create template with source element and target element", function () {
 		var target = doc.createElement('div');
-		var source = doc.createElement('div');
+		var source = doc.createElement('script');
+		source.setAttribute('type', 'text/x-soma-template');
 		source.innerHTML = "{{name}}";
 		var template = soma.template.create(source, target);
 		expect(template).not.toBeNull();
@@ -50,6 +51,9 @@ describe("api - template", function () {
 		expect(template.scope).not.toBeNull();
 		expect(template.watchers).not.toBeNull();
 		expect(template.watchers).toBeDefined();
+		template.scope.name = 'john';
+		template.render();
+		expect(target.innerHTML).toEqual('john');
 	});
 
 	it("create template string", function () {
@@ -67,6 +71,9 @@ describe("api - template", function () {
 		expect(template.scope).not.toBeNull();
 		expect(template.watchers).not.toBeNull();
 		expect(template.watchers).toBeDefined();
+		template.scope.name = 'john';
+		template.render();
+		expect(ct.innerHTML).toEqual('john');
 	});
 
 	it("create template string no param throws error", function () {
@@ -146,11 +153,11 @@ describe("api - template", function () {
 		ct.innerHTML = '{{name}}';
 		tpl.compile(ct);
 		tpl.render({name:"john"});
-		expect(ct.innerHTML).toEqual('john');
 		expect(tpl.node.children[0].interpolation).not.toBeNull();
 		expect(tpl.node.children[0].interpolation.expressions.length).toEqual(1);
 		expect(tpl.node.children[0].interpolation.expressions[0].pattern).toEqual('name');
 		expect(tpl.node.children[0].interpolation.expressions[0].value).toEqual('john');
+		expect(ct.innerHTML).toEqual('john');
 	});
 
 	it("template in template render parent", function () {

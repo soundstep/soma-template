@@ -1,0 +1,17 @@
+{
+	"name":"soma-template-site",
+	"version":"0.0.1",
+	"description":"soma-template site",
+	"author":{
+		"name":"Romuald Quantin",
+		"email":"romu@soundstep.com"
+	},
+	"scripts": {
+		"preinstall": [
+			"sudo npm install -g grunt"
+		]
+	},
+	"dependencies": {
+		"grunt-shell": ">= 0.1.3"
+	}
+}
