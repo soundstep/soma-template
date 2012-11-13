@@ -139,7 +139,6 @@
   in <span class="cp">{{</span><span class="nv">tweets.completed_in</span><span class="cp">}}</span> seconds.<span class="nt">&lt;/p&gt;</span>
 <span class="nt">&lt;/div&gt;</span>
 <span class="nt">&lt;script&gt;</span>
-  <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">));</span>
   <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
     <span class="nx">type</span><span class="o">:</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span>
 	<span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;http://search.twitter.com/search.json?q=template&#39;</span><span class="p">,</span>
@@ -196,7 +195,6 @@
   and my age is <span class="cp">{{</span><span class="nv">section.person.age</span><span class="cp">}}</span>.<span class="nt">&lt;/p&gt;</span>
 <span class="nt">&lt;/div&gt;</span>
 <span class="nt">&lt;script&gt;</span>
-<span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">));</span>
 <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">section</span> <span class="o">=</span> <span class="p">{</span>
   <span class="nx">person</span><span class="o">:</span> <span class="p">{</span>
     <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;John&quot;</span><span class="p">,</span>
