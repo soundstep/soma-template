@@ -338,7 +338,7 @@
 
 		<h3>Watch an element</h3>
 
-		<p>The following example is watching an element, which is a div. For convenience, the template engine will not only watch the token <code>{{color}}</code> in the div but will also watch any token that is a text node and a direct child of this div, the token <code>{{content}}</code> in this example.</p>
+		<p>The following example is watching a div element. For convenience, the template engine will not only watch the token <code>{{color}}</code> in the div but will also watch any token that is a text node and a direct child of the element watched: the token <code>{{content}}</code> in this example.</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;&lt;div</span> <span class="na">class=</span><span class="s">&quot;</span><span class="cp">{{</span><span class="nv">color</span><span class="cp">}}</span><span class="s">&quot;</span><span class="nt">&gt;</span><span class="cp">{{</span><span class="nv">content</span><span class="cp">}}</span><span class="nt">&lt;/div&gt;&lt;/div&gt;</span>
 <span class="nt">&lt;script&gt;</span>
   <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">color</span> <span class="o">=</span> <span class="s2">&quot;color-red&quot;</span><span class="p">;</span>
@@ -352,6 +352,33 @@
 		<p><a href="http://plnkr.co/edit/ipjiWz?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
 
 		<h3>Remove a watcher</h3>
+		<p>To remove a watcher, the unwatch function can be used with either a token or an element.</p>
+		<div class="codehilite"><pre><span class="nx">template.unwatch(<span class="s2">&quot;date&quot;</span>);
+template.unwatch(element);</span>
+</pre></div>
+
+	</section>
+
+	<section>
+
+		<h1>Special attributes</h1>
+
+		<p>Special attributes have already been introduced the repeaters (<code>data-repeat</code>). The attributes are providing new functionalities or special behaviors for ease-of-use most of the time</p>
+		<p>All the attribute names are customizable in case you want to change them, it can be useful if one of them are conflicting with something else in your application.</p>
+
+		<h3>Skip interpolation (data-skip)</h3>
+		<p>The template engine will stop parsing the elements children if it find a <code>data-skip</code> attribute on an element, with no value or a boolean. The value of the attribute can also be a token, only the children will not be parsed. If there are tokens in skipped elements, they won't be replaced.</p>
+		<p>It can also be useful to skip a large number of elements to keep the best performance possible.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>Show my name: <span class="cp">{{</span><span class="nv">name</span><span class="cp">}}</span>, but not
+my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span><span class="cp">{{</span><span class="nv">age</span><span class="cp">}}</span><span class="nt">&lt;/span&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;John&quot;</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">age</span> <span class="o">=</span> <span class="mi">21</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/Mn1fc2?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+
+
 
 	</section>
 
