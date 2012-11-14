@@ -4,7 +4,7 @@
 	"description":"Template system (dom manipulation)",
 	"author":{
 		"name":"Romuald Quantin",
-		"email":"romuald@soundstep.com"
+		"email":"romu@soundstep.com"
 	},
 	"scripts": {
 		"preinstall": [
