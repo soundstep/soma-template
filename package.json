@@ -1,11 +1,15 @@
 {
 	"name":"soma-template",
 	"version":"0.0.1",
-	"description":"Template system (dom manipulation)",
-	"author":{
-		"name":"Romuald Quantin",
-		"email":"romu@soundstep.com"
+	"author":"Romuald Quantin <romu@soundstep.com> (http://www.soundstep.com)",
+	"description":"Seamless DOM-based templates.",
+	"homepage": "http://soundstep.github.com/soma-template/",
+	"keywords": ["soma-template", "somatemplate", "template", "dom", "html", "rendering"],
+	"repository": {
+		"type": "git",
+		"url": "http://github.com/soundstep/soma-template.git"
 	},
+	"main": "build/soma-template.js",
 	"scripts": {
 		"preinstall": [
 			"sudo npm install -g grunt"
