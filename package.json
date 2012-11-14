@@ -9,13 +9,5 @@
 		"type": "git",
 		"url": "http://github.com/soundstep/soma-template.git"
 	},
-	"main": "build/soma-template.js",
-	"scripts": {
-		"preinstall": [
-			"sudo npm install -g grunt"
-		],
-		"install": [
-			"sudo npm install -g bunyip"
-		]
-	}
+	"main": "build/soma-template.js"
 }
