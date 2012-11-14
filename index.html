@@ -366,7 +366,25 @@ template.unwatch(element);</span>
 		<p>Special attributes have already been introduced the repeaters (<code>data-repeat</code>). The attributes are providing new functionalities or special behaviors for ease-of-use most of the time</p>
 		<p>All the attribute names are customizable in case you want to change them, it can be useful if one of them are conflicting with something else in your application.</p>
 
-		<h3>Skip interpolation (data-skip)</h3>
+		<h3>Hide elements before rendering (data-cloak)</h3>
+		<p>Paradoxically, <code>data-cloak</code> is not a attribute but a style class that is used to hide elements before rendering, in other words, to hide tokens. The class itself is not provided by the template but will be automatically removed on rendering.</p>
+		<p>The class can be set on the root of the template, or on any element inside the template.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;style&gt;</span>
+  <span class="nc">.data-cloak</span> <span class="p">{</span>
+    <span class="k">display</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="nt">&lt;/style&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;p&gt;</span>Next line appears after rendering:<span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;p</span> <span class="na">class=</span><span class="s">&quot;data-cloak&quot;</span><span class="nt">&gt;</span><span class="cp">{{</span><span class="nv">text</span><span class="cp">}}</span><span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">text</span> <span class="o">=</span> <span class="s2">&quot;Here I am!&quot;</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/eetuGW?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+
+		<h3>Skip parsing (data-skip)</h3>
 		<p>The template engine will stop parsing the elements children if it find a <code>data-skip</code> attribute on an element, with no value or a boolean. The value of the attribute can also be a token, only the children will not be parsed. If there are tokens in skipped elements, they won't be replaced.</p>
 		<p>It can also be useful to skip a large number of elements to keep the best performance possible.</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>Show my name: <span class="cp">{{</span><span class="nv">name</span><span class="cp">}}</span>, but not
@@ -378,7 +396,85 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 <span class="nt">&lt;/script&gt;</span></pre></div>
 		<p><a href="http://plnkr.co/edit/Mn1fc2?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
 
+		<h3>Source (data-src)</h3>
+		<p>The <code>data-src</code> attribute will produce a <code>src</code> attribute on rendering. The reason for using this attribute is to avoid to give a wrong path to the browser. Using a token in a <code>src</code> attribute, for example the source of an image, would result in a 404 error.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;&lt;img</span> <span class="na">data-src=</span><span class="s">&quot;images/</span><span class="cp">{{</span><span class="nv">image</span><span class="cp">}}</span><span class="s">.jpg&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">image</span> <span class="o">=</span> <span class="s2">&quot;image&quot;</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/68KEzp?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
 
+		<h3>Links (data-href)</h3>
+		<p>The <code>data-href</code> attribute will produce a <code>href</code> attribute on rendering. The reason for using this attribute is to avoid the user clicking on a non-rendered links. Using a token in a <code>href</code> attribute, for example a <code>a</code> tag, would probably result in a dead link (404 error).</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;a</span> <span class="na">data-href=</span><span class="s">&quot;http://</span><span class="cp">{{</span><span class="nv">link</span><span class="cp">}}</span><span class="s">&quot;</span> <span class="na">target=</span><span class="s">&quot;_blank&quot;</span><span class="nt">&gt;</span>Clickable when rendered<span class="nt">&lt;/a&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">link</span> <span class="o">=</span> <span class="s2">&quot;www.soundstep.com&quot;</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/RvwvfM?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+
+		<h3>Show and hide (data-show and data-hide)</h3>
+		<p>While this behavior can be achieved with tokens, this attribute will show or hide elements depending of its value (boolean). It is something close to a switch on and off.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">data-show=</span><span class="s">&quot;</span><span class="cp">{{</span><span class="nv">displayed</span><span class="cp">}}</span><span class="s">&quot;</span><span class="nt">&gt;</span>I am visible!<span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">data-hide=</span><span class="s">&quot;</span><span class="cp">{{</span><span class="nv">displayed</span><span class="cp">}}</span><span class="s">&quot;</span><span class="nt">&gt;</span>I am not :(<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">displayed</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/5d9TQL?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+
+		<h3>Checked (data-checked)</h3>
+		<p>A checkbox "initial checked value" is set by the presence or non-presence of the <code>checked</code> attribute. For convenience, the <code>data-checked</code> attribute, which take a boolean, will add or remove the <code>checked</code> attribute.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;checkbox&quot;</span> <span class="na">data-checked=</span><span class="s">&quot;</span><span class="cp">{{</span><span class="nv">checked</span><span class="cp">}}</span><span class="s">&quot;</span><span class="nt">&gt;</span> Checked or unchecked?
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">checked</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/lEIEOj?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+
+		<h3>Disabled (data-disabled)</h3>
+		<p>An element <code>disabled</code> value is set by its presence or non-presence. For convenience, the <code>data-disabled</code> attribute, which take a boolean, will add or remove the <code>disabled</code> attribute.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">data-disabled=</span><span class="s">&quot;</span><span class="cp">{{</span><span class="nv">disabled</span><span class="cp">}}</span><span class="s">&quot;</span> <span class="na">value=</span><span class="s">&quot;Disable me&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">disabled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/GLImgm?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+
+		<h3>Multiple (data-multiple)</h3>
+		<p>A select <code>multiple</code> value is set by its presence or non-presence. For convenience, the <code>data-multiple</code> attribute, which take a boolean, will add or remove the <code>multiple</code> attribute.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;select</span> <span class="na">data-multiple=</span><span class="s">&quot;</span><span class="cp">{{</span><span class="nv">multiple</span><span class="cp">}}</span><span class="s">&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;option&gt;</span>United Kingdom<span class="nt">&lt;/option&gt;</span>
+    <span class="nt">&lt;option&gt;</span>France<span class="nt">&lt;/option&gt;</span>
+    <span class="nt">&lt;option&gt;</span>Germany<span class="nt">&lt;/option&gt;</span>
+  <span class="nt">&lt;/select&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">multiple</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/dbIkSh?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+
+		<h3>Read only (data-readonly)</h3>
+		<p>An element <code>readonly</code> value is set by its presence or non-presence. For convenience, the <code>data-readonly</code> attribute, which take a boolean, will add or remove the <code>readonly</code> attribute.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">data-readonly=</span><span class="s">&quot;</span><span class="cp">{{</span><span class="nv">readonly</span><span class="cp">}}</span><span class="s">&quot;</span> <span class="na">value=</span><span class="s">&quot;Read only?&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">readonly</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/zXtgzx?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
 
 	</section>
 

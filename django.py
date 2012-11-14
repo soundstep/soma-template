@@ -2,11 +2,11 @@ from pygments import highlight
 from pygments.lexers import HtmlDjangoLexer
 from pygments.formatters import HtmlFormatter
 
-code = """<div id="target">Show my name: {{name}}, but not
-my age: <span data-skip="true">{{age}}</span></div>
+code = """<div id="target">
+  <input type="text" data-readonly="{{readonly}}" value="Read only?">
+</div>
 <script>
-  template.scope.name = "John";
-  template.scope.age = 21;
+  template.scope.readonly = true;
   template.render();
 </script>
 """
