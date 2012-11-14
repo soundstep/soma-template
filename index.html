@@ -73,7 +73,7 @@
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;template&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;p&gt;</span>My name is <span class="cp">{{</span><span class="nv">name</span><span class="cp">}}</span>.<span class="nt">&lt;/p&gt;</span>
 <span class="nt">&lt;/div&gt;</span></pre></div>
-		<p>A token is an identifier surrounded by double curly braces (customizable). In this example "name" is the identifier and the template engine will try to find data to replace the token in the DOM element.</p>
+		<p>A token is an identifier surrounded by double curly braces (customizable). In this example "<code>name</code>" is the identifier and the template engine will try to find data to replace the token in the DOM element.</p>
 
 	</section>
 
@@ -84,7 +84,7 @@
 		<p>There are three ways to create a template.</p>
 		<h3>Targeting a dom element</h3>
 		<p>This is the easiest way, and the one I recommend. The template is part of the DOM and a reference to it can be sent to the create function. A template instance will be returned, this is what will be used to render data inside it.</p>
-		<p>Note that the tokens will appear in the DOM but the template engine provide a way to easily hide elements (such as the template itself) until the template is rendered. See the class name "data-cloak".</p>
+		<p>Note that the tokens will appear in the DOM but the template engine provide a way to easily hide elements (such as the template itself) until the template is rendered. See the class name "<code>data-cloak</code>".</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;&lt;p&gt;</span>My name is <span class="cp">{{</span><span class="nv">name</span><span class="cp">}}</span>.<span class="nt">&lt;/p&gt;&lt;/div&gt;</span>
 <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
   <span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">);</span>
@@ -122,7 +122,7 @@
 		<p>The template instance is providing a property called <code>scope</code>. There is at least one scope per template, which is nothing more than an object with some special properties for the template engine.</p>
 		<p>There can be more than one scope in some cases, see the special attribute <code>data-repeat</code>. The scope is the object that will be used to provide the data. In other words, the data is not sent to the template but assigned to the scope in a very easy and natural manner.</p>
 		<h3>Simple rendering</h3>
-		<p>Here is an example where a value is provided for an identifier named "name" (to keep the code short and simple, a <code>template</code> variable is used to refer to a template instance, see previous examples).</p>
+		<p>Here is an example where a value is provided for an identifier named "<code>name</code>" (to keep the code short and simple, a <code>template</code> variable is used to refer to a template instance, see previous examples).</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;&lt;p&gt;</span>My name is <span class="cp">{{</span><span class="nv">name</span><span class="cp">}}</span> and my age is <span class="cp">{{</span><span class="nv">age</span><span class="cp">}}</span>.<span class="nt">&lt;/p&gt;&lt;/div&gt;</span>
 <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
   <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;John&quot;</span><span class="p">;</span>
@@ -254,6 +254,104 @@
 <span class="nt">&lt;/script&gt;</span></pre></div>
 		<p><a href="http://plnkr.co/edit/ZQbBYn?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
 
+	</section>
+
+	<section>
+
+		<h1>Repeaters</h1>
+
+		<p>A repeater is a special attribute (<code>data-repeat</code>) that will duplicate the current node. A repeater can be used to perform an iteration on an array or an object to display its content.</p>
+		<p>The repeater attribute value is composed of three parts: a "current variable" that you can name as your convenience, the keyword "<code>in</code>" and the array or object target: "<code>my_var in my_array</code>".</p>
+		<p>A scope will be created for each repeated node to avoid data conflict, and will have a reference to its parent. The template engine will automatically search in its scope parent in case it doesn't find data in its current scope.</p>
+
+		<h3>Array repeater</h3>
+		<p>Here is an example of an array repeater, an <code>$index</code> variable is also available on the current scope and can be passed to a function if needed.</p>
+		<p>The node that contains the <code>data-repeat</code>, and everything inside, will be duplicated three times in this example. One for each item in the array <code>items</code>.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">data-repeat=</span><span class="s">&quot;item in items&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div&gt;</span>[<span class="cp">{{$index</span><span class="cp">}}</span>] <span class="cp">{{</span><span class="nv">greet</span><span class="cp">}}</span> <span class="cp">{{</span><span class="nv">item.name</span><span class="cp">}}</span>!<span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">greet</span> <span class="o">=</span> <span class="s2">&quot;Hello&quot;</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span> <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;John&quot;</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;David&quot;</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Mike&quot;</span> <span class="p">}</span>
+  <span class="p">];</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/ZQbBYn?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+
+		<h3>Object repeater</h3>
+		<p>You can also perform an iteration on an object, in this case a <code>$key</code> variable will be available on the current scope.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">data-repeat=</span><span class="s">&quot;item in items&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div&gt;</span>[<span class="cp">{{$key}}</span>] <span class="cp">{{</span><span class="nv">greet</span><span class="cp">}}</span> <span class="cp">{{</span><span class="nv">item</span><span class="cp">}}</span>!<span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">greet</span> <span class="o">=</span> <span class="s2">&quot;Hello&quot;</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name1</span><span class="o">:</span> <span class="s2">&quot;John&quot;</span><span class="p">,</span>
+    <span class="nx">name2</span><span class="o">:</span> <span class="s2">&quot;David&quot;</span><span class="p">,</span>
+    <span class="nx">name3</span><span class="o">:</span> <span class="s2">&quot;Mike&quot;</span>
+  <span class="p">};</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/JQtbv6?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+
+	</section>
+
+	<section>
+
+		<h1>Scope</h1>
+
+		<p>A scope provides a data model context for a template, and a new scope child is created for each item of a repeater to provide a new context and avoid data conflict.</p>
+		<p>The following image illustrates a template scope that contains a child scope, which contains also another child scope, and so on. Notice that all variables names are identical but the values are probably different.</p>
+		<p><img src="assets/images/scopes.jpg" alt="scopes"></p>
+		<p><a href="http://plnkr.co/edit/JQtbv6?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+		<p>Note that a scope parent can also be accessed using a parent path notation (also works with parameters):</p>
+		<div class="codehilite"><pre><span class="cp">{{../item.name}}
+{{../../getName(../$index)</span><span class="cp">}}</span></pre></div>
+
+	</section>
+
+	<section>
+
+		<h1>Watchers</h1>
+
+		<p>To provide flexibility, a specific rendering can be intercepted so you can alter it. They are called watchers, and you can watch either a token or an element.</p>
+
+		<h3>Watch a token</h3>
+
+		<p>The following example adds a watcher to the <code>date</code> token. The full string date received as a parameter will be formatted to display only the day, the month and the year.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>Date formatted: <span class="cp">{{</span><span class="nv">date</span><span class="cp">}}</span><span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">date</span> <span class="o">=</span> <span class="s2">&quot;Wed Nov 14 2012 02:31:20 GMT+0000 (GMT)&quot;</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">watch</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">oldValue</span><span class="p">,</span> <span class="nx">newValue</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">newValue</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/\w{3} \d{2} \d{4}/</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
+  <span class="p">});</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/YCEXYb?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+
+		<h3>Watch an element</h3>
+
+		<p>The following example is watching an element, which is a div. For convenience, the template engine will not only watch the token <code>{{color}}</code> in the div but will also watch any token that is a text node and a direct child of this div, the token <code>{{content}}</code> in this example.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;&lt;div</span> <span class="na">class=</span><span class="s">&quot;</span><span class="cp">{{</span><span class="nv">color</span><span class="cp">}}</span><span class="s">&quot;</span><span class="nt">&gt;</span><span class="cp">{{</span><span class="nv">content</span><span class="cp">}}</span><span class="nt">&lt;/div&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">color</span> <span class="o">=</span> <span class="s2">&quot;color-red&quot;</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">content</span> <span class="o">=</span> <span class="s2">&quot;This text is not red&quot;</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">watch</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">element</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">oldValue</span><span class="p">,</span> <span class="nx">newValue</span><span class="p">,</span> <span class="nx">pattern</span><span class="p">,</span> <span class="nx">scope</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">attribute</span><span class="p">)</span> <span class="k">return</span> <span class="s2">&quot;color-blue&quot;</span><span class="p">;</span>
+    <span class="k">else</span> <span class="k">return</span> <span class="nx">newValue</span> <span class="o">+</span> <span class="s2">&quot; and has been watched as well!&quot;</span><span class="p">;</span>
+  <span class="p">});</span>
+<span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/ipjiWz?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+
+		<h3>Remove a watcher</h3>
 
 	</section>
 
