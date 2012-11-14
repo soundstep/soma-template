@@ -121,6 +121,7 @@
 		<p>This part will be much different than other template engines. The JSON format can of course still be used, but the way that it is sent to the template is different.</p>
 		<p>The template instance is providing a property called <code>scope</code>. There is at least one scope per template, which is nothing more than an object with some special properties for the template engine.</p>
 		<p>There can be more than one scope in some cases, see the special attribute <code>data-repeat</code>. The scope is the object that will be used to provide the data. In other words, the data is not sent to the template but assigned to the scope in a very easy and natural manner.</p>
+		<p>The template engine will also re-render the elements only if the data has changed.</p>
 		<h3>Simple rendering</h3>
 		<p>Here is an example where a value is provided for an identifier named "<code>name</code>" (to keep the code short and simple, a <code>template</code> variable is used to refer to a template instance, see previous examples).</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;&lt;p&gt;</span>My name is <span class="cp">{{</span><span class="nv">name</span><span class="cp">}}</span> and my age is <span class="cp">{{</span><span class="nv">age</span><span class="cp">}}</span>.<span class="nt">&lt;/p&gt;&lt;/div&gt;</span>
