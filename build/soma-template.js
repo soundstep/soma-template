@@ -905,7 +905,11 @@ Template.prototype = {
 		return '[object Template]';
 	},
 	compile: function(element) {
-		if (element) this.element = element;
+		if (element) {
+			templates.remove(element);
+			templates.put(element, this);
+			this.element = element;
+		}
 		if (this.node) this.node.dispose();
 		this.node = compile(this, this.element);
 		this.node.root = true;

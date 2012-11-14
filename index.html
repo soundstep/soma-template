@@ -17,6 +17,67 @@
 	<![endif]-->
 </head>
 <body>
+
+<!--
+TOC
+
+What is soma-template?
+Inspiration
+Installation
+What is a template?
+Create a template instance
+	Targeting a dom element
+	Providing a string
+	Using a script tag
+Render a template
+	Simple rendering
+	JSON rendering
+Interpolation
+	Attributes
+	Anything anywhere
+	Path access
+	Function call
+	Function parameters
+	Mix everything
+Repeaters
+	Array repeater
+	Object repeater
+Scope
+Watchers
+	Watch a token
+	Watch an element
+	Remove a watcher
+Special attributes
+	data-cloak
+	data-skip
+	data-src
+	data-href
+	data-show
+	data-hide
+	data-checked
+	data-disabled
+	data-multiple
+	data-readonly
+Settings
+	Tokens
+	Special attributes
+	Variables in repeaters
+Managing templates
+	Multiple templates
+	Get a template
+	Re-compile
+	Updating data
+	Invalidate data
+	Disposing templates
+Template engine process
+	Compile-time
+	Render-time
+	Render a node
+	Render an attribute
+Demos
+Tests
+-->
+
 <div class="wrapper">
 	<header>
 		<h1>soma-template</h1>
@@ -54,6 +115,8 @@
 	<section>
 
 		<h1>Installation</h1>
+
+		<p>soma-template will cost you only 4.7 KB on your bandwidth!</p>
 
 		<h3>Browser application</h3>
 		<p><a href="https://github.com/soundstep/soma-template/tree/master/build" class="button icon tag" target="_blank">download soma-template</a></p>
@@ -122,6 +185,7 @@
 		<p>The template instance is providing a property called <code>scope</code>. There is at least one scope per template, which is nothing more than an object with some special properties for the template engine.</p>
 		<p>There can be more than one scope in some cases, see the special attribute <code>data-repeat</code>. The scope is the object that will be used to provide the data. In other words, the data is not sent to the template but assigned to the scope in a very easy and natural manner.</p>
 		<p>The template engine will also re-render the elements only if the data has changed.</p>
+
 		<h3>Simple rendering</h3>
 		<p>Here is an example where a value is provided for an identifier named "<code>name</code>" (to keep the code short and simple, a <code>template</code> variable is used to refer to a template instance, see previous examples).</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;&lt;p&gt;</span>My name is <span class="cp">{{</span><span class="nv">name</span><span class="cp">}}</span> and my age is <span class="cp">{{</span><span class="nv">age</span><span class="cp">}}</span>.<span class="nt">&lt;/p&gt;&lt;/div&gt;</span>
@@ -353,9 +417,10 @@
 		<p><a href="http://plnkr.co/edit/ipjiWz?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
 
 		<h3>Remove a watcher</h3>
-		<p>To remove a watcher, the unwatch function can be used with either a token or an element.</p>
+		<p>To remove a watcher, the <code>unwatch</code> function can be used with either a token or an element. Additionally, the function <code>clearWatchers</code> can be used to remove all the watchers at once.</p>
 		<div class="codehilite"><pre><span class="nx">template.unwatch(<span class="s2">&quot;date&quot;</span>);
-template.unwatch(element);</span>
+template.unwatch(element);
+template.clearWatchers();</span>
 </pre></div>
 
 	</section>
@@ -479,22 +544,214 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 
 	</section>
 
-		<!-- jsdom
-		<div class="codehilite"><pre><span class="kd">var</span> <span class="nx">jsdom</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;jsdom&quot;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./soma-template&quot;</span><span class="p">);</span>
-<span class="nx">jsdom</span><span class="p">.</span><span class="nx">env</span><span class="p">(</span>
-  <span class="s1">&#39;&lt;div id=&quot;ct&quot;&gt;My name is: {{name}}&lt;/div&gt;&#39;</span><span class="p">,</span>
-  <span class="p">[</span><span class="s2">&quot;http://code.jquery.com/jquery.js&quot;</span><span class="p">],</span>
-  <span class="kd">function</span><span class="p">(</span><span class="nx">errors</span><span class="p">,</span> <span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nb">document</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nb">document</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">tpl</span> <span class="o">=</span> <span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;ct&quot;</span><span class="p">));</span>
-    <span class="nx">tpl</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;john&quot;</span><span class="p">;</span>
-    <span class="nx">tpl</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;ct&quot;</span><span class="p">).</span><span class="nx">innerHTML</span><span class="p">);</span>
-  <span class="p">}</span>
-<span class="p">);</span>
+	<section>
+
+		<h1>Settings</h1>
+
+		<p>soma-template exposes some settings to customize variables that might be a problem in some configurations. All the settings are applied on the library in a static way, I recommend changing them before creating templates and the changes will affect all created templates.</p>
+		<p>The settings object can be access this way:</p>
+		<div class="codehilite"><pre><span class="nx"><span class="kd">var</span> settings = soma.template.settings;</span></pre></div>
+
+		<h3>Tokens</h3>
+		<p>The default double curly braces that surround an identifier <code>{{name}}</code> can be customized. I recommend using at least 2 characters and while I tested some characters The might be some problems with weird ones!</p>
+		<p>Two methods can be used to get or set the "start token" and the "end token" characters:</p>
+		<div class="codehilite"><pre><span class="nx">settings.tokens.start(<span class="s">&quot;[[&quot;</span>);
+settings.tokens.start(<span class="s">&quot;]]&quot;</span>);</span>
+<span class="nt">&lt;div&gt;</span>[[name]]<span class="nt">&lt;/div&gt;</span></pre></div>
+
+		<h3>Special attributes</h3>
+		<p>Here is a list of attributes (and their default values) that can be changed:</p>
+		<ul>
+			<li>skip (<code>data-skip</code>)
+			<li>repeat (<code>data-repeat</code>)
+			<li>src (<code>data-src</code>)
+			<li>href (<code>data-href</code>)
+			<li>show (<code>data-show</code>)
+			<li>hide (<code>data-hide</code>)
+			<li>cloak (<code>data-cloak</code>)
+			<li>checked (<code>data-checked</code>)
+			<li>disabled (<code>data-disabled</code>)
+			<li>multiple (<code>data-multiple</code>)
+			<li>readonly (<code>data-readonly</code>)
+			<li>selected (<code>data-selected</code>)
+		</ul>
+		<p>These values are just a property on an object, they can be changed this way:</p>
+		<div class="codehilite"><pre>
+<span class="nx">settings</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">repeat</span> <span class="o">=</span> <span class="s2">&quot;custom-repeat&quot;</span><span class="p">;</span>
+<span class="nx">settings</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="s2">&quot;custom-src&quot;</span><span class="p">;</span>
 </pre></div>
-	-->
+
+		<h3>Variables in repeaters</h3>
+		<p>The variables used the repeaters (<code>$index</code> and <code>$key</code>) can also be changed:</p>
+		<div class="codehilite"><pre><span class="nx">settings</span><span class="p">.</span><span class="nx">vars</span><span class="p">.</span><span class="nx">index</span> <span class="o">=</span> <span class="s2">&quot;_index&quot;</span><span class="p">;</span>
+<span class="nx">settings</span><span class="p">.</span><span class="nx">vars</span><span class="p">.</span><span class="nx">key</span> <span class="o">=</span> <span class="s2">&quot;_key&quot;</span><span class="p">;</span></pre></div>
+
+	</section>
+
+	<section>
+
+		<h1>Managing templates</h1>
+
+		<h3>Multiple templates</h3>
+
+		<p>Templates can be created side-by-side but also contain each others. The templates can be rendered separately, or all at once using the function <code>soma.template.renderAll()</code>.</p>
+		<p>Here is an example of a template containing another template, with the same tokens but different data:</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;template1&quot;</span><span class="nt">&gt;</span>
+  My name is <span class="cp">{{</span><span class="nv">name</span><span class="cp">}}</span> and I can count: <span class="cp">{{</span><span class="nv">count</span><span class="cp">}}</span>.
+  <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;template2&quot;</span><span class="nt">&gt;</span>
+    My name is <span class="cp">{{</span><span class="nv">name</span><span class="cp">}}</span> and I can count: <span class="cp">{{</span><span class="nv">count</span><span class="cp">}}</span>.
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">tpl1</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;template1&#39;</span><span class="p">));</span>
+  <span class="nx">tpl1</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;template 1&quot;</span><span class="p">;</span>
+  <span class="nx">tpl1</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">tpl2</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;template2&#39;</span><span class="p">));</span>
+  <span class="nx">tpl2</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;template 2&quot;</span><span class="p">;</span>
+  <span class="nx">tpl2</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+  <span class="nx">tpl1</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+  <span class="nx">tpl2</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+  <span class="c1">// or</span>
+  <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">renderAll</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/LiAu8K?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+
+		<h3>Get a template from an element</h3>
+
+		<p>A reference to a template can be retrieved with the element target of the template, using the function <code>soma.template.get(element)</code>.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>My name is <span class="cp">{{</span><span class="nv">name</span><span class="cp">}}</span>.<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">);</span>
+  <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;John&quot;</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/fCQ0c8?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+
+		<h3>Re-compile a template</h3>
+		<p>Templates can be re-compiled using the <code>compile</code> function, which is very close to creating a new template, except that you can keep the same template reference.</p>
+		<p>Note that re-compiling a template with an element that has been already compiled will not work as the tokens are not in the DOM anymore. To achieve this, a cache of the element can be stored before creating the template.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;button</span> <span class="na">id=</span><span class="s">&quot;render&quot;</span><span class="nt">&gt;</span>render<span class="nt">&lt;/button&gt;</span>
+<span class="nt">&lt;button</span> <span class="na">id=</span><span class="s">&quot;compile&quot;</span><span class="nt">&gt;</span>compile<span class="nt">&lt;/button&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>My name is <span class="cp">{{</span><span class="nv">name</span><span class="cp">}}</span>.<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">targetCache</span> <span class="o">=</span> <span class="nx">target</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
+  <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#render&#39;</span><span class="p">).</span><span class="nx">click</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;John&quot;</span><span class="p">;</span>
+    <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+  <span class="p">});</span>
+  <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#compile&#39;</span><span class="p">).</span><span class="nx">click</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">template</span><span class="p">.</span><span class="nx">element</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">targetCache</span><span class="p">;</span>
+    <span class="nx">template</span><span class="p">.</span><span class="nx">compile</span><span class="p">();</span>
+  <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/hWoPj3?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+
+		<h3>Updating data without rendering</h3>
+		<p>Updating the data but not rendering the template is possible using the <code>update</code> method.</p>
+		<div class="codehilite"><pre><span class="nx">template.scope.name = "John";
+template.update();</span>
+</pre></div>
+
+		<h3>Invalidate data</h3>
+		<p>The template engine rely on data change to update the nodes and attributes. If the values of the tokens do not change, the DOM will not be updated. The reason is to keep the performance high and change only what is necessary. You can however "invalidate" the data and force a DOM update using the template function "<code>invalidate</code>".</p>
+
+		<h3>Updating or rendering without scope</h3>
+		<p><strong>This is not recommended!</strong> Data can be sent straight into the template without using the scope. An object can be sent as a parameter in the <code>update</code> or <code>render</code> functions.</p>
+		<p>This method is not recommended because the template engine is meant to work with existing scopes. This will force the template engine to iterate the object and assign the properties to the existing scopes, which will be significantly slower than using the scope. Assigning an object, even a very big object, on an existing scope (<code>scope.big = bigObject</code>) is the right way to use the template engine.</p>
+
+		<h3>Disposing templates</h3>
+		<p>Disposing of something that fill the memory is always a good idea, even a small object. To dispose a template, the <code>dispose</code> function can be called, this will destroy everything that has been created internally by the template engine.</p>
+		<div class="codehilite"><pre><span class="nx">template.dispose();
+template = null;</span>
+</pre></div>
+
+	</section>
+
+	<section>
+
+		<h1>Template engine process</h1>
+
+		<p>The template engine is going through several steps at compile-time, and render-time</p>
+
+		<h3>Compile-time</h3>
+		<p>The compile-time process is what is happening inside the template engine when it is created. The template instance will keep a reference to the element root and start to parse the DOM to create instances of internal functions to mimic and represent the DOM structure of the current template.</p>
+		<p>A <code>scope</code> is created on the first node and passed to the others. The internal function instances created are  of the type of <code>Node</code>, <code>Attribute</code>, <code>Interpolation</code> and <code>Expression</code>.</p>
+		<p>A <code>Node</code> instance represents a DOM element, an <code>Attribute</code> instance represents an attribute of an element, an <code>Interpolation</code> instance represents a sequence containing strings and expressions, and finally an <code>Expression</code> instance represents a token.</p>
+		<p>The template instance keeps and exposes the reference of the root node and the root scope, which are accessible using the template property <code>node</code> and <code>scope</code> respectively.</p>
+		<p>A node can contain attributes (or value if it is a Text Node), and can contain others node children. Both the nodes and attributes can contain interpolations, and each interpolation can contain a list of expressions (token). In other words, the template instance can be browsed and inspected from the root to its extreme nodes, exposing tokens on the way. The structure has been exposed if some actions have to be made before rendering.</p>
+		<p><img src="assets/images/structure.gif" alt="structure"></p>
+
+		<h3>Render-time</h3>
+		<p>The template will start two processes, one after the other. The first step is to update the expressions values using the scope data, invalidating the nodes and attributes if the values have changed. And the second step is parsing its nodes and attributes to update the DOM if necessary.</p>
+
+		<h3>Render a node</h3>
+
+		<p>All nodes created by the template engine are accessible and it is possible to update and render a single node (and its children), without having to render the whole template.</p>
+		<p>For convenience, the template and each nodes provide a <code>getNode</code> function to quickly access to a specific node if needed. Here is an example to render a specific node without rendering the whole template:</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;p&gt;</span>Only the second paragraph is rendered:<span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;p&gt;</span>First paragraph: <span class="cp">{{</span><span class="nv">content1</span><span class="cp">}}</span><span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;second&quot;</span><span class="nt">&gt;</span>Second paragraph: <span class="cp">{{</span><span class="nv">content2</span><span class="cp">}}</span><span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">));</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">content1</span> <span class="o">=</span> <span class="s2">&quot;first content&quot;</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">content2</span> <span class="o">=</span> <span class="s2">&quot;second content&quot;</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">template</span><span class="p">.</span><span class="nx">getNode</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;second&#39;</span><span class="p">));</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">update</span><span class="p">();</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/IUpUTP?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+
+		<p>The nodes can also be accessed this way:</p>
+		<div class="codehilite"><pre><span class="nx"><span class="kd">var</span> node = template.node.children[0].children[0];</span></pre></div>
+
+		<h3>Render an attribute</h3>
+		<p>As the nodes, the attributes can also be accessed and rendered without rendering the whole template. In the following example, only the class node will be rendered:</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;p</span> <span class="na">class=</span><span class="s">&quot;</span><span class="cp">{{</span><span class="nv">color</span><span class="cp">}}</span><span class="s">&quot;</span><span class="nt">&gt;</span>Only the class attribute is rendered <span class="cp">{{</span><span class="nv">content</span><span class="cp">}}</span>.<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">color</span> <span class="o">=</span> <span class="s2">&quot;color&quot;</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">content</span> <span class="o">=</span> <span class="s2">&quot;text not rendered&quot;</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">attribute</span> <span class="o">=</span> <span class="nx">template</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">children</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">attributes</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+  <span class="nx">attribute</span><span class="p">.</span><span class="nx">update</span><span class="p">();</span>
+  <span class="nx">attribute</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/9FwWhy?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+
+	</section>
+
+	<section>
+
+		<h1>Demos</h1>
+
+		<p>The <a href="https://github.com/soundstep/soma-template/tree/master/demos" target="_blank">demos source code</a> are available on the github repo.</p>
+
+		<ul>
+			<li><a href="demos/twitter/" target="_blank">Twitter search demo</a></li>
+			<li><a href="demos/sheet/" target="_blank">Sheet demo</a></li>
+		</ul>
+
+	</section>
+
+	<section>
+
+		<h1>Tests</h1>
+
+		<p>Both the functions exposed and internal are tested on all modern browsers and Internet Explorer from version 7, but if you find something that doesn't work or want to discussed something, please use <a href="https://github.com/soundstep/soma-template/issues">Github issues</a>.</p>
+
+		<ul>
+			<li><a href="tests/" target="_blank">API tests</a></li>
+			<li><a href="tests/index-internal.html" target="_blank">Internal tests</a></li>
+		</ul>
+
+	</section>
 
 	<footer>
 		<p>
