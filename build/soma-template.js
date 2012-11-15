@@ -13,6 +13,8 @@ var errors = soma.template.errors = {
 
 var tokenStart = '{{';
 var tokenEnd = '}}';
+var helpersObject = {};
+var helpersScopeObject = {};
 
 var settings = soma.template.settings = soma.template.settings || {};
 
@@ -265,9 +267,11 @@ function getValue(scope, pattern, pathString, accessor, params, isFunc, paramsFo
 	else paramsValues = paramsFound;
 	// find scope
 	var scopeTarget = getScopeFromPattern(scope, pattern);
+	// remove scope parent string
+	pattern = pattern.replace('../', '');
 	if (!scopeTarget) return undefined;
-	// search object
 	var pathParts = pathString.split('.');
+	// search object
 	var path = scopeTarget;
 	if (pathParts[0] !== "") {
 		var i = -1, l = pathParts.length;
@@ -387,7 +391,7 @@ function compile(template, element, parent, nodeTarget) {
 	// get node
 	var node;
 	if (!nodeTarget) {
-		node = getNodeFromElement(element, parent ? parent.scope : new Scope());
+		node = getNodeFromElement(element, parent ? parent.scope : new Scope(helpersScopeObject)._createChild());
 	}
 	else {
 		node = nodeTarget;
@@ -905,11 +909,7 @@ Template.prototype = {
 		return '[object Template]';
 	},
 	compile: function(element) {
-		if (element) {
-			templates.remove(element);
-			templates.put(element, this);
-			this.element = element;
-		}
+		if (element) this.element = element;
 		if (this.node) this.node.dispose();
 		this.node = compile(this, this.element);
 		this.node.root = true;
@@ -999,6 +999,21 @@ function renderAllTemplates() {
 	}
 }
 
+function appendHelpers(obj) {
+	if (obj === null) {
+		helpersObject = {};
+		helpersScopeObject = {};
+	}
+	if (isDefined(obj) && isObject(obj)) {
+		for (var key in obj) {
+			if (obj.hasOwnProperty(key)) {
+				helpersObject[key] = helpersScopeObject[key] = obj[key];
+			}
+		}
+	}
+	return helpersObject;
+}
+
 // set regex
 tokens.start(tokenStart);
 tokens.end(tokenEnd);
@@ -1007,6 +1022,7 @@ tokens.end(tokenEnd);
 soma.template.create = createTemplate;
 soma.template.get = getTemplate;
 soma.template.renderAll = renderAllTemplates;
+soma.template.helpers = appendHelpers;
 
 // register for AMD module
 if (typeof define === 'function' && define.amd) {

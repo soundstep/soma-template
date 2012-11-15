@@ -32,6 +32,10 @@ h3, h4, h5, h6 {
 	color: #494949;
 }
 
+img {
+	border-radius: 5px;
+}
+
 a {
 	color: #39c;
 	font-weight: 500;

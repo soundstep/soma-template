@@ -60,9 +60,11 @@ function getValue(scope, pattern, pathString, accessor, params, isFunc, paramsFo
 	else paramsValues = paramsFound;
 	// find scope
 	var scopeTarget = getScopeFromPattern(scope, pattern);
+	// remove scope parent string
+	pattern = pattern.replace('../', '');
 	if (!scopeTarget) return undefined;
-	// search object
 	var pathParts = pathString.split('.');
+	// search object
 	var path = scopeTarget;
 	if (pathParts[0] !== "") {
 		var i = -1, l = pathParts.length;
@@ -182,7 +184,7 @@ function compile(template, element, parent, nodeTarget) {
 	// get node
 	var node;
 	if (!nodeTarget) {
-		node = getNodeFromElement(element, parent ? parent.scope : new Scope());
+		node = getNodeFromElement(element, parent ? parent.scope : new Scope(helpersScopeObject)._createChild());
 	}
 	else {
 		node = nodeTarget;

@@ -14,7 +14,7 @@ describe("api - scope", function () {
 		expect(tpl.scope).toBeDefined();
 		expect(tpl.scope).not.toBeNull();
 		expect(tpl.scope).toEqual(tpl.node.scope);
-		expect(tpl.scope._parent).toBeNull();
+		expect(tpl.scope._parent).not.toBeNull();
 	});
 
 	it("child scope", function () {

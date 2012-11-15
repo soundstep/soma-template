@@ -3,8 +3,8 @@ from pygments.lexers import HtmlDjangoLexer
 from pygments.formatters import HtmlFormatter
 
 code = """<script type="text/javascript">
-settings.vars.index = "_index";
-settings.vars.key = "_key";
+var camelize = soma.template.helpers().camelize;
+var camelize = template.scope._parent.camelize;
 </script>
 """
 
