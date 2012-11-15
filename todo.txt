@@ -1,0 +1,20 @@
+- be able to extend scope, or send a global object to access from a token
+
+soma.template.extend({
+	myFunction: fucntion() {
+		// do something
+		return value;
+	}
+});
+
+- array parsing
+
+{{item[0]}}
+
+- create dynamic menu in site
+
+- site spelling mistake in token text: "The"
+
+- site spelling mistake in token pre: start twice, should have an end
+
+- dispose in array repeater

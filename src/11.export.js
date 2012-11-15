@@ -44,6 +44,21 @@ function renderAllTemplates() {
 	}
 }
 
+function appendHelpers(obj) {
+	if (obj === null) {
+		helpersObject = {};
+		helpersScopeObject = {};
+	}
+	if (isDefined(obj) && isObject(obj)) {
+		for (var key in obj) {
+			if (obj.hasOwnProperty(key)) {
+				helpersObject[key] = helpersScopeObject[key] = obj[key];
+			}
+		}
+	}
+	return helpersObject;
+}
+
 // set regex
 tokens.start(tokenStart);
 tokens.end(tokenEnd);
@@ -52,6 +67,7 @@ tokens.end(tokenEnd);
 soma.template.create = createTemplate;
 soma.template.get = getTemplate;
 soma.template.renderAll = renderAllTemplates;
+soma.template.helpers = appendHelpers;
 
 // register for AMD module
 if (typeof define === 'function' && define.amd) {

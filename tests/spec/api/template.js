@@ -164,7 +164,7 @@ describe("api - template", function () {
 		var t1 = createTemplateWithContent('{{name}}');
 		var t2 = createTemplateWithContent('{{name}}');
 		t1.scope.name = "john";
-		t2.scope.name = "david";
+		t2.scope.name = "david2";
 		t1.render();
 		expect(t1.element.innerHTML).toEqual('john');
 		expect(t2.element.innerHTML).toEqual('{{name}}');
@@ -189,6 +189,66 @@ describe("api - template", function () {
 		t2.render();
 		expect(t1.element.innerHTML).toEqual('john');
 		expect(t2.element.innerHTML).toEqual('david');
+	});
+
+	it("extend default", function () {
+		expect(soma.template.helpers()).toEqual({});
+	});
+
+	it("extend value", function () {
+		ct.innerHTML = '{{name}}';
+		soma.template.helpers({name: 'david'});
+		tpl.compile();
+		tpl.render();
+		expect(ct.innerHTML).toEqual('david');
+		tpl.scope.name = 'john';
+		tpl.render();
+		expect(ct.innerHTML).toEqual('john');
+		soma.template.helpers(null);
+	});
+
+	it("extend function", function () {
+		ct.innerHTML = '{{getName("john")}}';
+		soma.template.helpers({
+			getName: function(n) {
+				return "getName: " + n;
+			}
+		});
+		tpl.compile();
+		tpl.render();
+		expect(ct.innerHTML).toEqual('getName: john');
+		tpl.scope.getName = function(n){
+			return "getName in scope: " + n;
+		}
+		tpl.render();
+		expect(ct.innerHTML).toEqual('getName in scope: john');
+		soma.template.helpers(null);
+	});
+
+	it("extend append", function () {
+		soma.template.helpers({value1: 'value1'});
+		soma.template.helpers({value2: 'value2'});
+		expect(soma.template.helpers()).toEqual({value1: 'value1', value2: 'value2'});
+		soma.template.helpers(null);
+	});
+
+	it("extend null", function () {
+		soma.template.helpers({value1: 'value1'});
+		soma.template.helpers(null);
+		expect(soma.template.helpers()).toEqual({});
+	});
+
+	it("extend with library", function () {
+		soma.template.helpers(_.str.exports());
+		ct.innerHTML = '{{camelize(str)}}';
+		tpl.compile();
+		tpl.scope.str = "-this-is-a-camelized-string";
+		tpl.render();
+		expect(ct.innerHTML).toEqual('ThisIsACamelizedString');
+	});
+
+	it("extend no value", function () {
+		// do nothing
 	});
 
 	it("render all", function () {

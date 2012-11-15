@@ -9,6 +9,8 @@ var errors = soma.template.errors = {
 
 var tokenStart = '{{';
 var tokenEnd = '}}';
+var helpersObject = {};
+var helpersScopeObject = {};
 
 var settings = soma.template.settings = soma.template.settings || {};
 
