@@ -145,11 +145,9 @@ describe("api - rendering", function () {
 		tpl.compile();
 		tpl.scope.data = "image.jpg";
 		tpl.render();
-		expect(ct.innerHTML).toEqual('<span data-src="{{data}}" src="image.jpg"></span>');
 		expect(ct.firstChild.getAttribute('src')).toEqual('image.jpg');
 		tpl.scope.data = "image2.jpg";
 		tpl.render();
-		expect(ct.innerHTML).toEqual('<span data-src="{{data}}" src="image2.jpg"></span>');
 		expect(ct.firstChild.getAttribute('src')).toEqual('image2.jpg');
 	});
 
@@ -158,11 +156,9 @@ describe("api - rendering", function () {
 		tpl.compile();
 		tpl.scope.data = "http://www.soundstep.com";
 		tpl.render();
-		expect(ct.innerHTML).toEqual('<span data-href="{{data}}" href="http://www.soundstep.com"></span>');
 		expect(ct.firstChild.getAttribute('href')).toEqual('http://www.soundstep.com');
 		tpl.scope.data = "http://www.google.com";
 		tpl.render();
-		expect(ct.innerHTML).toEqual('<span data-href="{{data}}" href="http://www.google.com"></span>');
 		expect(ct.firstChild.getAttribute('href')).toEqual('http://www.google.com');
 	});
 

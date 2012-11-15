@@ -590,6 +590,7 @@ Node.prototype = {
 		this.element = null;
 		this.scope = null;
 		this.attributes = null;
+		this.attributesHashMap = null;
 		this.value = null;
 		this.interpolation = null;
 		this.repeater = null;
@@ -619,6 +620,17 @@ Node.prototype = {
 			}
 		}
 		return null;
+	},
+	getAttribute: function(name) {
+		if (this.attributes) {
+			var i = -1, l = this.attributes.length;
+			while (++i < l) {
+				var att = this.attributes[i];
+				if (att.interpolationName && att.interpolationName.value === name) {
+					return att;
+				}
+			}
+		}
 	},
 	update: function() {
 		if (childNodeIsTemplate(this)) return;

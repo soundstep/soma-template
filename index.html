@@ -44,10 +44,6 @@ Repeaters
 	Array repeater
 	Object repeater
 Scope
-Watchers
-	Watch a token
-	Watch an element
-	Remove a watcher
 Special attributes
 	data-cloak
 	data-skip
@@ -59,6 +55,14 @@ Special attributes
 	data-disabled
 	data-multiple
 	data-readonly
+Helpers
+	Add helpers
+	Access helpers
+	Remove helpers
+Watchers
+	Watch a token
+	Watch an element
+	Remove a watcher
 Settings
 	Tokens
 	Special attributes
@@ -758,11 +762,14 @@ template = null;</span>
 <span class="nt">&lt;script&gt;</span>
   <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">color</span> <span class="o">=</span> <span class="s2">&quot;color&quot;</span><span class="p">;</span>
   <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">content</span> <span class="o">=</span> <span class="s2">&quot;text not rendered&quot;</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">attribute</span> <span class="o">=</span> <span class="nx">template</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">children</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">attributes</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+  <span class="kd">var</span> <span class="nx">attribute</span> <span class="o">=</span> <span class="nx">template</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">children</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s2">&quot;class&quot;</span><span class="p">);</span>
   <span class="nx">attribute</span><span class="p">.</span><span class="nx">update</span><span class="p">();</span>
   <span class="nx">attribute</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
 <span class="nt">&lt;/script&gt;</span></pre></div>
 		<p><a href="http://plnkr.co/edit/9FwWhy?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+
+		<p>The attributes can also be accessed this way:</p>
+		<div class="codehilite"><pre><span class="nx"><span class="kd">var</span> attribute = template.node.attributes[0];</span></pre></div>
 
 	</section>
 
