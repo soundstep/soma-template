@@ -18,3 +18,7 @@ soma.template.extend({
 - site spelling mistake in token pre: start twice, should have an end
 
 - dispose in array repeater
+
+- add benchmark suite (template benchmarks, and comparison benchmarks)
+
+- add time execution in sheet demo?
