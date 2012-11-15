@@ -181,6 +181,24 @@ describe("api - node", function () {
 		expect(tpl.node.children[0].children[0].value).toEqual('john');
 	});
 
+	it("getAttributeByName", function () {
+		ct.innerHTML = '<p data-id="{{idvalue}}" c{{classname}}s="{{boldvalue}}">{{name}}</p>';
+		tpl.compile();
+		tpl.scope.classname = 'las';
+		tpl.scope.boldvalue = 'bold';
+		tpl.scope.idvalue = 'id';
+		var attribute = tpl.node.children[0].getAttribute('c{{classname}}s');
+		tpl.render();
+		var att1 = tpl.node.children[0].getAttribute('c{{classname}}s');
+		var att2 = tpl.node.children[0].getAttribute('data-id');
+		expect(att1).toBeDefined();
+		expect(att1.value).toEqual('bold');
+		expect(att1.interpolationName.value).toEqual('c{{classname}}s');
+		expect(att2).toBeDefined();
+		expect(att2.value).toEqual('id');
+		expect(att2.interpolationValue.value).toEqual('{{idvalue}}');
+	});
+
 	it("dispose", function() {
 		tpl.element.innerHTML = '{{name}}<div data-repeat="item in items">{{$index}}</div><div><p>{{age}}</p></div>';
 		tpl.compile();
