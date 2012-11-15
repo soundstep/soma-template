@@ -592,10 +592,10 @@ template.clearWatchers();</span>
 		<div class="codehilite"><pre><span class="nx"><span class="kd">var</span> settings = soma.template.settings;</span></pre></div>
 
 		<h3>Tokens</h3>
-		<p>The default double curly braces that surround an identifier <code>{{name}}</code> can be customized. I recommend using at least 2 characters and while I tested some characters The might be some problems with weird ones!</p>
+		<p>The default double curly braces that surround an identifier <code>{{name}}</code> can be customized. I recommend using at least 2 characters. Some common characters have been tested, but there might be some problems with weird ones!</p>
 		<p>Two methods can be used to get or set the "start token" and the "end token" characters:</p>
 		<div class="codehilite"><pre><span class="nx">settings.tokens.start(<span class="s">&quot;[[&quot;</span>);
-settings.tokens.start(<span class="s">&quot;]]&quot;</span>);</span>
+settings.tokens.end(<span class="s">&quot;]]&quot;</span>);</span>
 <span class="nt">&lt;div&gt;</span>[[name]]<span class="nt">&lt;/div&gt;</span></pre></div>
 
 		<h3>Special attributes</h3>
