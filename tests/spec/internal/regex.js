@@ -220,7 +220,14 @@ describe("internal - regex", function () {
 		settings.tokens.start('{{');
 	});
 
-
-
+	it("array", function () {
+		// regex.array (match and replace) is used to find string in params and remove the string
+		expect("".match(regex.array)).toBeNull();
+		expect("name".match(regex.array)).toEqual(['name']);
+		expect("name[]".match(regex.array)).toEqual(['name']);
+		expect("name[0]".match(regex.array)).toEqual(['name', '0']);
+		expect("name[9]".match(regex.array)).toEqual(['name', '9']);
+		expect("name[100]".match(regex.array)).toEqual(['name', '100']);
+	});
 
 });

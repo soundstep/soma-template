@@ -324,6 +324,165 @@ describe("internal - shared", function () {
 		expect(getValue(child, 'd1.func(p.param1, p.param2)', 'd1', 'func', ['p.param1', 'p.param2'], true, null)).toEqual('param1param2');
 	});
 
+	it("getValue array", function() {
+		scope.names = ['john', 'david', 'mike'];
+		scope.names[100] = 'olivia';
+		expect(getValue(scope, 'names[0]', '', 'names[0]', [''], false, null)).toEqual('john');
+		expect(getValue(scope, 'names[1]', '', 'names[1]', [''], false, null)).toEqual('david');
+		expect(getValue(scope, 'names[2]', '', 'names[2]', [''], false, null)).toEqual('mike');
+		expect(getValue(scope, 'names[100]', '', 'names[100]', [''], false, null)).toEqual('olivia');
+		expect(getValue(scope, 'names[3]', '', 'names[3]', [''], false, null)).toBeUndefined();
+	});
+
+	it("getValue array param", function() {
+		scope.names = ['john', 'david', 'mike'];
+		scope.names[100] = 'olivia';
+		scope.func = function(value) {
+			return !value ? null : "My name is " + value;
+		}
+		expect(getValue(scope, 'func(names[0])', '', 'func', ['names[0]'], true, null)).toEqual('My name is john');
+		expect(getValue(scope, 'func(names[1])', '', 'func', ['names[1]'], true, null)).toEqual('My name is david');
+		expect(getValue(scope, 'func(names[2])', '', 'func', ['names[2]'], true, null)).toEqual('My name is mike');
+		expect(getValue(scope, 'func(names[100])', '', 'func', ['names[100]'], true, null)).toEqual('My name is olivia');
+		expect(getValue(scope, 'func(names[3])', '', 'func', ['names[3]'], true, null)).toBeNull();
+	});
+
+	it("getValue array from child", function() {
+		scope.names = ['john', 'david', 'mike'];
+		scope.names[100] = 'olivia';
+		expect(getValue(child, 'names[0]', '', 'names[0]', [''], false, null)).toEqual('john');
+		expect(getValue(child, 'names[1]', '', 'names[1]', [''], false, null)).toEqual('david');
+		expect(getValue(child, 'names[2]', '', 'names[2]', [''], false, null)).toEqual('mike');
+		expect(getValue(child, 'names[100]', '', 'names[100]', [''], false, null)).toEqual('olivia');
+		expect(getValue(child, 'names[3]', '', 'names[3]', [''], false, null)).toBeUndefined();
+	});
+
+	it("getValue array param from child", function() {
+		scope.names = ['john', 'david', 'mike'];
+		scope.names[100] = 'olivia';
+		scope.func = function(value) {
+			return !value ? null : "My name is " + value;
+		}
+		expect(getValue(child, 'func(names[0])', '', 'func', ['names[0]'], true, null)).toEqual('My name is john');
+		expect(getValue(child, 'func(names[1])', '', 'func', ['names[1]'], true, null)).toEqual('My name is david');
+		expect(getValue(child, 'func(names[2])', '', 'func', ['names[2]'], true, null)).toEqual('My name is mike');
+		expect(getValue(child, 'func(names[100])', '', 'func', ['names[100]'], true, null)).toEqual('My name is olivia');
+		expect(getValue(child, 'func(names[3])', '', 'func', ['names[3]'], true, null)).toBeNull();
+	});
+
+	it("getValue array from child with parent string", function() {
+		scope.names = ['john', 'david', 'mike'];
+		scope.names[100] = 'olivia';
+		expect(getValue(child, '../names[0]', '', 'names[0]', [''], false, null)).toEqual('john');
+		expect(getValue(child, '../names[1]', '', 'names[1]', [''], false, null)).toEqual('david');
+		expect(getValue(child, '../names[2]', '', 'names[2]', [''], false, null)).toEqual('mike');
+		expect(getValue(child, '../names[100]', '', 'names[100]', [''], false, null)).toEqual('olivia');
+		expect(getValue(child, '../names[3]', '', 'names[3]', [''], false, null)).toBeUndefined();
+	});
+
+	it("getValue array param from child with parent string", function() {
+		scope.names = ['john', 'david', 'mike'];
+		scope.names[100] = 'olivia';
+		scope.func = function(value) {
+			return !value ? null : "My name is " + value;
+		}
+		expect(getValue(child, 'func(../names[0])', '', 'func', ['../names[0]'], true, null)).toEqual('My name is john');
+		expect(getValue(child, 'func(../names[1])', '', 'func', ['../names[1]'], true, null)).toEqual('My name is david');
+		expect(getValue(child, 'func(../names[2])', '', 'func', ['../names[2]'], true, null)).toEqual('My name is mike');
+		expect(getValue(child, 'func(../names[100])', '', 'func', ['../names[100]'], true, null)).toEqual('My name is olivia');
+		expect(getValue(child, 'func(../names[3])', '', 'func', ['../names[3]'], true, null)).toBeNull();
+	});
+
+	it("getValue array path", function() {
+		scope.section = {
+			names: ['john', 'david', 'mike']
+		};
+		scope.section.names[100] = 'olivia';
+		expect(getValue(scope, 'section.names[0]', 'section', 'names[0]', [''], false, null)).toEqual('john');
+		expect(getValue(scope, 'section.names[1]', 'section', 'names[1]', [''], false, null)).toEqual('david');
+		expect(getValue(scope, 'section.names[2]', 'section', 'names[2]', [''], false, null)).toEqual('mike');
+		expect(getValue(scope, 'section.names[100]', 'section', 'names[100]', [''], false, null)).toEqual('olivia');
+		expect(getValue(scope, 'section.names[3]', 'section', 'names[3]', [''], false, null)).toBeUndefined();
+	});
+
+	it("getValue array path param", function() {
+		scope.section = {
+			names: ['john', 'david', 'mike']
+		};
+		scope.section.names[100] = 'olivia';
+		scope.section.func = function(value) {
+			return !value ? null : "My name is " + value;
+		}
+		expect(getValue(scope, 'section.func(section.names[0])', 'section', 'func', ['section.names[0]'], true, null)).toEqual('My name is john');
+		expect(getValue(scope, 'section.func(section.names[1])', 'section', 'func', ['section.names[1]'], true, null)).toEqual('My name is david');
+		expect(getValue(scope, 'section.func(section.names[2])', 'section', 'func', ['section.names[2]'], true, null)).toEqual('My name is mike');
+		expect(getValue(scope, 'section.func(section.names[100])', 'section', 'func', ['section.names[100]'], true, null)).toEqual('My name is olivia');
+		expect(getValue(scope, 'section.func(section.names[3])', 'section', 'func', ['section.names[3]'], true, null)).toBeNull();
+	});
+
+	it("getValue array path from child", function() {
+		scope.section = {
+			names: ['john', 'david', 'mike']
+		};
+		scope.section.names[100] = 'olivia';
+		expect(getValue(child, 'section.names[0]', 'section', 'names[0]', [''], false, null)).toEqual('john');
+		expect(getValue(child, 'section.names[1]', 'section', 'names[1]', [''], false, null)).toEqual('david');
+		expect(getValue(child, 'section.names[2]', 'section', 'names[2]', [''], false, null)).toEqual('mike');
+		expect(getValue(child, 'section.names[100]', 'section', 'names[100]', [''], false, null)).toEqual('olivia');
+		expect(getValue(child, 'section.names[3]', 'section', 'names[3]', [''], false, null)).toBeUndefined();
+	});
+
+	it("getValue array path param from child", function() {
+		scope.section = {
+			names: ['john', 'david', 'mike']
+		};
+		scope.section.names[100] = 'olivia';
+		scope.section.func = function(value) {
+			return !value ? null : "My name is " + value;
+		}
+		expect(getValue(child, 'section.func(section.names[0])', 'section', 'func', ['section.names[0]'], true, null)).toEqual('My name is john');
+		expect(getValue(child, 'section.func(section.names[1])', 'section', 'func', ['section.names[1]'], true, null)).toEqual('My name is david');
+		expect(getValue(child, 'section.func(section.names[2])', 'section', 'func', ['section.names[2]'], true, null)).toEqual('My name is mike');
+		expect(getValue(child, 'section.func(section.names[100])', 'section', 'func', ['section.names[100]'], true, null)).toEqual('My name is olivia');
+		expect(getValue(child, 'section.func(section.names[3])', 'section', 'func', ['section.names[3]'], true, null)).toBeNull();
+	});
+
+	it("getValue array path from child with parent string", function() {
+		scope.section = {
+			names: ['john', 'david', 'mike']
+		};
+		scope.section.names[100] = 'olivia';
+		expect(getValue(child, '../section.names[0]', 'section', 'names[0]', [''], false, null)).toEqual('john');
+		expect(getValue(child, '../section.names[1]', 'section', 'names[1]', [''], false, null)).toEqual('david');
+		expect(getValue(child, '../section.names[2]', 'section', 'names[2]', [''], false, null)).toEqual('mike');
+		expect(getValue(child, '../section.names[100]', 'section', 'names[100]', [''], false, null)).toEqual('olivia');
+		expect(getValue(child, '../section.names[3]', 'section', 'names[3]', [''], false, null)).toBeUndefined();
+	});
+
+	it("getValue array path param from child", function() {
+		scope.section = {
+			names: ['john', 'david', 'mike']
+		};
+		scope.section.names[100] = 'olivia';
+		scope.section.func = function(value) {
+			return !value ? null : "My name is " + value;
+		}
+		expect(getValue(child, '../section.func(../section.names[0])', 'section', 'func', ['../section.names[0]'], true, null)).toEqual('My name is john');
+		expect(getValue(child, '../section.func(../section.names[0])', 'section', 'func', ['../section.names[0]'], true, null)).toEqual('My name is john');
+		expect(getValue(child, '../section.func(../section.names[1])', 'section', 'func', ['../section.names[1]'], true, null)).toEqual('My name is david');
+		expect(getValue(child, '../section.func(../section.names[2])', 'section', 'func', ['../section.names[2]'], true, null)).toEqual('My name is mike');
+		expect(getValue(child, '../section.func(../section.names[100])', 'section', 'func', ['../section.names[100]'], true, null)).toEqual('My name is olivia');
+		expect(getValue(child, '../section.func(../section.names[3])', 'section', 'func', ['../section.names[3]'], true, null)).toBeNull();
+	});
+
+	it("getExpArrayParts", function() {
+		expect(getExpArrayParts('')).toBeNull();
+		expect(getExpArrayParts('name')).toBeNull();
+		expect(getExpArrayParts('name[]')).toBeNull();
+		expect(getExpArrayParts('name[0]')).toEqual(['name', '0'])
+		expect(getExpArrayParts('name[999]')).toEqual(['name', '999'])
+	});
+
 	it("getExpressionPath no path", function () {
 		expect(getExpressionPath('func()')).toEqual('');
 		expect(getExpressionPath('func(a1)')).toEqual('');

@@ -1,3 +1,10 @@
+function getExpArrayParts(value) {
+	if (!isString(value)) return false;
+	var matches = value.match(regex.array);
+	if (!matches || matches.length < 2) return null;
+	else return matches;
+}
+
 function getRepeaterData(repeaterValue, scope) {
 	var parts = repeaterValue.match(regex.repeat);
 	if (!parts) return;
@@ -77,9 +84,17 @@ function getValue(scope, pattern, pathString, accessor, params, isFunc, paramsFo
 		}
 	}
 	if (!isFunc) {
-		// pattern is a property
-		if (!isDefined(path[accessor]) && scopeTarget._parent) return getValue(scopeTarget._parent, pattern, pathString, accessor, params, isFunc, paramsValues);
-		else return path[accessor];
+		var arrayParts = getExpArrayParts(accessor);
+		if (arrayParts && isArray(path[arrayParts[0]]) && isDefined(path[arrayParts[0]][parseInt(arrayParts[1])])) {
+			// pattern is an array
+			return path[arrayParts[0]][parseInt(arrayParts[1])];
+		}
+		else {
+			// pattern is a property
+			if (!isDefined(path[accessor]) && scopeTarget._parent) return getValue(scopeTarget._parent, pattern, pathString, accessor, params, isFunc, paramsValues);
+			else return path[accessor];
+		}
+
 	}
 	else {
 		// pattern is a function
