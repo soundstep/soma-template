@@ -187,28 +187,30 @@ describe("internal - helpers", function () {
 	it("insert after", function () {
 		ct.innerHTML = "<p></p>";
 		insertAfter(ct.firstChild, doc.createElement('span'));
-		expect(ct.innerHTML).toEqual('<p></p><span></span>');
+		expect(ct.childNodes[0].nodeName.toLowerCase()).toEqual('p');
+		expect(ct.childNodes[1].nodeName.toLowerCase()).toEqual('span');
 	});
 
 	it("insert before", function () {
 		ct.innerHTML = "<p></p>";
 		insertBefore(ct.firstChild, doc.createElement('span'));
-		expect(ct.innerHTML).toEqual('<span></span><p></p>');
+		expect(ct.childNodes[0].nodeName.toLowerCase()).toEqual('span');
+		expect(ct.childNodes[1].nodeName.toLowerCase()).toEqual('p');
 	});
 
 	it("remove class", function() {
 		ct.innerHTML = '<p></p>';
 		removeClass(ct.firstChild, 'cl')
-		expect(ct.innerHTML).toEqual('<p></p>');
+		expect(ct.firstChild.className.replace(/\s/g, '')).toEqual('');
 		ct.innerHTML = '<p class="cl"></p>';
 		removeClass(ct.firstChild, 'cl')
-		expect(ct.innerHTML).toEqual('<p class=""></p>');
+		expect(ct.firstChild.className.replace(/\s/g, '')).toEqual('');
 		ct.innerHTML = '<p class=" cl "></p>';
 		removeClass(ct.firstChild, 'cl')
-		expect(ct.innerHTML).toEqual('<p class=""></p>');
+		expect(ct.firstChild.className.replace(/\s/g, '')).toEqual('');
 		ct.innerHTML = '<p class="cl bold"></p>';
 		removeClass(ct.firstChild, 'cl')
-		expect(ct.innerHTML).toEqual('<p class="bold"></p>');
+		expect(ct.firstChild.className.replace(/\s/g, '')).toEqual('bold');
 	});
 
 	it("create hash map", function() {

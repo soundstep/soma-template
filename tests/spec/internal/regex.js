@@ -13,32 +13,32 @@ describe("internal - regex", function () {
 	it("sequence", function () {
 		// regex.sequence (match) should separate in an array the tokens and non-tokens parts
 		expect("".match(regex.sequence)).toBeNull();
-		expect("string".match(regex.sequence)).toEqual(['string']);
-		expect("{{name}}".match(regex.sequence)).toEqual(['{{name}}']);
-		expect("name}".match(regex.sequence)).toEqual(['name}']);
-		expect("{name".match(regex.sequence)).toEqual(['{name']);
-		expect("{name}".match(regex.sequence)).toEqual(['{name}']);
-		expect("{name} {{name}}".match(regex.sequence)).toEqual(['{name} ', '{{name}}']);
+		expect("string".match(regex.sequence).toString()).toEqual('string');
+		expect("{{name}}".match(regex.sequence).toString()).toEqual('{{name}}');
+		expect("name}".match(regex.sequence).toString()).toEqual('name}');
+		expect("{name".match(regex.sequence).toString()).toEqual('{name');
+		expect("{name}".match(regex.sequence).toString()).toEqual('{name}');
+		expect("{name} {{name}}".match(regex.sequence).toString()).toEqual('{name} ,{{name}}');
 		// string
-		expect("s{{name}}".match(regex.sequence)).toEqual(['s', '{{name}}']);
-		expect("{{name}}s".match(regex.sequence)).toEqual(['{{name}}', 's']);
-		expect("s{{name}}s".match(regex.sequence)).toEqual(['s', '{{name}}', 's']);
-		expect("{{name}}s{{name}}".match(regex.sequence)).toEqual(['{{name}}', 's', '{{name}}']);
+		expect("s{{name}}".match(regex.sequence).toString()).toEqual('s,{{name}}');
+		expect("{{name}}s".match(regex.sequence).toString()).toEqual('{{name}},s');
+		expect("s{{name}}s".match(regex.sequence).toString()).toEqual('s,{{name}},s');
+		expect("{{name}}s{{name}}".match(regex.sequence).toString()).toEqual('{{name}},s,{{name}}');
 		// space
-		expect(" {{name}}".match(regex.sequence)).toEqual([' ', '{{name}}']);
-		expect("{{name}} ".match(regex.sequence)).toEqual(['{{name}}', ' ']);
-		expect(" {{name}} ".match(regex.sequence)).toEqual([' ', '{{name}}', ' ']);
-		expect("{{name}} {{name}}".match(regex.sequence)).toEqual(['{{name}}', ' ', '{{name}}']);
+		expect(" {{name}}".match(regex.sequence).toString()).toEqual(' ,{{name}}');
+		expect("{{name}} ".match(regex.sequence).toString()).toEqual('{{name}}, ');
+		expect(" {{name}} ".match(regex.sequence).toString()).toEqual(' ,{{name}}, ');
+		expect("{{name}} {{name}}".match(regex.sequence).toString()).toEqual('{{name}}, ,{{name}}');
 		// tab
-		expect("	{{name}}".match(regex.sequence)).toEqual(['	', '{{name}}']);
-		expect("{{name}}	".match(regex.sequence)).toEqual(['{{name}}', '	']);
-		expect("	{{name}}	".match(regex.sequence)).toEqual(['	', '{{name}}', '	']);
-		expect("{{name}}	{{name}}".match(regex.sequence)).toEqual(['{{name}}', '	', '{{name}}']);
+		expect("	{{name}}".match(regex.sequence).toString()).toEqual('	,{{name}}');
+		expect("{{name}}	".match(regex.sequence).toString()).toEqual('{{name}},	');
+		expect("	{{name}}	".match(regex.sequence).toString()).toEqual('	,{{name}},	');
+		expect("{{name}}	{{name}}".match(regex.sequence).toString()).toEqual('{{name}},	,{{name}}');
 		// line break
-		expect("\n{{name}}".match(regex.sequence)).toEqual(['\n', '{{name}}']);
-		expect("{{name}}\n".match(regex.sequence)).toEqual(['{{name}}', '\n']);
-		expect("\n{{name}}\n".match(regex.sequence)).toEqual(['\n', '{{name}}', '\n']);
-		expect("{{name}}\n{{name}}".match(regex.sequence)).toEqual(['{{name}}', '\n', '{{name}}']);
+		expect("\n{{name}}".match(regex.sequence).toString()).toEqual('\n,{{name}}');
+		expect("{{name}}\n".match(regex.sequence).toString()).toEqual('{{name}},\n');
+		expect("\n{{name}}\n".match(regex.sequence).toString()).toEqual('\n,{{name}},\n');
+		expect("{{name}}\n{{name}}".match(regex.sequence).toString()).toEqual('{{name}},\n,{{name}}');
 	});
 
 	it("token", function () {
@@ -48,10 +48,10 @@ describe("internal - regex", function () {
 		expect("{name}".match(regex.token)).toBeNull();
 		expect("{{name}".match(regex.token)).toBeNull();
 		expect("{name}}".match(regex.token)).toBeNull();
-		expect("{{name}}".match(regex.token)).toEqual(['{{name}}']);
-		expect("a{{name}}".match(regex.token)).toEqual(['{{name}}']);
-		expect("{{name}}a".match(regex.token)).toEqual(['{{name}}']);
-		expect("a{{name}}a".match(regex.token)).toEqual(['{{name}}']);
+		expect("{{name}}".match(regex.token).toString()).toEqual('{{name}}');
+		expect("a{{name}}".match(regex.token).toString()).toEqual('{{name}}');
+		expect("{{name}}a".match(regex.token).toString()).toEqual('{{name}}');
+		expect("a{{name}}a".match(regex.token).toString()).toEqual('{{name}}');
 	});
 
 	it("expression", function () {
@@ -168,8 +168,8 @@ describe("internal - regex", function () {
 	it("depth", function () {
 		// regex.depth (match) is used to find the parent scope
 		expect("name".match(regex.depth)).toBeNull();
-		expect("../name".match(regex.depth)).toEqual(['../']);
-		expect("../../name".match(regex.depth)).toEqual(['../', '../']);
+		expect("../name".match(regex.depth).toString()).toEqual('../');
+		expect("../../name".match(regex.depth).toString()).toEqual('../,../');
 	});
 
 	it("string", function () {
@@ -218,16 +218,6 @@ describe("internal - regex", function () {
 		t1.render();
 		expect(t1.element.innerHTML).toEqual('john');
 		settings.tokens.start('{{');
-	});
-
-	it("array", function () {
-		// regex.array (match and replace) is used to find string in params and remove the string
-		expect("".match(regex.array)).toBeNull();
-		expect("name".match(regex.array)).toEqual(['name']);
-		expect("name[]".match(regex.array)).toEqual(['name']);
-		expect("name[0]".match(regex.array)).toEqual(['name', '0']);
-		expect("name[9]".match(regex.array)).toEqual(['name', '9']);
-		expect("name[100]".match(regex.array)).toEqual(['name', '100']);
 	});
 
 });

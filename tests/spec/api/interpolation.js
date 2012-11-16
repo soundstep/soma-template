@@ -127,9 +127,9 @@ describe("api - interpolation", function () {
 	});
 
 	it("attribute name multiple prefix", function () {
-		ct.innerHTML = '<p s{{in}}g{{le}}></p>';
+		ct.innerHTML = '<p s{{i}}g{{le}}></p>';
 		tpl.compile();
-		tpl.scope.in = 'in';
+		tpl.scope.i = 'in';
 		tpl.scope.le = 'le';
 		tpl.render();
 		expect(ct.innerHTML).toEqual('<p single=""></p>');
@@ -163,9 +163,9 @@ describe("api - interpolation", function () {
 	});
 
 	it("attribute name value single", function () {
-		ct.innerHTML = '<p {{class}}="{{myClass}}"></p>';
+		ct.innerHTML = '<p {{class1}}="{{myClass}}"></p>';
 		tpl.compile();
-		tpl.scope.class = 'class';
+		tpl.scope.class1 = 'class';
 		tpl.scope.myClass = 'myClass';
 		tpl.render();
 		expect(ct.innerHTML).toEqual('<p class="myClass"></p>');

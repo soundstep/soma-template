@@ -348,7 +348,6 @@ describe("api - special attributes", function () {
 			]
 		];
 		tpl.render();
-		console.log(ct);
 		// level 1
 		var ul = ct.childNodes[0];
 		expect(ul.childNodes[0].firstChild.nodeValue).toEqual('Level 1, index 0');

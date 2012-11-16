@@ -67,8 +67,7 @@ var regex = {
 	quote: /\"|\'/g,
 	content: /[^.|^\s]/gm,
 	depth: /..\//g,
-	string: /^(\"|\')(.*)(\"|\')$/,
-	array: /(?!\[)(\d+)?!\]|[^\[|\]]+/g
+	string: /^(\"|\')(.*)(\"|\')$/
 };
 
 function isArray(value) {
@@ -223,13 +222,6 @@ if (!Array.prototype.filter) {
 	};
 }
 
-
-function getExpArrayParts(value) {
-	if (!isString(value)) return false;
-	var matches = value.match(regex.array);
-	if (!matches || matches.length < 2) return null;
-	else return matches;
-}
 
 function getRepeaterData(repeaterValue, scope) {
 	var parts = repeaterValue.match(regex.repeat);

@@ -1,10 +1,3 @@
-function getExpArrayParts(value) {
-	if (!isString(value)) return false;
-	var matches = value.match(regex.array);
-	if (!matches || matches.length < 2) return null;
-	else return matches;
-}
-
 function getRepeaterData(repeaterValue, scope) {
 	var parts = repeaterValue.match(regex.repeat);
 	if (!parts) return;

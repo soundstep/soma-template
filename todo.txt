@@ -9,13 +9,3 @@
 - add time execution in sheet demo?
 
 - run tests on all browsers
-
-- add array in path: {{items[0].name}}
-
-- finishing array tests (check render, check in repeater)
-
-- add array example in sheet
-
-- add array syntax in site
-
-- change spelling an href

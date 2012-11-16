@@ -534,14 +534,6 @@ describe("internal - shared", function () {
 		expect(getValue(child, 'func(../path[3].name)', 'func', ['../path[3].name'])).toBeNull();
 	});
 
-	it("getExpArrayParts", function() {
-		expect(getExpArrayParts('')).toBeNull();
-		expect(getExpArrayParts('name')).toBeNull();
-		expect(getExpArrayParts('name[]')).toBeNull();
-		expect(getExpArrayParts('name[0]')).toEqual(['name', '0'])
-		expect(getExpArrayParts('name[999]')).toEqual(['name', '999'])
-	});
-
 	it("getExpressionPath single", function () {
 		expect(getExpressionPath('func()')).toEqual('func');
 		expect(getExpressionPath('func(a1)')).toEqual('func');
