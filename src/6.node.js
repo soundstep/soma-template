@@ -7,6 +7,7 @@ var Node = function(element, scope) {
 	this.invalidate = false;
 	this.skip = false;
 	this.repeater = null;
+	this.isRepeaterDescendant = false;
 	this.parent = null;
 	this.children = [];
 	this.childrenRepeater = [];

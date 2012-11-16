@@ -37,34 +37,34 @@ describe("api - variables", function () {
 
 	it("index in attribute", function () {
 		ct.innerHTML =
-			'<div data-repeat="itemA in itemsA" class="myClassA{{$index}}">' +
-				'<div data-repeat="itemB in itemsB" class="myClassB{{$index}}"></div>' +
+			'<div data-repeat="itemA in itemsA" data-id="myClassA{{$index}}">' +
+				'<div data-repeat="itemB in itemsB" data-id="myClassB{{$index}}"></div>' +
 			'</div>';
 		tpl.compile();
 		tpl.scope.itemsA = ["itemA1", "itemA2", "itemA3"];
 		tpl.scope.itemsB = ["itemB1", "itemB2", "itemB3"];
 		tpl.render();
 		// first repeat
-		expect(ct.childNodes[0].getAttribute('class')).toEqual('myClassA0');
-		expect(ct.childNodes[1].getAttribute('class')).toEqual('myClassA1');
-		expect(ct.childNodes[2].getAttribute('class')).toEqual('myClassA2');
+		expect(ct.childNodes[0].getAttribute('data-id')).toEqual('myClassA0');
+		expect(ct.childNodes[1].getAttribute('data-id')).toEqual('myClassA1');
+		expect(ct.childNodes[2].getAttribute('data-id')).toEqual('myClassA2');
 		// second repeat
-		expect(ct.childNodes[0].childNodes[0].getAttribute('class')).toEqual('myClassB0');
-		expect(ct.childNodes[0].childNodes[1].getAttribute('class')).toEqual('myClassB1');
-		expect(ct.childNodes[0].childNodes[2].getAttribute('class')).toEqual('myClassB2');
-		expect(ct.childNodes[1].childNodes[0].getAttribute('class')).toEqual('myClassB0');
-		expect(ct.childNodes[1].childNodes[1].getAttribute('class')).toEqual('myClassB1');
-		expect(ct.childNodes[1].childNodes[2].getAttribute('class')).toEqual('myClassB2');
-		expect(ct.childNodes[2].childNodes[0].getAttribute('class')).toEqual('myClassB0');
-		expect(ct.childNodes[2].childNodes[1].getAttribute('class')).toEqual('myClassB1');
-		expect(ct.childNodes[2].childNodes[2].getAttribute('class')).toEqual('myClassB2');
+		expect(ct.childNodes[0].childNodes[0].getAttribute('data-id')).toEqual('myClassB0');
+		expect(ct.childNodes[0].childNodes[1].getAttribute('data-id')).toEqual('myClassB1');
+		expect(ct.childNodes[0].childNodes[2].getAttribute('data-id')).toEqual('myClassB2');
+		expect(ct.childNodes[1].childNodes[0].getAttribute('data-id')).toEqual('myClassB0');
+		expect(ct.childNodes[1].childNodes[1].getAttribute('data-id')).toEqual('myClassB1');
+		expect(ct.childNodes[1].childNodes[2].getAttribute('data-id')).toEqual('myClassB2');
+		expect(ct.childNodes[2].childNodes[0].getAttribute('data-id')).toEqual('myClassB0');
+		expect(ct.childNodes[2].childNodes[1].getAttribute('data-id')).toEqual('myClassB1');
+		expect(ct.childNodes[2].childNodes[2].getAttribute('data-id')).toEqual('myClassB2');
 	});
 
 	it("index parent", function () {
 		ct.innerHTML =
 			'<div data-repeat="itemA in itemsA">{{$index}}' +
 				'<div data-repeat="itemB in itemsB">{{../$index}}</div>' +
-				'</div>';
+			'</div>';
 		tpl.compile();
 		tpl.scope.itemsA = ["itemA1", "itemA2", "itemA3"];
 		tpl.scope.itemsB = ["itemB1", "itemB2", "itemB3"];
@@ -174,52 +174,52 @@ describe("api - variables", function () {
 
 	it("key in attribute", function () {
 		ct.innerHTML =
-			'<div data-repeat="itemA in itemsA" class="myClassA{{$key}}">' +
-				'<div data-repeat="itemB in itemsB" class="myClassB{{$key}}"></div>' +
-				'</div>';
-		tpl.compile();
-		tpl.scope.itemsA = {itemA1:"itemA1 value", itemA2:"itemA2 value", itemA3:"itemA3 value"};
-		tpl.scope.itemsB = {itemB1:"itemB1 value", itemB2:"itemB2 value", itemB3:"itemB3 value"};
-		tpl.render();
-		// first repeat
-		expect(ct.childNodes[0].getAttribute('class')).toEqual('myClassAitemA1');
-		expect(ct.childNodes[1].getAttribute('class')).toEqual('myClassAitemA2');
-		expect(ct.childNodes[2].getAttribute('class')).toEqual('myClassAitemA3');
-		// second repeat
-		expect(ct.childNodes[0].childNodes[0].getAttribute('class')).toEqual('myClassBitemB1');
-		expect(ct.childNodes[0].childNodes[1].getAttribute('class')).toEqual('myClassBitemB2');
-		expect(ct.childNodes[0].childNodes[2].getAttribute('class')).toEqual('myClassBitemB3');
-		expect(ct.childNodes[1].childNodes[0].getAttribute('class')).toEqual('myClassBitemB1');
-		expect(ct.childNodes[1].childNodes[1].getAttribute('class')).toEqual('myClassBitemB2');
-		expect(ct.childNodes[1].childNodes[2].getAttribute('class')).toEqual('myClassBitemB3');
-		expect(ct.childNodes[2].childNodes[0].getAttribute('class')).toEqual('myClassBitemB1');
-		expect(ct.childNodes[2].childNodes[1].getAttribute('class')).toEqual('myClassBitemB2');
-		expect(ct.childNodes[2].childNodes[2].getAttribute('class')).toEqual('myClassBitemB3');
-	});
-
-	it("key parent", function () {
-		ct.innerHTML =
-			'<div data-repeat="itemA in itemsA" class="myClassA{{$key}}">' +
-				'<div data-repeat="itemB in itemsB" class="myClassB{{../$key}}"></div>' +
+			'<div data-repeat="itemA in itemsA" data-id="myClassA{{$key}}">' +
+				'<div data-repeat="itemB in itemsB" data-id="myClassB{{$key}}"></div>' +
 			'</div>';
 		tpl.compile();
 		tpl.scope.itemsA = {itemA1:"itemA1 value", itemA2:"itemA2 value", itemA3:"itemA3 value"};
 		tpl.scope.itemsB = {itemB1:"itemB1 value", itemB2:"itemB2 value", itemB3:"itemB3 value"};
 		tpl.render();
 		// first repeat
-		expect(ct.childNodes[0].getAttribute('class')).toEqual('myClassAitemA1');
-		expect(ct.childNodes[1].getAttribute('class')).toEqual('myClassAitemA2');
-		expect(ct.childNodes[2].getAttribute('class')).toEqual('myClassAitemA3');
+		expect(ct.childNodes[0].getAttribute('data-id')).toEqual('myClassAitemA1');
+		expect(ct.childNodes[1].getAttribute('data-id')).toEqual('myClassAitemA2');
+		expect(ct.childNodes[2].getAttribute('data-id')).toEqual('myClassAitemA3');
 		// second repeat
-		expect(ct.childNodes[0].childNodes[0].getAttribute('class')).toEqual('myClassBitemA1');
-		expect(ct.childNodes[0].childNodes[1].getAttribute('class')).toEqual('myClassBitemA1');
-		expect(ct.childNodes[0].childNodes[2].getAttribute('class')).toEqual('myClassBitemA1');
-		expect(ct.childNodes[1].childNodes[0].getAttribute('class')).toEqual('myClassBitemA2');
-		expect(ct.childNodes[1].childNodes[1].getAttribute('class')).toEqual('myClassBitemA2');
-		expect(ct.childNodes[1].childNodes[2].getAttribute('class')).toEqual('myClassBitemA2');
-		expect(ct.childNodes[2].childNodes[0].getAttribute('class')).toEqual('myClassBitemA3');
-		expect(ct.childNodes[2].childNodes[1].getAttribute('class')).toEqual('myClassBitemA3');
-		expect(ct.childNodes[2].childNodes[2].getAttribute('class')).toEqual('myClassBitemA3');
+		expect(ct.childNodes[0].childNodes[0].getAttribute('data-id')).toEqual('myClassBitemB1');
+		expect(ct.childNodes[0].childNodes[1].getAttribute('data-id')).toEqual('myClassBitemB2');
+		expect(ct.childNodes[0].childNodes[2].getAttribute('data-id')).toEqual('myClassBitemB3');
+		expect(ct.childNodes[1].childNodes[0].getAttribute('data-id')).toEqual('myClassBitemB1');
+		expect(ct.childNodes[1].childNodes[1].getAttribute('data-id')).toEqual('myClassBitemB2');
+		expect(ct.childNodes[1].childNodes[2].getAttribute('data-id')).toEqual('myClassBitemB3');
+		expect(ct.childNodes[2].childNodes[0].getAttribute('data-id')).toEqual('myClassBitemB1');
+		expect(ct.childNodes[2].childNodes[1].getAttribute('data-id')).toEqual('myClassBitemB2');
+		expect(ct.childNodes[2].childNodes[2].getAttribute('data-id')).toEqual('myClassBitemB3');
+	});
+
+	it("key parent", function () {
+		ct.innerHTML =
+			'<div data-repeat="itemA in itemsA" data-id="myClassA{{$key}}">' +
+				'<div data-repeat="itemB in itemsB" data-id="myClassB{{../$key}}"></div>' +
+			'</div>';
+		tpl.compile();
+		tpl.scope.itemsA = {itemA1:"itemA1 value", itemA2:"itemA2 value", itemA3:"itemA3 value"};
+		tpl.scope.itemsB = {itemB1:"itemB1 value", itemB2:"itemB2 value", itemB3:"itemB3 value"};
+		tpl.render();
+		// first repeat
+		expect(ct.childNodes[0].getAttribute('data-id')).toEqual('myClassAitemA1');
+		expect(ct.childNodes[1].getAttribute('data-id')).toEqual('myClassAitemA2');
+		expect(ct.childNodes[2].getAttribute('data-id')).toEqual('myClassAitemA3');
+		// second repeat
+		expect(ct.childNodes[0].childNodes[0].getAttribute('data-id')).toEqual('myClassBitemA1');
+		expect(ct.childNodes[0].childNodes[1].getAttribute('data-id')).toEqual('myClassBitemA1');
+		expect(ct.childNodes[0].childNodes[2].getAttribute('data-id')).toEqual('myClassBitemA1');
+		expect(ct.childNodes[1].childNodes[0].getAttribute('data-id')).toEqual('myClassBitemA2');
+		expect(ct.childNodes[1].childNodes[1].getAttribute('data-id')).toEqual('myClassBitemA2');
+		expect(ct.childNodes[1].childNodes[2].getAttribute('data-id')).toEqual('myClassBitemA2');
+		expect(ct.childNodes[2].childNodes[0].getAttribute('data-id')).toEqual('myClassBitemA3');
+		expect(ct.childNodes[2].childNodes[1].getAttribute('data-id')).toEqual('myClassBitemA3');
+		expect(ct.childNodes[2].childNodes[2].getAttribute('data-id')).toEqual('myClassBitemA3');
 	});
 
 	it("key as parameter", function () {

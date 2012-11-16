@@ -62,15 +62,27 @@ describe("api - attribute", function () {
 	});
 
 	it("previous name", function () {
-		ct.innerHTML = '<div {{class}}="bold"></div>';
+		ct.innerHTML = '<div {{class1}}="bold"></div>';
 		tpl.compile();
-		tpl.scope.class = 'class';
+		tpl.scope.class1 = 'class';
 		tpl.render();
-		expect(ct.firstChild.getAttribute('class')).toEqual('bold');
-		tpl.scope.class = 'data-class';
+		if (ie === 7) {
+			expect(ct.firstChild.className).toEqual('bold');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('class')).toEqual('bold');
+		}
+		tpl.scope.class1 = 'data-class';
 		tpl.render();
-		expect(ct.firstChild.getAttribute('class')).toBeNull();
-		expect(ct.firstChild.getAttribute('data-class')).toEqual('bold');
+		if (ie === 7) {
+			expect(ct.firstChild.className).toBeNull();
+		}
+		else if (ie === 8) {
+			expect(ct.firstChild.className).toEqual('');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('class')).toBeNull();
+		}
 	});
 
 	it("dispose", function () {

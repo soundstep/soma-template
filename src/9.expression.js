@@ -9,14 +9,12 @@ var Expression = function(pattern, node, attribute) {
 		this.isFunction = false;
 		this.depth = null;
 		this.path = null;
-		this.accessor = null;
 		this.params = null;
 	}
 	else {
 		this.isFunction = isExpFunction(this.pattern);
 		this.depth = getScopeDepth(this.pattern);
 		this.path = getExpressionPath(this.pattern);
-		this.accessor = getExpressionAccessor(this.pattern);
 		this.params = !this.isFunction ? null : getParamsFromString(this.pattern.match(regex.func)[2]);
 	}
 };
@@ -29,7 +27,6 @@ Expression.prototype = {
 		this.node = null;
 		this.attribute = null;
 		this.path = null;
-		this.accessor = null;
 		this.params = null;
 		this.value = null;
 	},
@@ -45,6 +42,6 @@ Expression.prototype = {
 		}
 	},
 	getValue: function(scope) {
-		return getValue(scope, this.pattern, this.path, this.accessor, this.params, this.isFunction);
+		return getValue(scope, this.pattern, this.path, this.params);
 	}
 };

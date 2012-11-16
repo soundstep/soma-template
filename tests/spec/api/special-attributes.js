@@ -108,42 +108,82 @@ describe("api - special attributes", function () {
 		ct.innerHTML = '<input type="checkbox" data-checked/>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.getAttribute('checked')).toEqual('checked');
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('checked')).toBeTruthy();
+		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('checked')).toEqual('');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('checked')).toEqual('checked');
+		}
 	});
 
 	it("data-checked true", function () {
 		ct.innerHTML = '<input type="checkbox" data-checked="true"/>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.getAttribute('checked')).toEqual('checked');
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('checked')).toBeTruthy();
+		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('checked')).toEqual('');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('checked')).toEqual('checked');
+		}
 	});
 
 	it("data-checked false", function () {
 		ct.innerHTML = '<input type="checkbox" data-checked="false"/>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.getAttribute('checked')).toBeNull();
+		if (ct.canHaveChildren) {
+			// IE
+			expect(ct.firstChild.getAttribute('checked')).toBeFalsy();
+		}
+		else {
+			expect(ct.firstChild.getAttribute('checked')).toBeNull();
+		}
 	});
 
 	it("data-disabled no value", function () {
 		ct.innerHTML = '<input type="checkbox" data-disabled/>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.getAttribute('disabled')).toEqual('disabled');
+		if (ct.canHaveChildren) {
+			// IE
+			expect(ct.firstChild.getAttribute('disabled')).toBeTruthy();
+		}
+		else {
+			expect(ct.firstChild.getAttribute('disabled')).toEqual('disabled');
+		}
 	});
 
 	it("data-disabled true", function () {
 		ct.innerHTML = '<input type="checkbox" data-disabled="true"/>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.getAttribute('disabled')).toEqual('disabled');
+		if (ct.canHaveChildren) {
+			// IE
+			expect(ct.firstChild.getAttribute('disabled')).toBeTruthy();
+		}
+		else {
+			expect(ct.firstChild.getAttribute('disabled')).toEqual('disabled');
+		}
 	});
 
 	it("data-disabled false", function () {
 		ct.innerHTML = '<input type="checkbox" data-disabled="false"/>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.getAttribute('disabled')).toBeNull();
+		if (ct.canHaveChildren) {
+			// IE
+			expect(ct.firstChild.getAttribute('disabled')).toBeFalsy();
+		}
+		else {
+			expect(ct.firstChild.getAttribute('disabled')).toBeNull();
+		}
 	});
 
 	it("data-multiple no value", function () {
@@ -171,21 +211,39 @@ describe("api - special attributes", function () {
 		ct.innerHTML = '<input type="checkbox" data-readonly/>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.getAttribute('readonly')).toEqual('readonly');
+		if (ct.canHaveChildren) {
+			// IE
+			expect(ct.firstChild.getAttribute('readonly')).toBeTruthy();
+		}
+		else {
+			expect(ct.firstChild.getAttribute('readonly')).toEqual('readonly');
+		}
 	});
 
 	it("data-readonly true", function () {
 		ct.innerHTML = '<input type="checkbox" data-readonly="true"/>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.getAttribute('readonly')).toEqual('readonly');
+		if (ct.canHaveChildren) {
+			// IE
+			expect(ct.firstChild.getAttribute('readonly')).toBeTruthy();
+		}
+		else {
+			expect(ct.firstChild.getAttribute('readonly')).toEqual('readonly');
+		}
 	});
 
 	it("data-readonly false", function () {
 		ct.innerHTML = '<input type="checkbox" data-readonly="false"/>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.getAttribute('readonly')).toBeNull();
+		if (ct.canHaveChildren) {
+			// IE
+			expect(ct.firstChild.getAttribute('readonly')).toBeFalsy();
+		}
+		else {
+			expect(ct.firstChild.getAttribute('readonly')).toBeNull();
+		}
 	});
 
 	it("data-selected no value", function () {
@@ -212,9 +270,19 @@ describe("api - special attributes", function () {
 	it("data-cloak", function () {
 		ct.innerHTML = '<div class="data-cloak">{{name}}</span>';
 		tpl.compile();
-		expect(ct.firstChild.getAttribute('class')).toEqual('data-cloak');
+		if (ct.canHaveChildren) {
+			expect(ct.firstChild.className).toEqual('data-cloak');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('class')).toEqual('data-cloak');
+		}
 		tpl.render();
-		expect(ct.firstChild.getAttribute('class')).not.toEqual('data-cloak');
+		if (ct.canHaveChildren) {
+			expect(ct.firstChild.className).toEqual('');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('class')).not.toEqual('data-cloak');
+		}
 	});
 
 	it("data-repeat", function () {
@@ -312,6 +380,101 @@ describe("api - special attributes", function () {
 		expect(ul_3_3.childNodes[2].firstChild.nodeValue).toEqual('Level 3, index 2: 2-2-2');
 	});
 
+	it("data-repeat direct access", function () {
+		ct.innerHTML =
+			'<ul>' +
+				'<li data-repeat="item1 in items">' +
+					'Level 1, index {{$index}}' +
+					'<ul>' +
+						'<li data-repeat="item2 in item1">' +
+							'Level 2, index {{$index}}' +
+							'<ul>' +
+								'<li data-repeat="items3 in item2">' +
+									'{{item2[0]}} {{item2[1]}} {{item2[2]}}' +
+								'</li>' +
+							'</ul>' +
+						'</li>' +
+					'</ul>' +
+				'</li>' +
+			'</ul>';
+		tpl.compile();
+		tpl.scope.items = [
+			[
+				["0-0-0", "0-0-1", "0-0-2"],
+				["0-1-0", "0-1-1", "0-1-2"],
+				["0-2-0", "0-2-1", "0-2-2"]
+			],
+			[
+				["1-0-0", "1-0-1", "1-0-2"],
+				["1-1-0", "1-1-1", "1-1-2"],
+				["1-2-0", "1-2-1", "1-2-2"]
+			],
+			[
+				["2-0-0", "2-0-1", "2-0-2"],
+				["2-1-0", "2-1-1", "2-1-2"],
+				["2-2-0", "2-2-1", "2-2-2"]
+			]
+		];
+		tpl.render();
+		// level 1
+		var ul = ct.childNodes[0];
+		expect(ul.childNodes[0].firstChild.nodeValue).toEqual('Level 1, index 0');
+		expect(ul.childNodes[1].firstChild.nodeValue).toEqual('Level 1, index 1');
+		expect(ul.childNodes[2].firstChild.nodeValue).toEqual('Level 1, index 2');
+		// level 2
+		var ul_1 = ul.childNodes[0].childNodes[1];
+		expect(ul_1.childNodes[0].firstChild.nodeValue).toEqual('Level 2, index 0');
+		expect(ul_1.childNodes[1].firstChild.nodeValue).toEqual('Level 2, index 1');
+		expect(ul_1.childNodes[2].firstChild.nodeValue).toEqual('Level 2, index 2');
+		var ul_2 = ul.childNodes[1].childNodes[1];
+		expect(ul_2.childNodes[0].firstChild.nodeValue).toEqual('Level 2, index 0');
+		expect(ul_2.childNodes[1].firstChild.nodeValue).toEqual('Level 2, index 1');
+		expect(ul_2.childNodes[2].firstChild.nodeValue).toEqual('Level 2, index 2');
+		var ul_3 = ul.childNodes[2].childNodes[1];
+		expect(ul_3.childNodes[0].firstChild.nodeValue).toEqual('Level 2, index 0');
+		expect(ul_3.childNodes[1].firstChild.nodeValue).toEqual('Level 2, index 1');
+		expect(ul_3.childNodes[2].firstChild.nodeValue).toEqual('Level 2, index 2');
+		// level 3
+		var ul_1_1 = ul_1.childNodes[0].childNodes[1];
+		expect(ul_1_1.childNodes[0].firstChild.nodeValue).toEqual('0-0-0 0-0-1 0-0-2');
+		expect(ul_1_1.childNodes[1].firstChild.nodeValue).toEqual('0-0-0 0-0-1 0-0-2');
+		expect(ul_1_1.childNodes[2].firstChild.nodeValue).toEqual('0-0-0 0-0-1 0-0-2');
+		var ul_1_2 = ul_1.childNodes[1].childNodes[1];
+		expect(ul_1_2.childNodes[0].firstChild.nodeValue).toEqual('0-1-0 0-1-1 0-1-2');
+		expect(ul_1_2.childNodes[1].firstChild.nodeValue).toEqual('0-1-0 0-1-1 0-1-2');
+		expect(ul_1_2.childNodes[2].firstChild.nodeValue).toEqual('0-1-0 0-1-1 0-1-2');
+		var ul_1_3 = ul_1.childNodes[2].childNodes[1];
+		expect(ul_1_3.childNodes[0].firstChild.nodeValue).toEqual('0-2-0 0-2-1 0-2-2');
+		expect(ul_1_3.childNodes[1].firstChild.nodeValue).toEqual('0-2-0 0-2-1 0-2-2');
+		expect(ul_1_3.childNodes[2].firstChild.nodeValue).toEqual('0-2-0 0-2-1 0-2-2');
+		// level 3
+		var ul_2_1 = ul_2.childNodes[0].childNodes[1];
+		expect(ul_2_1.childNodes[0].firstChild.nodeValue).toEqual('1-0-0 1-0-1 1-0-2');
+		expect(ul_2_1.childNodes[1].firstChild.nodeValue).toEqual('1-0-0 1-0-1 1-0-2');
+		expect(ul_2_1.childNodes[2].firstChild.nodeValue).toEqual('1-0-0 1-0-1 1-0-2');
+		var ul_2_2 = ul_2.childNodes[1].childNodes[1];
+		expect(ul_2_2.childNodes[0].firstChild.nodeValue).toEqual('1-1-0 1-1-1 1-1-2');
+		expect(ul_2_2.childNodes[1].firstChild.nodeValue).toEqual('1-1-0 1-1-1 1-1-2');
+		expect(ul_2_2.childNodes[2].firstChild.nodeValue).toEqual('1-1-0 1-1-1 1-1-2');
+		var ul_2_3 = ul_2.childNodes[2].childNodes[1];
+		expect(ul_2_3.childNodes[0].firstChild.nodeValue).toEqual('1-2-0 1-2-1 1-2-2');
+		expect(ul_2_3.childNodes[1].firstChild.nodeValue).toEqual('1-2-0 1-2-1 1-2-2');
+		expect(ul_2_3.childNodes[2].firstChild.nodeValue).toEqual('1-2-0 1-2-1 1-2-2');
+		// level 3
+		var ul_3_1 = ul_3.childNodes[0].childNodes[1];
+		expect(ul_3_1.childNodes[0].firstChild.nodeValue).toEqual('2-0-0 2-0-1 2-0-2');
+		expect(ul_3_1.childNodes[1].firstChild.nodeValue).toEqual('2-0-0 2-0-1 2-0-2');
+		expect(ul_3_1.childNodes[2].firstChild.nodeValue).toEqual('2-0-0 2-0-1 2-0-2');
+		var ul_3_2 = ul_3.childNodes[1].childNodes[1];
+		expect(ul_3_2.childNodes[0].firstChild.nodeValue).toEqual('2-1-0 2-1-1 2-1-2');
+		expect(ul_3_2.childNodes[1].firstChild.nodeValue).toEqual('2-1-0 2-1-1 2-1-2');
+		expect(ul_3_2.childNodes[2].firstChild.nodeValue).toEqual('2-1-0 2-1-1 2-1-2');
+		var ul_3_3 = ul_3.childNodes[2].childNodes[1];
+		expect(ul_3_3.childNodes[0].firstChild.nodeValue).toEqual('2-2-0 2-2-1 2-2-2');
+		expect(ul_3_3.childNodes[1].firstChild.nodeValue).toEqual('2-2-0 2-2-1 2-2-2');
+		expect(ul_3_3.childNodes[2].firstChild.nodeValue).toEqual('2-2-0 2-2-1 2-2-2');
+
+	});
 
 
 

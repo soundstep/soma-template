@@ -122,9 +122,14 @@ describe("api - settings", function () {
 
 	it("change checked", function () {
 		settings.attributes.checked = 'custom-checked';
-		var t1 = createTemplateWithContent('<span custom-checked></span>');
+		var t1 = createTemplateWithContent('<input custom-checked>');
 		t1.render();
-		expect(t1.element.firstChild.getAttribute('checked')).toEqual('checked');
+		if (ct.canHaveChildren) {
+			expect(t1.element.firstChild.getAttribute('checked')).toBeTruthy();
+		}
+		else {
+			expect(t1.element.firstChild.getAttribute('checked')).toEqual('checked');
+		}
 		settings.attributes.checked = 'data-checked';
 	});
 
@@ -132,7 +137,12 @@ describe("api - settings", function () {
 		settings.attributes.disabled = 'custom-disabled';
 		var t1 = createTemplateWithContent('<span custom-disabled></span>');
 		t1.render();
-		expect(t1.element.firstChild.getAttribute('disabled')).toEqual('disabled');
+		if (ct.canHaveChildren) {
+			expect(t1.element.firstChild.getAttribute('disabled')).toBeTruthy();
+		}
+		else {
+			expect(t1.element.firstChild.getAttribute('disabled')).toEqual('disabled');
+		}
 		settings.attributes.disabled = 'data-disabled';
 	});
 
@@ -148,7 +158,12 @@ describe("api - settings", function () {
 		settings.attributes.readonly = 'custom-readonly';
 		var t1 = createTemplateWithContent('<span custom-readonly></span>');
 		t1.render();
-		expect(t1.element.firstChild.getAttribute('readonly')).toEqual('readonly');
+		if (ct.canHaveChildren) {
+			expect(t1.element.firstChild.getAttribute('readonly')).toBeTruthy();
+		}
+		else {
+			expect(t1.element.firstChild.getAttribute('readonly')).toEqual('readonly');
+		}
 		settings.attributes.readonly = 'data-readonly';
 	});
 

@@ -34,10 +34,14 @@ describe("api - template", function () {
 	});
 
 	it("create template with source element and target element", function () {
-		var target = doc.createElement('div');
 		var source = doc.createElement('script');
 		source.setAttribute('type', 'text/x-soma-template');
-		source.innerHTML = "{{name}}";
+		if (null == source.canHaveChildren || source.canHaveChildren) {
+			source.appendChild(doc.createTextNode('{{name}}'));
+		} else {
+			source.text = '{{name}}';
+		}
+		var target = doc.createElement('div');
 		var template = soma.template.create(source, target);
 		expect(template).not.toBeNull();
 		expect(template).toBeDefined();
@@ -46,7 +50,7 @@ describe("api - template", function () {
 		expect(template.element).toBeDefined();
 		expect(template.element.innerHTML).not.toBeNull();
 		expect(template.element.innerHTML).toBeDefined();
-		expect(template.element.innerHTML).toEqual(source.innerHTML);
+		expect(template.element.innerHTML).toEqual(source.innerHTML.replace(/\s/g, ''));
 		expect(template.node).not.toBeNull();
 		expect(template.scope).not.toBeNull();
 		expect(template.watchers).not.toBeNull();

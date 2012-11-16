@@ -5,6 +5,9 @@
 	<meta charset="utf-8" />
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
 	<link rel="stylesheet" href="styles/styles.css">
+	<!--[if IE 7]>
+	<script type="text/javascript" src="js/libs/json2.js"></script>
+	<![endif]-->
 </head>
 <body>
 
@@ -66,7 +69,15 @@
 	<div><pre class="tpl-print prettyprint"></pre></div>
 	<div><pre class="data-print prettyprint"></pre></div>
 	<div class="buttons"></div>
-	<div class="tpl">Access data with a dot notation: {{path.greet}} {{path.name(path.who)}}!</div>
+	<div class="tpl">Access data with dot notation: {{path.greet}} {{path.name(path.who)}}!</div>
+</div>
+
+<div data-id="text-interpolation-array" class="container bs-docs-example">
+	<div class="title">Array</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl">Access array value: {{greet[0]}} {{greet[1]}}!</div>
 </div>
 
 <div data-id="data-repeat-array" class="container bs-docs-example">

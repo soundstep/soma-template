@@ -42,7 +42,8 @@ describe("api - node", function () {
 		tpl.scope.items = [1, 2];
 		tpl.render();
 		expect(tpl.node.element).toEqual(ct);
-		expect(tpl.node.children[0].element.outerHTML).toEqual('<div data-repeat="item in items">{{item}}</div>');
+		expect(tpl.node.children[0].element.getAttribute('data-repeat')).toEqual('item in items');
+		expect(tpl.node.children[0].element.firstChild.nodeValue).toEqual('{{item}}');
 		expect(tpl.node.children[0].childrenRepeater[0].element).toEqual(ct.childNodes[0]);
 		expect(tpl.node.children[0].childrenRepeater[1].element).toEqual(ct.childNodes[1]);
 	});
@@ -167,7 +168,7 @@ describe("api - node", function () {
 		tpl.compile();
 		tpl.scope.name = 'john';
 		tpl.node.children[0].children[0].update();
-		expect(ct.innerHTML).toEqual('<p>{{name}}</p>');
+		expect(ct.firstChild.innerHTML).toEqual('{{name}}');
 		expect(tpl.node.children[0].children[0].value).toEqual('{{name}}');
 	});
 
@@ -177,7 +178,7 @@ describe("api - node", function () {
 		tpl.scope.name = 'john';
 		tpl.node.children[0].children[0].update();
 		tpl.node.children[0].children[0].render();
-		expect(ct.innerHTML).toEqual('<p>john</p>');
+		expect(ct.firstChild.innerHTML).toEqual('john');
 		expect(tpl.node.children[0].children[0].value).toEqual('john');
 	});
 

@@ -22,7 +22,8 @@ describe("api - watchers", function () {
 		tpl.render();
 		expect(tpl.watchers.get('name')).toBeDefined();
 		expect(watcherExecuted).toEqual(3);
-		expect(ct.innerHTML).toEqual('<span david="david">david</span>');
+		expect(ct.firstChild.getAttribute('david')).toEqual('david');
+		expect(ct.firstChild.innerHTML).toEqual('david');
 	});
 
 	it("add node watcher", function () {
@@ -37,7 +38,8 @@ describe("api - watchers", function () {
 		tpl.render();
 		expect(tpl.watchers.get(ct.firstChild)).toBeDefined();
 		expect(watcherExecuted).toEqual(3);
-		expect(ct.innerHTML).toEqual('<span david="david">david</span>');
+		expect(ct.firstChild.getAttribute('david')).toEqual('david');
+		expect(ct.firstChild.innerHTML).toEqual('david');
 	});
 
 	it("add text node watcher", function () {
@@ -52,7 +54,8 @@ describe("api - watchers", function () {
 		tpl.render();
 		expect(tpl.watchers.get(ct.firstChild.firstChild)).toBeDefined();
 		expect(watcherExecuted).toEqual(1);
-		expect(ct.innerHTML).toEqual('<span john="john">david</span>');
+		expect(ct.firstChild.getAttribute('john')).toEqual('john');
+		expect(ct.firstChild.innerHTML).toEqual('david');
 	});
 
 	it("remove pattern watcher", function () {
@@ -84,23 +87,8 @@ describe("api - watchers", function () {
 		tpl.render();
 		expect(tpl.watchers.get(ct.firstChild)).toBeUndefined();
 		expect(watcherExecuted).toEqual(0);
-		expect(ct.innerHTML).toEqual('<span john="john">john</span>');
-	});
-
-	it("add text node watcher", function () {
-		ct.innerHTML = '<span {{name}}="{{name}}">{{name}}</span>';
-		tpl.compile(ct);
-		tpl.scope.name = 'john';
-		var watcherExecuted = 0;
-		tpl.watch(ct.firstChild.firstChild, function() {
-			watcherExecuted++;
-			return 'david';
-		});
-		tpl.unwatch(ct.firstChild.firstChild);
-		tpl.render();
-		expect(tpl.watchers.get(ct.firstChild.firstChild)).toBeUndefined();
-		expect(watcherExecuted).toEqual(0);
-		expect(ct.innerHTML).toEqual('<span john="john">john</span>');
+		expect(ct.firstChild.getAttribute('john')).toEqual('john');
+		expect(ct.firstChild.innerHTML).toEqual('john');
 	});
 
 	it("clear watcher", function () {

@@ -77,6 +77,14 @@
 				    }
 			    }
 		    ],
+    		    'text-interpolation-array':[
+			    {
+				    greet: ['Hello', 'soma-template']
+			    },
+			    {
+				    greet: ['Hello', 'world']
+			    }
+		    ],
 		    'data-repeat-array': [
 			    {
 				    'greet': 'Hello',
