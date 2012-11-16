@@ -203,7 +203,7 @@ Tests
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;&lt;p&gt;</span>My name is John and my age is 21.<span class="nt">&lt;/p&gt;&lt;/div&gt;</span></pre></div>
 		<p><a href="http://plnkr.co/edit/c00Dvm?p=preview"class="button icon edit" target="_blank">try it yourself</a></p>
 		<h3>JSON rendering</h3>
-		<p>Another example with data received from an API call. The response can simply be assigned to a scope property and accessed using a dot notation.</p>
+		<p>Another example with data received from an API call. The response can simply be assigned to a scope property and accessed using dot notation.</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;p&gt;</span><span class="cp">{{</span><span class="nv">tweets.results.length</span><span class="cp">}}</span> tweets retrieved
   in <span class="cp">{{</span><span class="nv">tweets.completed_in</span><span class="cp">}}</span> seconds.<span class="nt">&lt;/p&gt;</span>
@@ -227,7 +227,7 @@ Tests
 
 		<h1>Interpolation</h1>
 
-		<p>A String interpolation makes an heavy use of string representation of data. It means insert a string or replace a variable with its value making string formatting very intuitive.</p>
+		<p>A String interpolation makes heavy use of string representation of data. It means insert a string or replace a variable with its value making string formatting very intuitive.</p>
 
 		<h3>Attributes</h3>
 		<p>You can add tokens in text nodes, but you can also use them in attribute names and values. In the following example, a class value is rendered, as well as the attribute name:</p>
@@ -379,7 +379,7 @@ Tests
 
 		<p>A scope provides a data model context for a template, and a new scope child is created for each item of a repeater to provide a new context and avoid data conflict.</p>
 		<p>The following image illustrates a template scope that contains a child scope, which contains also another child scope, and so on. Notice that all variables names are identical but the values are probably different.</p>
-		<p>The global scope that surrounds the template scope is a common scope to all templates. The global scope can be populated with helpers functions to format tokens or contains global values (see the helpers section).</p>
+		<p>The global scope that surrounds each template scope is shared between all templates. The global scope can be populated with helper functions or global values (see the helpers section).</p>
 		<p><img src="assets/images/scopes.gif" alt="scopes"></p>
 		<p><a href="http://plnkr.co/edit/JQtbv6?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
 		<p>Note that a scope parent can also be accessed using a parent path notation (also works with parameters):</p>
@@ -396,7 +396,7 @@ Tests
 		<p>All the attribute names are customizable in case you want to change them, it can be useful if one of them are conflicting with something else in your application.</p>
 
 		<h3>Hide elements before rendering (data-cloak)</h3>
-		<p>Paradoxically, <code>data-cloak</code> is not a attribute but a style class that is used to hide elements before rendering, in other words, to hide tokens. The class itself is not provided by the template but will be automatically removed on rendering.</p>
+		<p>Paradoxically, <code>data-cloak</code> is not an attribute but a styled class that is used to hide elements before rendering, in other words, to hide tokens. The class itself is not provided by the template but will be automatically removed on rendering.</p>
 		<p>The class can be set on the root of the template, or on any element inside the template.</p>
 		<div class="codehilite"><pre><span class="nt">&lt;style&gt;</span>
   <span class="nc">.data-cloak</span> <span class="p">{</span>
@@ -435,7 +435,7 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 		<p><a href="http://plnkr.co/edit/68KEzp?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
 
 		<h3>Links (data-href)</h3>
-		<p>The <code>data-href</code> attribute will produce a <code>href</code> attribute on rendering. The reason for using this attribute is to avoid the user clicking on a non-rendered links. Using a token in a <code>href</code> attribute, for example a <code>a</code> tag, would probably result in a dead link (404 error).</p>
+		<p>The <code>data-href</code> attribute will produce an <code>href</code> attribute on rendering. The reason for using this attribute is to avoid the user clicking on a non-rendered links. Using a token in an <code>href</code> attribute, for example an <code>a</code> tag, would probably result in a dead link (404 error).</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;a</span> <span class="na">data-href=</span><span class="s">&quot;http://</span><span class="cp">{{</span><span class="nv">link</span><span class="cp">}}</span><span class="s">&quot;</span> <span class="na">target=</span><span class="s">&quot;_blank&quot;</span><span class="nt">&gt;</span>Clickable when rendered<span class="nt">&lt;/a&gt;</span>
 <span class="nt">&lt;/div&gt;</span>
@@ -511,8 +511,8 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 
 		<h1>Helpers</h1>
 
-		<p>Helpers functions (or values) can be added to the template engine to format the token values. The functions will be added to a global scope that is common to all templates.</p>
-		<p>The helpers make it easy to enhance the template engine as they accessible from the token. The helpers can be either custom or from other javascript libraries.</p>
+		<p>Helper functions (or values) can be added to the template engine to help format the output. The functions will be added to the global scope that is shared between all templates.</p>
+		<p>Helper functions make it easy to enhance the template engine's rendering, since they are easily accessible from within the templates. The helpers can be either custom written or imported from other Javascript libraries.</p>
 
 		<h3>Add helpers</h3>
 		<p>The helpers can be added to the template engine, wrapped in an object and passed to the <code>helpers</code> function. In the following example, the template engine is enhanced with a <code>replaceDash</code> custom function and with more than fifty string functions from the library <a href="http://epeli.github.com/underscore.string/" target="_blank">underscore.string</a>.</p>
@@ -534,7 +534,7 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 		<p><a href="http://plnkr.co/edit/tYPCz0?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
 
 		<h3>Access helpers</h3>
-		<p>The helpers can be accessed outside of the tokens if needed, from either a call to the <code>helpers</code> function without parameter, or from the global scope.</p>
+		<p>The helpers can be accessed outside of the tokens if needed, either from a call to the helpers function without parameters, or from the global scope.</p>
 		<div class="codehilite"><pre><span class="kd">var</span> <span class="nx">camelize</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">helpers</span><span class="p">().</span><span class="nx">camelize</span><span class="p">;</span>
 <span class="kd">var</span> <span class="nx">camelize</span> <span class="o">=</span> <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">_parent</span><span class="p">.</span><span class="nx">camelize</span><span class="p">;</span></pre></div>
 
