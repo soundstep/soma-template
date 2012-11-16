@@ -118,6 +118,21 @@ describe("internal - helpers", function () {
 		soma.template.settings.tokens.end('}}');
 	});
 
+	it("getExpArrayParts", function () {
+		expect(isExpFunction('func()')).toBeTruthy();
+		expect(isExpFunction('func(p)')).toBeTruthy();
+		expect(isExpFunction('func("p")')).toBeTruthy();
+		expect(isExpFunction('path.func()')).toBeTruthy();
+		expect(isExpFunction('path.func(p)')).toBeTruthy();
+		expect(isExpFunction('path.func("p")')).toBeTruthy();
+		expect(isExpFunction('path.path.func()')).toBeTruthy();
+		expect(isExpFunction('path.path.func(p)')).toBeTruthy();
+		expect(isExpFunction('path.path.func("p")')).toBeTruthy();
+		expect(isExpFunction('')).toBeFalsy();
+		expect(isExpFunction({})).toBeFalsy();
+		expect(isExpFunction()).toBeFalsy();
+	});
+
 	it("trim", function () {
 		expect(trim('string')).toEqual('string');
 		// space

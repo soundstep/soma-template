@@ -10,17 +10,11 @@
 
 - run tests on all browsers
 
-- spelling mistakes:
+- add array in path: {{items[0].name}}
 
-201: "accessed using a dot notation" -> "accessed using dot notation"
-225: "interpolation makes an heavy use" -> "interpolation makes heavy use"
-436: "is not a attribute but a style class" -> "is not an attribute but a styled class"
-475: "attribute will produce a <code>href</code>" -> "attribute will produce an <code>href</code>"
-475: "Using a token in a <code>href</code> attribute, for example a <code>a</code> tag" -> "Using a token in an <code>href</code> attribute, for example an <code>a</code> tag"
-556: "characters The might be some" -> "characters, there might be some"
-17:29 think those should be correct, but only change the ones you want
-17:29 (a couple of the strings have multiple changes)
-17:32 the text under scope about helpers: "The global scope that surrounds the template scope is a common scope to all templates. The global scope can be populated with helpers functions to format tokens or contains global values (see the helpers section)."
-17:32 i'd write it like so: "The global scope that surrounds each template scope is shared between all templates. The global scope can be populated with helper functions or global values."
-17:33 oh, sorry, with this: "The global scope that surrounds each template scope is shared between all templates. The global scope can be populated with helper functions or global values (see the helpers section)." (missed the parentheses)
+- finishing array tests (check render, check in repeater)
+
+- add array example in sheet
+
+- add array syntax in site
 
