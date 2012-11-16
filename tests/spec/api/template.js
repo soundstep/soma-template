@@ -35,7 +35,7 @@ describe("api - template", function () {
 
 	it("create template with source element and target element", function () {
 		var container = doc.createElement('div');
-		container.innerHTML = '<script src="somescript.js" type="text/x-soma-template">{{name}}<\/script>';\
+		container.innerHTML = '<script type="text/x-soma-template">{{name}}<\/script>';
 		var source = container.firstChild;
 		var target = doc.createElement('div');
 		var template = soma.template.create(source, target);
