@@ -203,7 +203,25 @@ function HashMap(){
 		}
 	}
 }
+if (!Array.prototype.filter) {
+	 Array.prototype.filter = function(func) {
+		var len = this.length;
+		if (typeof func !== "function")
+			throw new TypeError();
 
+		var res = [];
+		var thisp = arguments[1];
+		for (var i = 0; i < len; i++) {
+			if (i in this) {
+				var val = this[i];
+				if (func.call(thisp, val, i, this)) {
+					res.push(val);
+				}
+			}
+		}
+		return res;
+	};
+}
 
 
 function getExpArrayParts(value) {
@@ -256,10 +274,10 @@ function getScopeFromPattern(scope, pattern) {
 
 function getValueFromPattern(scope, pattern) {
 	var exp = new Expression(pattern);
-	return getValue(scope, exp.pattern, exp.path, exp.accessor, exp.params, exp.isFunction);
+	return getValue(scope, exp.pattern, exp.path, exp.params, exp.isFunction);
 }
 
-function getValue(scope, pattern, pathString, accessor, params, isFunc, paramsFound) {
+function getValue(scope, pattern, pathString, params, paramsFound) {
 	// string
 	if (regex.string.test(pattern)) {
 		return trimQuotes(pattern);
@@ -275,49 +293,32 @@ function getValue(scope, pattern, pathString, accessor, params, isFunc, paramsFo
 	else paramsValues = paramsFound;
 	// find scope
 	var scopeTarget = getScopeFromPattern(scope, pattern);
-	// remove scope parent string
-	pattern = pattern.replace('../', '');
+	// remove parent string
+	pattern = pattern.replace(/..\//g, '');
+	pathString = pathString.replace(/..\//g, '');
 	if (!scopeTarget) return undefined;
-	var pathParts = pathString.split('.');
-	// search object
+	// search path
 	var path = scopeTarget;
-	if (pathParts[0] !== "") {
+	var pathParts = pathString.split(/\.|\[|\]/g);
+	if (pathParts.length > 0) {
 		var i = -1, l = pathParts.length;
 		while (++i < l) {
-			path = path[pathParts[i]];
-			if (!path) {
-				if (scopeTarget._parent) return getValue(scopeTarget._parent, pattern, pathString, accessor, params, isFunc, paramsValues);
+			if (pathParts[i] !== "") {
+				path = path[pathParts[i]];
+			}
+			if (!isDefined(path)) {
+				// no path, search in parent
+				if (scopeTarget._parent) return getValue(scopeTarget._parent, pattern, pathString, params, paramsValues);
 				else return undefined;
 			}
 		}
 	}
-	if (!isFunc) {
-		var arrayParts = getExpArrayParts(accessor);
-		if (arrayParts && isArray(path[arrayParts[0]]) && isDefined(path[arrayParts[0]][parseInt(arrayParts[1])])) {
-			// pattern is an array
-			return path[arrayParts[0]][parseInt(arrayParts[1])];
-		}
-		else {
-			// pattern is a property
-			if (!isDefined(path[accessor]) && scopeTarget._parent) return getValue(scopeTarget._parent, pattern, pathString, accessor, params, isFunc, paramsValues);
-			else return path[accessor];
-		}
-
+	// return value
+	if (!isFunction(path)) {
+		return path;
 	}
 	else {
-		// pattern is a function
-		if (!isDefined(path[accessor])) {
-			// no path found, search in parent
-			if (scopeTarget._parent) return getValue(scopeTarget._parent, pattern, pathString, accessor, params, isFunc, paramsValues);
-			else return undefined;
-		}
-		if (!isFunction(path[accessor])) {
-			// value is not a function
-			if (scopeTarget._parent) return getValue(scopeTarget._parent, pattern, pathString, accessor, params, isFunc, paramsValues);
-			else return undefined;
-		}
-		// found path and params
-		return path[accessor].apply(null, paramsValues);
+		return path.apply(null, paramsValues);
 	}
 	return undefined;
 }
@@ -325,13 +326,7 @@ function getValue(scope, pattern, pathString, accessor, params, isFunc, paramsFo
 function getExpressionPath(value) {
 	var val = value.split('(')[0];
 	val = trimScopeDepth(val);
-	return val.substr(0, val.lastIndexOf("."));
-}
-
-function getExpressionAccessor(value) {
-	var val = value.split('(')[0];
-	val = trimScopeDepth(val);
-	return val.substring(val.lastIndexOf(".")).replace('.', '');
+	return val;
 }
 
 function getParamsFromString(value) {
@@ -884,14 +879,12 @@ var Expression = function(pattern, node, attribute) {
 		this.isFunction = false;
 		this.depth = null;
 		this.path = null;
-		this.accessor = null;
 		this.params = null;
 	}
 	else {
 		this.isFunction = isExpFunction(this.pattern);
 		this.depth = getScopeDepth(this.pattern);
 		this.path = getExpressionPath(this.pattern);
-		this.accessor = getExpressionAccessor(this.pattern);
 		this.params = !this.isFunction ? null : getParamsFromString(this.pattern.match(regex.func)[2]);
 	}
 };
@@ -904,7 +897,6 @@ Expression.prototype = {
 		this.node = null;
 		this.attribute = null;
 		this.path = null;
-		this.accessor = null;
 		this.params = null;
 		this.value = null;
 	},
@@ -920,7 +912,7 @@ Expression.prototype = {
 		}
 	},
 	getValue: function(scope) {
-		return getValue(scope, this.pattern, this.path, this.accessor, this.params, this.isFunction);
+		return getValue(scope, this.pattern, this.path, this.params);
 	}
 };
 

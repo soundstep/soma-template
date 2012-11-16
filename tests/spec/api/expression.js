@@ -188,6 +188,73 @@ describe("api - expression", function () {
 		expect(ct.innerHTML).toEqual('valid');
 	});
 
+	it("array", function () {
+		ct.innerHTML = '{{path[0][0]}}{{path[0][1]}}{{path[1][0]}}{{path[1][1]}}';
+		tpl.compile();
+		tpl.scope.path = [
+			[1, 2],
+			[3, 4]
+		];
+		tpl.render();
+		expect(ct.innerHTML).toEqual('1234');
+	});
+
+	it("array path", function () {
+		ct.innerHTML = '{{path[0].path[0]}}{{path[0].path[1]}}{{path[1].path[0]}}{{path[1].path[1]}}';
+		tpl.compile();
+		tpl.scope.path = [
+			{path: [1, 2]},
+			{path: [3, 4]}
+		];
+		tpl.render();
+		expect(ct.innerHTML).toEqual('1234');
+	});
+
+	it("array path end", function () {
+		ct.innerHTML = '{{path[0].path[0].num}}{{path[0].path[1].num}}{{path[1].path[0].num}}{{path[1].path[1].num}}';
+		tpl.compile();
+		tpl.scope.path = [
+			{path: [{num:1}, {num:2}]},
+			{path: [{num:3}, {num:4}]}
+		];
+		tpl.render();
+		expect(ct.innerHTML).toEqual('1234');
+	});
+
+	it("array function", function () {
+		ct.innerHTML = '{{path[0]()}}{{path[1]()}}';
+		tpl.compile();
+		tpl.scope.path = [
+			function(){return 1;},
+			function(){return 2;}
+		];
+		tpl.render();
+		expect(ct.innerHTML).toEqual('12');
+	});
+
+	it("array function param string", function () {
+		ct.innerHTML = '{{path[0]("1")}}{{path[1]("2")}}';
+		tpl.compile();
+		tpl.scope.path = [
+			function(p){return p;},
+			function(p){return p;}
+		];
+		tpl.render();
+		expect(ct.innerHTML).toEqual('12');
+	});
+
+	it("array function param array", function () {
+		ct.innerHTML = '{{path[0](p[0])}}{{path[1](p[1])}}';
+		tpl.compile();
+		tpl.scope.path = [
+			function(p){return p;},
+			function(p){return p;}
+		];
+		tpl.scope.p = [1, 2];
+		tpl.render();
+		expect(ct.innerHTML).toEqual('12');
+	});
+
 	it("depth scope", function () {
 		ct.innerHTML = '<div data-repeat="item in items">{{../item.name}}</div>';
 		tpl.compile();

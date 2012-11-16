@@ -130,5 +130,23 @@ function HashMap(){
 		}
 	}
 }
+if (!Array.prototype.filter) {
+	 Array.prototype.filter = function(func) {
+		var len = this.length;
+		if (typeof func !== "function")
+			throw new TypeError();
 
+		var res = [];
+		var thisp = arguments[1];
+		for (var i = 0; i < len; i++) {
+			if (i in this) {
+				var val = this[i];
+				if (func.call(thisp, val, i, this)) {
+					res.push(val);
+				}
+			}
+		}
+		return res;
+	};
+}
 

@@ -31,8 +31,7 @@ describe("internal - expression", function () {
 		expect(exp.node).toEqual(node);
 		expect(exp.attribute).toBeUndefined();
 		expect(exp.isFunction).toBeFalsy();
-		expect(exp.path).toEqual('');
-		expect(exp.accessor).toEqual('name');
+		expect(exp.path).toEqual('name');
 		expect(exp.params).toBeNull();
 		expect(exp.value).toBeUndefined();
 	});
@@ -43,105 +42,87 @@ describe("internal - expression", function () {
 		expect(exp.node).toBeNull();
 		expect(exp.attribute).toEqual(attr);
 		expect(exp.isFunction).toBeFalsy();
-		expect(exp.path).toEqual('');
-		expect(exp.accessor).toEqual('name');
+		expect(exp.path).toEqual('name');
 		expect(exp.params).toBeNull();
 		expect(exp.value).toBeUndefined();
-	});
-
-	it("is function", function () {
-		var exp = new Expression('name()', node);
-		expect(exp.isFunction).toBeTruthy();
 	});
 
 	it("function param string", function () {
 		var exp = new Expression('name("john", "21")', node);
 		expect(exp.isFunction).toBeTruthy();
 		expect(exp.params).toEqual(['"john"', '"21"']);
-		expect(exp.accessor).toEqual('name');
 	});
 
 	it("function param var", function () {
 		var exp = new Expression('name(john, 21)', node);
 		expect(exp.isFunction).toBeTruthy();
 		expect(exp.params).toEqual(['john', '21']);
-		expect(exp.accessor).toEqual('name');
 	});
 
 	it("value path", function () {
 		var exp = new Expression('d1.name', node);
 		expect(exp.isFunction).toBeFalsy();
-		expect(exp.accessor).toEqual('name');
-		expect(exp.path).toEqual('d1');
+		expect(exp.path).toEqual('d1.name');
 	});
 
 	it("value path deep", function () {
 		var exp = new Expression('d1.d2.name', node);
 		expect(exp.isFunction).toBeFalsy();
-		expect(exp.accessor).toEqual('name');
-		expect(exp.path).toEqual('d1.d2');
+		expect(exp.path).toEqual('d1.d2.name');
 	});
 
 	it("function path param string", function () {
 		var exp = new Expression('d1.name("john", "21")', node);
 		expect(exp.isFunction).toBeTruthy();
 		expect(exp.params).toEqual(['"john"', '"21"']);
-		expect(exp.accessor).toEqual('name');
-		expect(exp.path).toEqual('d1');
+		expect(exp.path).toEqual('d1.name');
 	});
 
 	it("function path deep param string", function () {
 		var exp = new Expression('d1.d2.name("john", "21")', node);
 		expect(exp.isFunction).toBeTruthy();
 		expect(exp.params).toEqual(['"john"', '"21"']);
-		expect(exp.accessor).toEqual('name');
-		expect(exp.path).toEqual('d1.d2');
+		expect(exp.path).toEqual('d1.d2.name');
 	});
 
 	it("function path param var", function () {
 		var exp = new Expression('d1.name(john, 21)', node);
 		expect(exp.isFunction).toBeTruthy();
 		expect(exp.params).toEqual(['john', '21']);
-		expect(exp.accessor).toEqual('name');
-		expect(exp.path).toEqual('d1');
+		expect(exp.path).toEqual('d1.name');
 	});
 
 	it("function path deep param var", function () {
 		var exp = new Expression('d1.d2.name(john, 21)', node);
 		expect(exp.isFunction).toBeTruthy();
 		expect(exp.params).toEqual(['john', '21']);
-		expect(exp.accessor).toEqual('name');
-		expect(exp.path).toEqual('d1.d2');
+		expect(exp.path).toEqual('d1.d2.name');
 	});
 
 	it("function params string path", function () {
 		var exp = new Expression('name("john.david", "21.22")', node);
 		expect(exp.isFunction).toBeTruthy();
 		expect(exp.params).toEqual(['"john.david"', '"21.22"']);
-		expect(exp.accessor).toEqual('name');
 	});
 
 	it("function params var path", function () {
 		var exp = new Expression('name(john.david, 21.22)', node);
 		expect(exp.isFunction).toBeTruthy();
 		expect(exp.params).toEqual(['john.david', '21.22']);
-		expect(exp.accessor).toEqual('name');
 	});
 
 	it("function path params string path", function () {
 		var exp = new Expression('d1.d2.name("john.david", "21.22")', node);
 		expect(exp.isFunction).toBeTruthy();
 		expect(exp.params).toEqual(['"john.david"', '"21.22"']);
-		expect(exp.accessor).toEqual('name');
-		expect(exp.path).toEqual('d1.d2');
+		expect(exp.path).toEqual('d1.d2.name');
 	});
 
 	it("function params var path", function () {
 		var exp = new Expression('d1.d2.name(john.david, 21.22)', node);
 		expect(exp.isFunction).toBeTruthy();
 		expect(exp.params).toEqual(['john.david', '21.22']);
-		expect(exp.accessor).toEqual('name');
-		expect(exp.path).toEqual('d1.d2');
+		expect(exp.path).toEqual('d1.d2.name');
 	});
 
 	it("dispose", function () {
@@ -151,7 +132,6 @@ describe("internal - expression", function () {
 		expect(exp.node).toBeNull();
 		expect(exp.attribute).toBeNull();
 		expect(exp.path).toBeNull();
-		expect(exp.accessor).toBeNull();
 		expect(exp.params).toBeNull();
 		expect(exp.value).toBeNull();
 	});
