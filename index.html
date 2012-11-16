@@ -278,7 +278,22 @@ Tests
 
 		<h3>Array access</h3>
 		<p>The values of an array can be accessed using a standard Javascript syntax:</p>
-		
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;p&gt;</span>two people: <span class="cp">{{</span><span class="nv">person</span><span class="o">[</span><span class="m">0</span><span class="o">][</span><span class="m">0</span><span class="o">]</span><span class="cp">}}</span> + <span class="cp">{{</span><span class="nv">person</span><span class="o">[</span><span class="m">0</span><span class="o">][</span><span class="m">1</span><span class="o">]</span><span class="cp">}}</span><span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;p&gt;</span>other people: <span class="cp">{{</span><span class="nv">person</span><span class="o">[</span><span class="m">1</span><span class="o">][</span><span class="m">0</span><span class="o">]</span><span class="cp">}}</span> + <span class="cp">{{</span><span class="nv">person</span><span class="o">[</span><span class="m">1</span><span class="o">][</span><span class="m">1</span><span class="o">]</span><span class="cp">}}</span><span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;p&gt;</span>grouped: <span class="cp">{{</span><span class="nv">getAll</span><span class="o">(</span><span class="nv">person</span><span class="o">)</span><span class="cp">}}</span><span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">person</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="s1">&#39;john&#39;</span><span class="p">,</span> <span class="s1">&#39;david&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">&#39;olivia&#39;</span><span class="p">,</span> <span class="s1">&#39;emily&#39;</span><span class="p">]</span>
+  <span class="p">];</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">getAll</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">arr</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+  <span class="p">}</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/2KwLul?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
 
 		<h3>Function call</h3>
 
@@ -344,7 +359,7 @@ Tests
 		<p>The node that contains the <code>data-repeat</code>, and everything inside, will be duplicated three times in this example. One for each item in the array <code>items</code>.</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;div</span> <span class="na">data-repeat=</span><span class="s">&quot;item in items&quot;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;div&gt;</span>[<span class="cp">{{$index</span><span class="cp">}}</span>] <span class="cp">{{</span><span class="nv">greet</span><span class="cp">}}</span> <span class="cp">{{</span><span class="nv">item.name</span><span class="cp">}}</span>!<span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div&gt;</span><span class="cp">{{$index</span><span class="cp">}}</span> - <span class="cp">{{</span><span class="nv">greet</span><span class="cp">}}</span> <span class="cp">{{</span><span class="nv">item.name</span><span class="cp">}}</span>!<span class="nt">&lt;/div&gt;</span>
   <span class="nt">&lt;/div&gt;</span>
 <span class="nt">&lt;/div&gt;</span>
 <span class="nt">&lt;script&gt;</span>
@@ -362,7 +377,7 @@ Tests
 		<p>You can also perform an iteration on an object, in this case a <code>$key</code> variable will be available on the current scope.</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;div</span> <span class="na">data-repeat=</span><span class="s">&quot;item in items&quot;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;div&gt;</span>[<span class="cp">{{$key}}</span>] <span class="cp">{{</span><span class="nv">greet</span><span class="cp">}}</span> <span class="cp">{{</span><span class="nv">item</span><span class="cp">}}</span>!<span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div&gt;</span><span class="cp">{{$key}}</span> - <span class="cp">{{</span><span class="nv">greet</span><span class="cp">}}</span> <span class="cp">{{</span><span class="nv">item</span><span class="cp">}}</span>!<span class="nt">&lt;/div&gt;</span>
   <span class="nt">&lt;/div&gt;</span>
 <span class="nt">&lt;/div&gt;</span>
 <span class="nt">&lt;script&gt;</span>
@@ -440,7 +455,7 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 		<p><a href="http://plnkr.co/edit/68KEzp?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
 
 		<h3>Links (data-href)</h3>
-		<p>The <code>data-href</code> attribute will produce an <code>href</code> attribute on rendering. The reason for using this attribute is to avoid the user clicking on a non-rendered links. Using a token in an <code>href</code> attribute, for example an <code>a</code> tag, would probably result in a dead link (404 error).</p>
+		<p>The <code>data-href</code> attribute will produce a <code>href</code> attribute on rendering. The reason for using this attribute is to avoid the user clicking on a non-rendered links. Using a token in a <code>href</code> attribute, for example an <code>a</code> tag, would probably result in a dead link (404 error).</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;a</span> <span class="na">data-href=</span><span class="s">&quot;http://</span><span class="cp">{{</span><span class="nv">link</span><span class="cp">}}</span><span class="s">&quot;</span> <span class="na">target=</span><span class="s">&quot;_blank&quot;</span><span class="nt">&gt;</span>Clickable when rendered<span class="nt">&lt;/a&gt;</span>
 <span class="nt">&lt;/div&gt;</span>
