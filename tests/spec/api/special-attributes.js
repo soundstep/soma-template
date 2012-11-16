@@ -312,6 +312,102 @@ describe("api - special attributes", function () {
 		expect(ul_3_3.childNodes[2].firstChild.nodeValue).toEqual('Level 3, index 2: 2-2-2');
 	});
 
+	it("data-repeat direct access", function () {
+		ct.innerHTML =
+			'<ul>' +
+				'<li data-repeat="item1 in items">' +
+					'Level 1, index {{$index}}' +
+					'<ul>' +
+						'<li data-repeat="item2 in item1">' +
+							'Level 2, index {{$index}}' +
+							'<ul>' +
+								'<li data-repeat="items3 in item2">' +
+									'{{item2[0]}} {{item2[1]}} {{item2[2]}}' +
+								'</li>' +
+							'</ul>' +
+						'</li>' +
+					'</ul>' +
+				'</li>' +
+			'</ul>';
+		tpl.compile();
+		tpl.scope.items = [
+			[
+				["0-0-0", "0-0-1", "0-0-2"],
+				["0-1-0", "0-1-1", "0-1-2"],
+				["0-2-0", "0-2-1", "0-2-2"]
+			],
+			[
+				["1-0-0", "1-0-1", "1-0-2"],
+				["1-1-0", "1-1-1", "1-1-2"],
+				["1-2-0", "1-2-1", "1-2-2"]
+			],
+			[
+				["2-0-0", "2-0-1", "2-0-2"],
+				["2-1-0", "2-1-1", "2-1-2"],
+				["2-2-0", "2-2-1", "2-2-2"]
+			]
+		];
+		tpl.render();
+		console.log(ct);
+		// level 1
+		var ul = ct.childNodes[0];
+		expect(ul.childNodes[0].firstChild.nodeValue).toEqual('Level 1, index 0');
+		expect(ul.childNodes[1].firstChild.nodeValue).toEqual('Level 1, index 1');
+		expect(ul.childNodes[2].firstChild.nodeValue).toEqual('Level 1, index 2');
+		// level 2
+		var ul_1 = ul.childNodes[0].childNodes[1];
+		expect(ul_1.childNodes[0].firstChild.nodeValue).toEqual('Level 2, index 0');
+		expect(ul_1.childNodes[1].firstChild.nodeValue).toEqual('Level 2, index 1');
+		expect(ul_1.childNodes[2].firstChild.nodeValue).toEqual('Level 2, index 2');
+		var ul_2 = ul.childNodes[1].childNodes[1];
+		expect(ul_2.childNodes[0].firstChild.nodeValue).toEqual('Level 2, index 0');
+		expect(ul_2.childNodes[1].firstChild.nodeValue).toEqual('Level 2, index 1');
+		expect(ul_2.childNodes[2].firstChild.nodeValue).toEqual('Level 2, index 2');
+		var ul_3 = ul.childNodes[2].childNodes[1];
+		expect(ul_3.childNodes[0].firstChild.nodeValue).toEqual('Level 2, index 0');
+		expect(ul_3.childNodes[1].firstChild.nodeValue).toEqual('Level 2, index 1');
+		expect(ul_3.childNodes[2].firstChild.nodeValue).toEqual('Level 2, index 2');
+		// level 3
+		var ul_1_1 = ul_1.childNodes[0].childNodes[1];
+		expect(ul_1_1.childNodes[0].firstChild.nodeValue).toEqual('0-0-0 0-0-1 0-0-2');
+		expect(ul_1_1.childNodes[1].firstChild.nodeValue).toEqual('0-0-0 0-0-1 0-0-2');
+		expect(ul_1_1.childNodes[2].firstChild.nodeValue).toEqual('0-0-0 0-0-1 0-0-2');
+		var ul_1_2 = ul_1.childNodes[1].childNodes[1];
+		expect(ul_1_2.childNodes[0].firstChild.nodeValue).toEqual('0-1-0 0-1-1 0-1-2');
+		expect(ul_1_2.childNodes[1].firstChild.nodeValue).toEqual('0-1-0 0-1-1 0-1-2');
+		expect(ul_1_2.childNodes[2].firstChild.nodeValue).toEqual('0-1-0 0-1-1 0-1-2');
+		var ul_1_3 = ul_1.childNodes[2].childNodes[1];
+		expect(ul_1_3.childNodes[0].firstChild.nodeValue).toEqual('0-2-0 0-2-1 0-2-2');
+		expect(ul_1_3.childNodes[1].firstChild.nodeValue).toEqual('0-2-0 0-2-1 0-2-2');
+		expect(ul_1_3.childNodes[2].firstChild.nodeValue).toEqual('0-2-0 0-2-1 0-2-2');
+		// level 3
+		var ul_2_1 = ul_2.childNodes[0].childNodes[1];
+		expect(ul_2_1.childNodes[0].firstChild.nodeValue).toEqual('1-0-0 1-0-1 1-0-2');
+		expect(ul_2_1.childNodes[1].firstChild.nodeValue).toEqual('1-0-0 1-0-1 1-0-2');
+		expect(ul_2_1.childNodes[2].firstChild.nodeValue).toEqual('1-0-0 1-0-1 1-0-2');
+		var ul_2_2 = ul_2.childNodes[1].childNodes[1];
+		expect(ul_2_2.childNodes[0].firstChild.nodeValue).toEqual('1-1-0 1-1-1 1-1-2');
+		expect(ul_2_2.childNodes[1].firstChild.nodeValue).toEqual('1-1-0 1-1-1 1-1-2');
+		expect(ul_2_2.childNodes[2].firstChild.nodeValue).toEqual('1-1-0 1-1-1 1-1-2');
+		var ul_2_3 = ul_2.childNodes[2].childNodes[1];
+		expect(ul_2_3.childNodes[0].firstChild.nodeValue).toEqual('1-2-0 1-2-1 1-2-2');
+		expect(ul_2_3.childNodes[1].firstChild.nodeValue).toEqual('1-2-0 1-2-1 1-2-2');
+		expect(ul_2_3.childNodes[2].firstChild.nodeValue).toEqual('1-2-0 1-2-1 1-2-2');
+		// level 3
+		var ul_3_1 = ul_3.childNodes[0].childNodes[1];
+		expect(ul_3_1.childNodes[0].firstChild.nodeValue).toEqual('2-0-0 2-0-1 2-0-2');
+		expect(ul_3_1.childNodes[1].firstChild.nodeValue).toEqual('2-0-0 2-0-1 2-0-2');
+		expect(ul_3_1.childNodes[2].firstChild.nodeValue).toEqual('2-0-0 2-0-1 2-0-2');
+		var ul_3_2 = ul_3.childNodes[1].childNodes[1];
+		expect(ul_3_2.childNodes[0].firstChild.nodeValue).toEqual('2-1-0 2-1-1 2-1-2');
+		expect(ul_3_2.childNodes[1].firstChild.nodeValue).toEqual('2-1-0 2-1-1 2-1-2');
+		expect(ul_3_2.childNodes[2].firstChild.nodeValue).toEqual('2-1-0 2-1-1 2-1-2');
+		var ul_3_3 = ul_3.childNodes[2].childNodes[1];
+		expect(ul_3_3.childNodes[0].firstChild.nodeValue).toEqual('2-2-0 2-2-1 2-2-2');
+		expect(ul_3_3.childNodes[1].firstChild.nodeValue).toEqual('2-2-0 2-2-1 2-2-2');
+		expect(ul_3_3.childNodes[2].firstChild.nodeValue).toEqual('2-2-0 2-2-1 2-2-2');
+
+	});
 
 
 
