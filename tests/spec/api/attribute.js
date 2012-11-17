@@ -66,8 +66,7 @@ describe("api - attribute", function () {
 		tpl.compile();
 		tpl.scope.class1 = 'class';
 		tpl.render();
-		if (ct.canHaveChildren && ct.firstChild.className) {
-			// IE
+		if (ie === 7) {
 			expect(ct.firstChild.className).toEqual('bold');
 		}
 		else {
@@ -75,10 +74,11 @@ describe("api - attribute", function () {
 		}
 		tpl.scope.class1 = 'data-class';
 		tpl.render();
-		if (ct.canHaveChildren && ct.firstChild.className) {
-			// IE
-			console.log(111, ct.firstChild.className);
+		if (ie === 7) {
 			expect(ct.firstChild.className).toBeNull();
+		}
+		else if (ie === 8) {
+			expect(ct.firstChild.className).toEqual('');
 		}
 		else {
 			expect(ct.firstChild.getAttribute('class')).toBeNull();

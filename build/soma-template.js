@@ -70,6 +70,17 @@ var regex = {
 	string: /^(\"|\')(.*)(\"|\')$/
 };
 
+var ie = (function(){
+	var undef,
+		v = 3,
+		div = document.createElement('div'),
+		all = div.getElementsByTagName('i');
+	while (
+		div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->',
+			all[0]
+		);
+	return v > 4 ? v : undef;
+}());
 function isArray(value) {
 	return Object.prototype.toString.apply(value) === '[object Array]';
 };
@@ -104,9 +115,9 @@ function isExpFunction(value) {
 	if (!isString(value)) return false;
 	return !!value.match(regex.func);
 }
-function isIE7() {
-	return document.all && !window.opera && window.XMLHttpRequest;
-}
+//function isIE7() {
+//	return document.all && !window.opera && window.XMLHttpRequest;
+//}
 function childNodeIsTemplate(node) {
 	if (!node || !isElement(node.element)) return false;
 	if (node.parent && templates.get(node.element)) return true;
@@ -491,12 +502,35 @@ function renderNodeRepeater(node) {
 	}
 }
 
+function cloneRepeaterNode(element, node) {
+	var newNode = new Node(element, node.scope._createChild());
+	if (node.attributes) {
+		var i = -1, l = node.attributes.length;
+		var attrs = [];
+		while (++i < l) {
+			if (node.attributes[i].name === settings.attributes.skip) {
+				newNode.skip = (node.attributes[i].value === "" || node.attributes[i].value === "true");
+			}
+			if (node.attributes[i].name !== attributes.repeat) {
+				var attribute = new Attribute(node.attributes[i].name, node.attributes[i].value, newNode);
+				attrs.push(attribute);
+			}
+		}
+		newNode.isRepeaterDescendant = true;
+		newNode.attributes = attrs;
+	}
+	return newNode;
+}
+
 function createRepeaterChild(node, count, data, indexVar, indexVarValue, previousElement) {
 	var existingChild = node.childrenRepeater[count];
 	if (!existingChild) {
 		// no existing node
 		var newElement = node.element.cloneNode(true);
-		var newNode = getNodeFromElement(newElement, node.scope._createChild(), true, node);
+		// can't recreate the node with a cloned element on IE7
+		// be cause the attributes are not specified annymore (attribute.specified)
+		//var newNode = getNodeFromElement(newElement, node.scope._createChild(), true);
+		var newNode = cloneRepeaterNode(newElement, node)
 		newNode.parent = node.parent;
 		newNode.template = node.template;
 		node.childrenRepeater[count] = newNode;
@@ -553,6 +587,7 @@ var Node = function(element, scope) {
 	this.invalidate = false;
 	this.skip = false;
 	this.repeater = null;
+	this.isRepeaterDescendant = false;
 	this.parent = null;
 	this.children = [];
 	this.childrenRepeater = [];
@@ -695,7 +730,7 @@ Node.prototype = {
 		}
 	}
 };
-var Attribute = function(name, value, node, data) {
+var Attribute = function(name, value, node) {
 	this.name = name;
 	this.value = value;
 	this.node = node;
@@ -736,14 +771,24 @@ Attribute.prototype = {
 				renderHref(this.name, this.value);
 			}
 			else {
-				this.node.element.removeAttribute(this.interpolationName.value);
+				if (this.node.isRepeaterDescendant && ie === 7) {
+					// delete attributes on cloned elements crash IE7
+				}
+				else {
+					this.node.element.removeAttribute(this.interpolationName.value);
+				}
 				if (this.previousName) {
-					if (this.node.element.canHaveChildren && this.previousName === 'class') {
+					if (ie === 7 && this.previousName === 'class') {
 						// iE
 						this.node.element.className = "";
 					}
 					else {
-						this.node.element.removeAttribute(this.previousName);
+						if (this.node.isRepeaterDescendant && ie === 7) {
+							// delete attributes on cloned elements crash IE7
+						}
+						else {
+							this.node.element.removeAttribute(this.previousName);
+						}
 					}
 				}
 				renderAttribute(this.name, this.value, this.previousName);
@@ -763,7 +808,7 @@ Attribute.prototype = {
 		}
 		// checked
 		if (this.name === attributes.checked) {
-			if (element.canHaveChildren !== undefined) {
+			if (ie === 7) {
 				// IE
 				element.checked = isAttributeDefined(this.value) ? true : false;
 			}
@@ -781,8 +826,7 @@ Attribute.prototype = {
 		}
 		// readonly
 		if (this.name === attributes.readonly) {
-			if (element.canHaveChildren !== undefined) {
-				// IE
+			if (ie === 7) {
 				element.readOnly = isAttributeDefined(this.value) ? true : false;
 			}
 			else {
@@ -795,8 +839,7 @@ Attribute.prototype = {
 		}
 		// normal attribute
 		function renderAttribute(name, value) {
-			if (element.canHaveChildren && name === "class") {
-				// IE
+			if (ie === 7 && name === "class") {
 				element.className = value;
 			}
 			else {

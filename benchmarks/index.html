@@ -5,17 +5,47 @@
 </head>
 <body>
 
-<div id="ct-soma-template">{{content.path.value}}</div>
+<div id="report"></div>
 
+<h3>soma-template:</h3>
+<div id="ct-soma-template">
+	<div>
+		<div>
+			<div>{{content.path.value}}</div>
+		</div>
+	</div>
+	<div data-repeat="item in items">{{item.name}}</div>
+</div>
+
+<h3>handlebars template:</h3>
 <div id="ct-handlebars"></div>
-<script id="entry-template" type="text/x-handlebars-template">
-	{{content.path.value}}
+<script id="tpl-handlebars" type="text/x-handlebars-template">
+	<div>
+		<div>
+			<div>{{content.path.value}}</div>
+		</div>
+	</div>
+	{{#each items}}
+	<div>{{name}}</div>
+	{{/each}}
 </script>
 
-<div id="report"></div>
+<h3>hogan template:</h3>
+<div id="ct-hogan"></div>
+<script id="tpl-hogan" type="text/x-hogan-template">
+	<div>
+		<div>
+			<div>{{content.path.value}}</div>
+		</div>
+	</div>
+	{{#items}}
+	<div>{{name}}</div>
+	{{/items}}
+</script>
 
 <script type="text/javascript" src="../build/soma-template.js"></script>
 <script type="text/javascript" src="js/handlebars.js"></script>
+<script type="text/javascript" src="js/hogan-2.0.0.js"></script>
 <script type="text/javascript" src="js/benchmarks.js"></script>
 
 <script type="text/javascript">
@@ -29,19 +59,46 @@ tpl.scope.content = {
 		value: 0
 	}
 };
+tpl.scope.items = [{name:'john'}, {name:'david'}, {name:'mike'}];
 
 var ctHandlebars = document.getElementById('ct-handlebars');
-var source = document.getElementById('entry-template').innerHTML;
-var template = Handlebars.compile(source);
+var source_handlebars = document.getElementById('tpl-handlebars').innerHTML;
+var template_handlebars = Handlebars.compile(source_handlebars);
 var handlebarsData = {
 	content: {
 		path: {
 			value: 0
 		}
-	}
+	},
+	items: [{name:'john'}, {name:'david'}, {name:'mike'}]
+};
+
+var ctHogan = document.getElementById('ct-hogan');
+var source_hogan = document.getElementById('tpl-hogan').innerHTML;
+var template_hogan = Hogan.compile(source_hogan);
+var hoganData = {
+	content: {
+		path: {
+			value: 0
+		}
+	},
+	items: [{name:'john'}, {name:'david'}, {name:'mike'}]
 };
 
 var count = 0;
+
+//
+//tpl.scope.content.path.value = "new content" + count++;
+//tpl.scope.items = [{name:'john'+count++}, {name:'david'+count++}, {name:'mike'+count++}];
+//tpl.render();
+//
+//handlebarsData.content.path.value = "new content" + count++;
+//handlebarsData.items = [{name:'john'+count++}, {name:'david'+count++}, {name:'mike'+count++}];
+//ctHandlebars.innerHTML = template_handlebars(handlebarsData);
+//
+//hoganData.content.path.value = "new content" + count++;
+//hoganData.items = [{name:'john'+count++}, {name:'david'+count++}, {name:'mike'+count++}];
+ctHogan.innerHTML = template_hogan.render(hoganData);
 
 // benchmarks
 
@@ -54,19 +111,33 @@ var suite = new Benchmark.Suite;
 // add tests
 suite.add('[soma-template] render text node', function() {
 	tpl.scope.content.path.value = "new content" + count++;
+	tpl.scope.items = [{name:'john'+count++}, {name:'david'+count++}, {name:'mike'+count++}];
 	tpl.render();
 })
 .add('[handlebars] render text node', function() {
 	handlebarsData.content.path.value = "new content" + count++;
-	ctHandlebars.innerHTML = template(handlebarsData);
+	handlebarsData.items = [{name:'john'+count++}, {name:'david'+count++}, {name:'mike'+count++}];
+	ctHandlebars.innerHTML = template_handlebars(handlebarsData);
+})
+.add('[hogan] render text node', function() {
+	hoganData.content.path.value = "new content" + count++;
+	hoganData.items = [{name:'john'+count++}, {name:'david'+count++}, {name:'mike'+count++}];
+	ctHogan.innerHTML = template_hogan.render(hoganData);
 })
 .add('[soma-template] render unchanged text node', function() {
 	tpl.scope.content.path.value = "new content" + count;
+	tpl.scope.items = [{name:'john'+count}, {name:'david'+count}, {name:'mike'+count}];
 	tpl.render();
 })
 .add('[handlebars] render unchanged text node', function() {
 	handlebarsData.content.path.value = "new content" + count;
-	ctHandlebars.innerHTML = template(handlebarsData);
+	handlebarsData.items = [{name:'john'+count}, {name:'david'+count}, {name:'mike'+count}];
+	ctHandlebars.innerHTML = template_handlebars(handlebarsData);
+})
+.add('[hohan] render unchanged text node', function() {
+	hoganData.content.path.value = "new content" + count;
+	hoganData.items = [{name:'john'+count}, {name:'david'+count}, {name:'mike'+count}];
+	ctHogan.innerHTML = template_hogan.render(hoganData);
 })
 // add listeners
 .on('cycle', function(event) {

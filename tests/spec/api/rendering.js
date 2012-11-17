@@ -42,7 +42,10 @@ describe("api - rendering", function () {
 		expect(ct.firstChild.getAttribute('data-id')).toEqual('value');
 		tpl.scope.name = "data-name";
 		tpl.render();
-		expect(ct.firstChild.getAttribute('data-id')).toBeNull();
+//		if (!ct.canHaveChildren) {
+			// can't remove attribute on IE
+			expect(ct.firstChild.getAttribute('data-id')).toBeNull();
+//		}
 		expect(ct.firstChild.getAttribute('data-name')).toEqual('value');
 	});
 

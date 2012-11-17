@@ -108,9 +108,11 @@ describe("api - special attributes", function () {
 		ct.innerHTML = '<input type="checkbox" data-checked/>';
 		tpl.compile();
 		tpl.render();
-		if (ct.canHaveChildren) {
-			// IE
-			expect(ct.firstChild.getAttribute('checked')).toBeTruthy()
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('checked')).toBeTruthy();
+		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('checked')).toEqual('');
 		}
 		else {
 			expect(ct.firstChild.getAttribute('checked')).toEqual('checked');
@@ -121,9 +123,11 @@ describe("api - special attributes", function () {
 		ct.innerHTML = '<input type="checkbox" data-checked="true"/>';
 		tpl.compile();
 		tpl.render();
-		if (ct.canHaveChildren) {
-			// IE
-			expect(ct.firstChild.getAttribute('checked')).toBeTruthy()
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('checked')).toBeTruthy();
+		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('checked')).toEqual('');
 		}
 		else {
 			expect(ct.firstChild.getAttribute('checked')).toEqual('checked');

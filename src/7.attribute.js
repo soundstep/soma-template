@@ -1,4 +1,4 @@
-var Attribute = function(name, value, node, data) {
+var Attribute = function(name, value, node) {
 	this.name = name;
 	this.value = value;
 	this.node = node;
@@ -39,14 +39,24 @@ Attribute.prototype = {
 				renderHref(this.name, this.value);
 			}
 			else {
-				this.node.element.removeAttribute(this.interpolationName.value);
+				if (this.node.isRepeaterDescendant && ie === 7) {
+					// delete attributes on cloned elements crash IE7
+				}
+				else {
+					this.node.element.removeAttribute(this.interpolationName.value);
+				}
 				if (this.previousName) {
-					if (this.node.element.canHaveChildren && this.previousName === 'class') {
+					if (ie === 7 && this.previousName === 'class') {
 						// iE
 						this.node.element.className = "";
 					}
 					else {
-						this.node.element.removeAttribute(this.previousName);
+						if (this.node.isRepeaterDescendant && ie === 7) {
+							// delete attributes on cloned elements crash IE7
+						}
+						else {
+							this.node.element.removeAttribute(this.previousName);
+						}
 					}
 				}
 				renderAttribute(this.name, this.value, this.previousName);
@@ -66,7 +76,7 @@ Attribute.prototype = {
 		}
 		// checked
 		if (this.name === attributes.checked) {
-			if (element.canHaveChildren !== undefined) {
+			if (ie === 7) {
 				// IE
 				element.checked = isAttributeDefined(this.value) ? true : false;
 			}
@@ -84,8 +94,7 @@ Attribute.prototype = {
 		}
 		// readonly
 		if (this.name === attributes.readonly) {
-			if (element.canHaveChildren !== undefined) {
-				// IE
+			if (ie === 7) {
 				element.readOnly = isAttributeDefined(this.value) ? true : false;
 			}
 			else {
@@ -98,8 +107,7 @@ Attribute.prototype = {
 		}
 		// normal attribute
 		function renderAttribute(name, value) {
-			if (element.canHaveChildren && name === "class") {
-				// IE
+			if (ie === 7 && name === "class") {
 				element.className = value;
 			}
 			else {

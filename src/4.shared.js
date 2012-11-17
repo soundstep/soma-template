@@ -263,12 +263,35 @@ function renderNodeRepeater(node) {
 	}
 }
 
+function cloneRepeaterNode(element, node) {
+	var newNode = new Node(element, node.scope._createChild());
+	if (node.attributes) {
+		var i = -1, l = node.attributes.length;
+		var attrs = [];
+		while (++i < l) {
+			if (node.attributes[i].name === settings.attributes.skip) {
+				newNode.skip = (node.attributes[i].value === "" || node.attributes[i].value === "true");
+			}
+			if (node.attributes[i].name !== attributes.repeat) {
+				var attribute = new Attribute(node.attributes[i].name, node.attributes[i].value, newNode);
+				attrs.push(attribute);
+			}
+		}
+		newNode.isRepeaterDescendant = true;
+		newNode.attributes = attrs;
+	}
+	return newNode;
+}
+
 function createRepeaterChild(node, count, data, indexVar, indexVarValue, previousElement) {
 	var existingChild = node.childrenRepeater[count];
 	if (!existingChild) {
 		// no existing node
 		var newElement = node.element.cloneNode(true);
-		var newNode = getNodeFromElement(newElement, node.scope._createChild(), true, node);
+		// can't recreate the node with a cloned element on IE7
+		// be cause the attributes are not specified annymore (attribute.specified)
+		//var newNode = getNodeFromElement(newElement, node.scope._createChild(), true);
+		var newNode = cloneRepeaterNode(newElement, node)
 		newNode.parent = node.parent;
 		newNode.template = node.template;
 		node.childrenRepeater[count] = newNode;

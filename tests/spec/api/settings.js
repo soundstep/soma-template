@@ -122,7 +122,7 @@ describe("api - settings", function () {
 
 	it("change checked", function () {
 		settings.attributes.checked = 'custom-checked';
-		var t1 = createTemplateWithContent('<span custom-checked></span>');
+		var t1 = createTemplateWithContent('<input custom-checked>');
 		t1.render();
 		if (ct.canHaveChildren) {
 			expect(t1.element.firstChild.getAttribute('checked')).toBeTruthy();
