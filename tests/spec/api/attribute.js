@@ -66,11 +66,23 @@ describe("api - attribute", function () {
 		tpl.compile();
 		tpl.scope.class1 = 'class';
 		tpl.render();
-		expect(ct.firstChild.getAttribute('class')).toEqual('bold');
+		if (ct.canHaveChildren && ct.firstChild.className) {
+			// IE
+			expect(ct.firstChild.className).toEqual('bold');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('class')).toEqual('bold');
+		}
 		tpl.scope.class1 = 'data-class';
 		tpl.render();
-		expect(ct.firstChild.getAttribute('class')).toBeNull();
-		expect(ct.firstChild.getAttribute('data-class')).toEqual('bold');
+		if (ct.canHaveChildren && ct.firstChild.className) {
+			// IE
+			console.log(111, ct.firstChild.className);
+			expect(ct.firstChild.className).toBeNull();
+		}
+		else {
+			expect(ct.firstChild.getAttribute('class')).toBeNull();
+		}
 	});
 
 	it("dispose", function () {

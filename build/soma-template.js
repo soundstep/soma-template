@@ -104,6 +104,9 @@ function isExpFunction(value) {
 	if (!isString(value)) return false;
 	return !!value.match(regex.func);
 }
+function isIE7() {
+	return document.all && !window.opera && window.XMLHttpRequest;
+}
 function childNodeIsTemplate(node) {
 	if (!node || !isElement(node.element)) return false;
 	if (node.parent && templates.get(node.element)) return true;
@@ -493,7 +496,7 @@ function createRepeaterChild(node, count, data, indexVar, indexVarValue, previou
 	if (!existingChild) {
 		// no existing node
 		var newElement = node.element.cloneNode(true);
-		var newNode = getNodeFromElement(newElement, node.scope._createChild(), true);
+		var newNode = getNodeFromElement(newElement, node.scope._createChild(), true, node);
 		newNode.parent = node.parent;
 		newNode.template = node.template;
 		node.childrenRepeater[count] = newNode;
@@ -734,7 +737,15 @@ Attribute.prototype = {
 			}
 			else {
 				this.node.element.removeAttribute(this.interpolationName.value);
-				if (this.previousName) this.node.element.removeAttribute(this.previousName);
+				if (this.previousName) {
+					if (this.node.element.canHaveChildren && this.previousName === 'class') {
+						// iE
+						this.node.element.className = "";
+					}
+					else {
+						this.node.element.removeAttribute(this.previousName);
+					}
+				}
 				renderAttribute(this.name, this.value, this.previousName);
 			}
 		}
@@ -752,7 +763,13 @@ Attribute.prototype = {
 		}
 		// checked
 		if (this.name === attributes.checked) {
-			renderSpecialAttribute(this.name, this.value, 'checked');
+			if (element.canHaveChildren !== undefined) {
+				// IE
+				element.checked = isAttributeDefined(this.value) ? true : false;
+			}
+			else {
+				renderSpecialAttribute(this.name, this.value, 'checked');
+			}
 		}
 		// disabled
 		if (this.name === attributes.disabled) {
@@ -764,7 +781,13 @@ Attribute.prototype = {
 		}
 		// readonly
 		if (this.name === attributes.readonly) {
-			renderSpecialAttribute(this.name, this.value, 'readonly');
+			if (element.canHaveChildren !== undefined) {
+				// IE
+				element.readOnly = isAttributeDefined(this.value) ? true : false;
+			}
+			else {
+				renderSpecialAttribute(this.name, this.value, 'readonly');
+			}
 		}
 		// selected
 		if (this.name === attributes.selected) {
@@ -772,7 +795,8 @@ Attribute.prototype = {
 		}
 		// normal attribute
 		function renderAttribute(name, value) {
-			if (name == "class") {
+			if (element.canHaveChildren && name === "class") {
+				// IE
 				element.className = value;
 			}
 			else {

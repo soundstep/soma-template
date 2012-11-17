@@ -108,42 +108,78 @@ describe("api - special attributes", function () {
 		ct.innerHTML = '<input type="checkbox" data-checked/>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.getAttribute('checked')).toEqual('checked');
+		if (ct.canHaveChildren) {
+			// IE
+			expect(ct.firstChild.getAttribute('checked')).toBeTruthy()
+		}
+		else {
+			expect(ct.firstChild.getAttribute('checked')).toEqual('checked');
+		}
 	});
 
 	it("data-checked true", function () {
 		ct.innerHTML = '<input type="checkbox" data-checked="true"/>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.getAttribute('checked')).toEqual('checked');
+		if (ct.canHaveChildren) {
+			// IE
+			expect(ct.firstChild.getAttribute('checked')).toBeTruthy()
+		}
+		else {
+			expect(ct.firstChild.getAttribute('checked')).toEqual('checked');
+		}
 	});
 
 	it("data-checked false", function () {
 		ct.innerHTML = '<input type="checkbox" data-checked="false"/>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.getAttribute('checked')).toBeNull();
+		if (ct.canHaveChildren) {
+			// IE
+			expect(ct.firstChild.getAttribute('checked')).toBeFalsy();
+		}
+		else {
+			expect(ct.firstChild.getAttribute('checked')).toBeNull();
+		}
 	});
 
 	it("data-disabled no value", function () {
 		ct.innerHTML = '<input type="checkbox" data-disabled/>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.getAttribute('disabled')).toEqual('disabled');
+		if (ct.canHaveChildren) {
+			// IE
+			expect(ct.firstChild.getAttribute('disabled')).toBeTruthy();
+		}
+		else {
+			expect(ct.firstChild.getAttribute('disabled')).toEqual('disabled');
+		}
 	});
 
 	it("data-disabled true", function () {
 		ct.innerHTML = '<input type="checkbox" data-disabled="true"/>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.getAttribute('disabled')).toEqual('disabled');
+		if (ct.canHaveChildren) {
+			// IE
+			expect(ct.firstChild.getAttribute('disabled')).toBeTruthy();
+		}
+		else {
+			expect(ct.firstChild.getAttribute('disabled')).toEqual('disabled');
+		}
 	});
 
 	it("data-disabled false", function () {
 		ct.innerHTML = '<input type="checkbox" data-disabled="false"/>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.getAttribute('disabled')).toBeNull();
+		if (ct.canHaveChildren) {
+			// IE
+			expect(ct.firstChild.getAttribute('disabled')).toBeFalsy();
+		}
+		else {
+			expect(ct.firstChild.getAttribute('disabled')).toBeNull();
+		}
 	});
 
 	it("data-multiple no value", function () {
@@ -171,21 +207,39 @@ describe("api - special attributes", function () {
 		ct.innerHTML = '<input type="checkbox" data-readonly/>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.getAttribute('readonly')).toEqual('readonly');
+		if (ct.canHaveChildren) {
+			// IE
+			expect(ct.firstChild.getAttribute('readonly')).toBeTruthy();
+		}
+		else {
+			expect(ct.firstChild.getAttribute('readonly')).toEqual('readonly');
+		}
 	});
 
 	it("data-readonly true", function () {
 		ct.innerHTML = '<input type="checkbox" data-readonly="true"/>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.getAttribute('readonly')).toEqual('readonly');
+		if (ct.canHaveChildren) {
+			// IE
+			expect(ct.firstChild.getAttribute('readonly')).toBeTruthy();
+		}
+		else {
+			expect(ct.firstChild.getAttribute('readonly')).toEqual('readonly');
+		}
 	});
 
 	it("data-readonly false", function () {
 		ct.innerHTML = '<input type="checkbox" data-readonly="false"/>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.getAttribute('readonly')).toBeNull();
+		if (ct.canHaveChildren) {
+			// IE
+			expect(ct.firstChild.getAttribute('readonly')).toBeFalsy();
+		}
+		else {
+			expect(ct.firstChild.getAttribute('readonly')).toBeNull();
+		}
 	});
 
 	it("data-selected no value", function () {
@@ -212,9 +266,19 @@ describe("api - special attributes", function () {
 	it("data-cloak", function () {
 		ct.innerHTML = '<div class="data-cloak">{{name}}</span>';
 		tpl.compile();
-		expect(ct.firstChild.getAttribute('class')).toEqual('data-cloak');
+		if (ct.canHaveChildren) {
+			expect(ct.firstChild.className).toEqual('data-cloak');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('class')).toEqual('data-cloak');
+		}
 		tpl.render();
-		expect(ct.firstChild.getAttribute('class')).not.toEqual('data-cloak');
+		if (ct.canHaveChildren) {
+			expect(ct.firstChild.className).toEqual('');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('class')).not.toEqual('data-cloak');
+		}
 	});
 
 	it("data-repeat", function () {

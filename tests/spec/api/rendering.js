@@ -40,12 +40,10 @@ describe("api - rendering", function () {
 		tpl.scope.name = "data-id";
 		tpl.render();
 		expect(ct.firstChild.getAttribute('data-id')).toEqual('value');
-		expect(ct.innerHTML).toEqual('<p data-id="value"></p>');
 		tpl.scope.name = "data-name";
 		tpl.render();
 		expect(ct.firstChild.getAttribute('data-id')).toBeNull();
 		expect(ct.firstChild.getAttribute('data-name')).toEqual('value');
-		expect(ct.innerHTML).toEqual('<p data-name="value"></p>');
 	});
 
 	it("attribute multiple name", function () {
@@ -55,13 +53,11 @@ describe("api - rendering", function () {
 		tpl.scope.id = "id";
 		tpl.render();
 		expect(ct.firstChild.getAttribute('data-id')).toEqual('value');
-		expect(ct.innerHTML).toEqual('<p data-id="value"></p>');
 		tpl.scope.name = "data2";
 		tpl.scope.id = "id2";
 		tpl.render();
 		expect(ct.firstChild.getAttribute('data-id')).toBeNull();
 		expect(ct.firstChild.getAttribute('data2-id2')).toEqual('value');
-		expect(ct.innerHTML).toEqual('<p data2-id2="value"></p>');
 	});
 
 	it("attribute value", function () {
@@ -70,11 +66,9 @@ describe("api - rendering", function () {
 		tpl.scope.name = "john";
 		tpl.render();
 		expect(ct.firstChild.getAttribute('data-name')).toEqual('john');
-		expect(ct.innerHTML).toEqual('<p data-name="john"></p>');
 		tpl.scope.name = "david";
 		tpl.render();
 		expect(ct.firstChild.getAttribute('data-name')).toEqual('david');
-		expect(ct.innerHTML).toEqual('<p data-name="david"></p>');
 	});
 
 	it("attribute multiple values", function () {
@@ -84,12 +78,10 @@ describe("api - rendering", function () {
 		tpl.scope.age = 21;
 		tpl.render();
 		expect(ct.firstChild.getAttribute('data-name')).toEqual('data: john 21');
-		expect(ct.innerHTML).toEqual('<p data-name="data: john 21"></p>');
 		tpl.scope.name = "david";
 		tpl.scope.age = 22;
 		tpl.render();
 		expect(ct.firstChild.getAttribute('data-name')).toEqual('data: david 22');
-		expect(ct.innerHTML).toEqual('<p data-name="data: david 22"></p>');
 	});
 
 	it("function", function () {

@@ -40,7 +40,15 @@ Attribute.prototype = {
 			}
 			else {
 				this.node.element.removeAttribute(this.interpolationName.value);
-				if (this.previousName) this.node.element.removeAttribute(this.previousName);
+				if (this.previousName) {
+					if (this.node.element.canHaveChildren && this.previousName === 'class') {
+						// iE
+						this.node.element.className = "";
+					}
+					else {
+						this.node.element.removeAttribute(this.previousName);
+					}
+				}
 				renderAttribute(this.name, this.value, this.previousName);
 			}
 		}
@@ -58,7 +66,13 @@ Attribute.prototype = {
 		}
 		// checked
 		if (this.name === attributes.checked) {
-			renderSpecialAttribute(this.name, this.value, 'checked');
+			if (element.canHaveChildren !== undefined) {
+				// IE
+				element.checked = isAttributeDefined(this.value) ? true : false;
+			}
+			else {
+				renderSpecialAttribute(this.name, this.value, 'checked');
+			}
 		}
 		// disabled
 		if (this.name === attributes.disabled) {
@@ -70,7 +84,13 @@ Attribute.prototype = {
 		}
 		// readonly
 		if (this.name === attributes.readonly) {
-			renderSpecialAttribute(this.name, this.value, 'readonly');
+			if (element.canHaveChildren !== undefined) {
+				// IE
+				element.readOnly = isAttributeDefined(this.value) ? true : false;
+			}
+			else {
+				renderSpecialAttribute(this.name, this.value, 'readonly');
+			}
 		}
 		// selected
 		if (this.name === attributes.selected) {
@@ -78,7 +98,8 @@ Attribute.prototype = {
 		}
 		// normal attribute
 		function renderAttribute(name, value) {
-			if (name == "class") {
+			if (element.canHaveChildren && name === "class") {
+				// IE
 				element.className = value;
 			}
 			else {

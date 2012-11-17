@@ -32,6 +32,9 @@ function isExpFunction(value) {
 	if (!isString(value)) return false;
 	return !!value.match(regex.func);
 }
+function isIE7() {
+	return document.all && !window.opera && window.XMLHttpRequest;
+}
 function childNodeIsTemplate(node) {
 	if (!node || !isElement(node.element)) return false;
 	if (node.parent && templates.get(node.element)) return true;

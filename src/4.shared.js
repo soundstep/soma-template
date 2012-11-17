@@ -268,7 +268,7 @@ function createRepeaterChild(node, count, data, indexVar, indexVarValue, previou
 	if (!existingChild) {
 		// no existing node
 		var newElement = node.element.cloneNode(true);
-		var newNode = getNodeFromElement(newElement, node.scope._createChild(), true);
+		var newNode = getNodeFromElement(newElement, node.scope._createChild(), true, node);
 		newNode.parent = node.parent;
 		newNode.template = node.template;
 		node.childrenRepeater[count] = newNode;

@@ -66,32 +66,24 @@ describe("api - interpolation", function () {
 		tpl.compile();
 		tpl.scope.single = 'single';
 		tpl.render();
-		expect(ct.innerHTML).toEqual('<p single=""></p>');
+		expect(ct.firstChild.getAttribute('single')).toEqual('');
 	});
 
 	it("attribute value single", function () {
-		ct.innerHTML = '<p class="{{cl}}"></p>';
+		ct.innerHTML = '<p data-id="{{cl}}"></p>';
 		tpl.compile();
 		tpl.scope.cl = 'myClass';
 		tpl.render();
-		expect(ct.innerHTML).toEqual('<p class="myClass"></p>');
-	});
-
-	it("attribute name single", function () {
-		ct.innerHTML = '<p {{single}}></p>';
-		tpl.compile();
-		tpl.scope.single = 'single';
-		tpl.render();
-		expect(ct.innerHTML).toEqual('<p single=""></p>');
+		expect(ct.firstChild.getAttribute('data-id')).toEqual('myClass');
 	});
 
 	it("attribute name value single", function () {
 		ct.innerHTML = '<p {{cl1}}="{{cl2}}"></p>';
 		tpl.compile();
-		tpl.scope.cl1 = 'class';
+		tpl.scope.cl1 = 'data-id';
 		tpl.scope.cl2 = 'myClass';
 		tpl.render();
-		expect(ct.innerHTML).toEqual('<p class="myClass"></p>');
+		expect(ct.firstChild.getAttribute('data-id')).toEqual('myClass');
 	});
 
 	it("attribute name prefix", function () {
@@ -99,7 +91,7 @@ describe("api - interpolation", function () {
 		tpl.compile();
 		tpl.scope.ingle = 'ingle';
 		tpl.render();
-		expect(ct.innerHTML).toEqual('<p single=""></p>');
+		expect(ct.firstChild.getAttribute('single')).toEqual('');
 	});
 
 	it("attribute name suffix", function () {
@@ -107,23 +99,23 @@ describe("api - interpolation", function () {
 		tpl.compile();
 		tpl.scope.singl = 'singl';
 		tpl.render();
-		expect(ct.innerHTML).toEqual('<p single=""></p>');
+		expect(ct.firstChild.getAttribute('single')).toEqual('');
 	});
 
 	it("attribute value prefix", function () {
-		ct.innerHTML = '<p class="my{{cl}}"></p>';
+		ct.innerHTML = '<p data-id="my{{cl}}"></p>';
 		tpl.compile();
 		tpl.scope.cl = 'Class';
 		tpl.render();
-		expect(ct.innerHTML).toEqual('<p class="myClass"></p>');
+		expect(ct.firstChild.getAttribute('data-id')).toEqual('myClass');
 	});
 
 	it("attribute value suffix", function () {
-		ct.innerHTML = '<p class="{{my}}Class"></p>';
+		ct.innerHTML = '<p data-id="{{my}}Class"></p>';
 		tpl.compile();
 		tpl.scope.my = 'my';
 		tpl.render();
-		expect(ct.innerHTML).toEqual('<p class="myClass"></p>');
+		expect(ct.firstChild.getAttribute('data-id')).toEqual('myClass');
 	});
 
 	it("attribute name multiple prefix", function () {
@@ -132,7 +124,7 @@ describe("api - interpolation", function () {
 		tpl.scope.i = 'in';
 		tpl.scope.le = 'le';
 		tpl.render();
-		expect(ct.innerHTML).toEqual('<p single=""></p>');
+		expect(ct.firstChild.getAttribute('single')).toEqual('');
 	});
 
 	it("attribute name multiple suffix", function () {
@@ -141,72 +133,74 @@ describe("api - interpolation", function () {
 		tpl.scope.s = 's';
 		tpl.scope.gl = 'gl';
 		tpl.render();
-		expect(ct.innerHTML).toEqual('<p single=""></p>');
+		expect(ct.firstChild.getAttribute('single')).toEqual('');
 	});
 
 	it("attribute value multiple prefix", function () {
-		ct.innerHTML = '<p class="m{{y}}Cl{{ass}}"></p>';
+		ct.innerHTML = '<p data-id="m{{y}}Cl{{ass}}"></p>';
 		tpl.compile();
 		tpl.scope.y = 'y';
 		tpl.scope.ass = 'ass';
 		tpl.render();
-		expect(ct.innerHTML).toEqual('<p class="myClass"></p>');
+		expect(ct.firstChild.getAttribute('data-id')).toEqual('myClass');
 	});
 
 	it("attribute value multiple suffix", function () {
-		ct.innerHTML = '<p class="{{my}}C{{la}}ss"></p>';
+		ct.innerHTML = '<p data-id="{{my}}C{{la}}ss"></p>';
 		tpl.compile();
 		tpl.scope.my = 'my';
 		tpl.scope.la = 'la';
 		tpl.render();
-		expect(ct.innerHTML).toEqual('<p class="myClass"></p>');
+		expect(ct.firstChild.getAttribute('data-id')).toEqual('myClass');
 	});
 
 	it("attribute name value single", function () {
 		ct.innerHTML = '<p {{class1}}="{{myClass}}"></p>';
 		tpl.compile();
-		tpl.scope.class1 = 'class';
+		tpl.scope.class1 = 'data-id';
 		tpl.scope.myClass = 'myClass';
 		tpl.render();
-		expect(ct.innerHTML).toEqual('<p class="myClass"></p>');
+		expect(ct.firstChild.getAttribute('data-id')).toEqual('myClass');
 	});
 
 	it("attribute name value prefix", function () {
-		ct.innerHTML = '<p c{{lass}}="m{{yClass}}"></p>';
+		ct.innerHTML = '<p {{data}}-id="m{{yClass}}"></p>';
 		tpl.compile();
-		tpl.scope.lass = 'lass';
+		tpl.scope.data = 'data';
 		tpl.scope.yClass = 'yClass';
 		tpl.render();
-		expect(ct.innerHTML).toEqual('<p class="myClass"></p>');
+		expect(ct.firstChild.getAttribute('data-id')).toEqual('myClass');
 	});
 
 	it("attribute name value suffix", function () {
-		ct.innerHTML = '<p {{clas}}s="{{myClas}}s"></p>';
+		ct.innerHTML = '<p data-{{id}}="{{myClas}}s"></p>';
 		tpl.compile();
-		tpl.scope.clas = 'clas';
+		tpl.scope.id = 'id';
 		tpl.scope.myClas = 'myClas';
 		tpl.render();
-		expect(ct.innerHTML).toEqual('<p class="myClass"></p>');
+		expect(ct.firstChild.getAttribute('data-id')).toEqual('myClass');
 	});
 
 	it("attribute name value multiple prefix", function () {
-		ct.innerHTML = '<p c{{l}}a{{ss}}="m{{y}}Cla{{ss}}"></p>';
+		ct.innerHTML = '<p da{{ta}}-{{id}}="m{{y}}Cla{{ss}}"></p>';
 		tpl.compile();
-		tpl.scope.l = 'l';
+		tpl.scope.ta = 'ta';
+		tpl.scope.id = 'id';
 		tpl.scope.y = 'y';
 		tpl.scope.ss = 'ss';
 		tpl.render();
-		expect(ct.innerHTML).toEqual('<p class="myClass"></p>');
+		expect(ct.firstChild.getAttribute('data-id')).toEqual('myClass');
 	});
 
 	it("attribute name value multiple suffix", function () {
-		ct.innerHTML = '<p {{cl}}a{{s}}s="{{my}}Cla{{s}}s"></p>';
+		ct.innerHTML = '<p {{da}}ta{{dash}}id="{{my}}Cla{{s}}s"></p>';
 		tpl.compile();
-		tpl.scope.cl = 'cl';
+		tpl.scope.da = 'da';
+		tpl.scope.dash = '-';
 		tpl.scope.s = 's';
 		tpl.scope.my = 'my';
 		tpl.render();
-		expect(ct.innerHTML).toEqual('<p class="myClass"></p>');
+		expect(ct.firstChild.getAttribute('data-id')).toEqual('myClass');
 	});
 
 });
