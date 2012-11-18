@@ -1,0 +1,487 @@
+- browserstack get browsers
+
+http://api.browserstack.com/2/browsers
+
+- bunyip
+
+run tests example:
+bunyip -f tests/index.html -c config.js -b 'firefox:win/16.0'
+
+iPad 3rd (6.0):ios/6.0
+iPad 2 (5.0):ios/5.0
+iPhone 5:ios/6.0
+iPhone 4S:ios/5.1
+
+Samsung Galaxy Note:android/2.3
+Samsung Galaxy Nexus:android/4.0.3
+Motorola Razr:android/4.0.3
+Google Nexus 7:android/4.1
+
+firefox:mac/6.0
+firefox:mac/12.0
+firefox:mac/16.0
+chrome:mac/18.0
+opera:mac/12.5
+chrome:mac/22.0
+opera:mac/11.6
+opera:mac/12.5
+safari:mac/5.0
+safari:mac/6.0
+
+firefox:win/3.6
+firefox:win/12.0
+firefox:win/17.0
+chrome:win/16.0
+chrome:win/20.0
+chrome:win/24.0
+opera:win/11.6
+opera:win/12.11
+ie:win/7.0
+ie:win/8.0
+ie:win/9.0
+ie:win/10.0
+safari:win/4.0
+safari:win/5.1
+
+- browserstack browser list
+
+{
+    "ios": [
+        {
+            "version": "3.0",
+            "device": "iPhone 3GS"
+        },
+        {
+            "version": "4.0",
+            "device": "iPhone 4"
+        },
+        {
+            "version": "5.1",
+            "device": "iPhone 4S"
+        },
+        {
+            "version": "6.0",
+            "device": "iPhone 4S (6.0)"
+        },
+        {
+            "version": "6.0",
+            "device": "iPhone 5"
+        },
+        {
+            "version": "3.2",
+            "device": "iPad"
+        },
+        {
+            "version": "4.3.2",
+            "device": "iPad 2"
+        },
+        {
+            "version": "5.0",
+            "device": "iPad 2 (5.0)"
+        },
+        {
+            "version": "5.1",
+            "device": "iPad 3rd"
+        },
+        {
+            "version": "6.0",
+            "device": "iPad 3rd (6.0)"
+        }
+    ],
+    "android": [
+        {
+            "version": "2.1",
+            "device": "Samsung Galaxy S"
+        },
+        {
+            "version": "2.3",
+            "device": "Samsung Galaxy S II"
+        },
+        {
+            "version": "2.3",
+            "device": "Samsung Galaxy Note"
+        },
+        {
+            "version": "4.0.3",
+            "device": "Samsung Galaxy Nexus"
+        },
+        {
+            "version": "2.3",
+            "device": "Motorola Defy Plus"
+        },
+        {
+            "version": "2.3",
+            "device": "Motorola Droid Razr"
+        },
+        {
+            "version": "2.3",
+            "device": "Motorola Droid 4"
+        },
+        {
+            "version": "2.3",
+            "device": "Motorola Droid Bionic"
+        },
+        {
+            "version": "2.3",
+            "device": "Motorola Atrix 2"
+        },
+        {
+            "version": "2.3",
+            "device": "Motorola Photon 4G"
+        },
+        {
+            "version": "4.0.3",
+            "device": "Motorola Razr"
+        },
+        {
+            "version": "4.0.3",
+            "device": "Motorola Atrix HD"
+        },
+        {
+            "version": "1.5",
+            "device": "HTC Hero"
+        },
+        {
+            "version": "2.2",
+            "device": "HTC Wildfire"
+        },
+        {
+            "version": "4.0.3",
+            "device": "HTC Evo 3D"
+        },
+        {
+            "version": "1.6",
+            "device": "Sony Xperia X10"
+        },
+        {
+            "version": "2.2",
+            "device": "LG Optimus 3D"
+        },
+        {
+            "version": "2.2",
+            "device": "Samsung Galaxy Tab 8.9"
+        },
+        {
+            "version": "4.1",
+            "device": "Google Nexus 7"
+        }
+    ],
+    "mac": [
+        {
+            "version": "5.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "6.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "7.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "8.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "9.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "10.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "11.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "12.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "13.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "14.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "15.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "16.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "14.0",
+            "browser": "chrome"
+        },
+        {
+            "version": "16.0",
+            "browser": "chrome"
+        },
+        {
+            "version": "17.0",
+            "browser": "chrome"
+        },
+        {
+            "version": "18.0",
+            "browser": "chrome"
+        },
+        {
+            "version": "19.0",
+            "browser": "chrome"
+        },
+        {
+            "version": "20.0",
+            "browser": "chrome"
+        },
+        {
+            "version": "21.0",
+            "browser": "chrome"
+        },
+        {
+            "version": "22.0",
+            "browser": "chrome"
+        },
+        {
+            "version": "11.1",
+            "browser": "opera"
+        },
+        {
+            "version": "11.6",
+            "browser": "opera"
+        },
+        {
+            "version": "12.0",
+            "browser": "opera"
+        },
+        {
+            "version": "12.5",
+            "browser": "opera"
+        },
+        {
+            "version": "4.0",
+            "browser": "safari"
+        },
+        {
+            "version": "5.0",
+            "browser": "safari"
+        },
+        {
+            "version": "5.1",
+            "browser": "safari"
+        },
+        {
+            "version": "6.0",
+            "browser": "safari"
+        }
+    ],
+    "opera": [
+        {
+            "version": "240x320",
+            "device": "HTC Wildfire"
+        },
+        {
+            "version": "320x480",
+            "device": "LG Optimus One"
+        },
+        {
+            "version": "360x640",
+            "device": "Nokia 5800 XpressMusic"
+        },
+        {
+            "version": "480x800",
+            "device": "Samsung Galaxy S II"
+        },
+        {
+            "version": "480x854",
+            "device": "Motorola Droid X"
+        },
+        {
+            "version": "540x960",
+            "device": "Motorola Atrix 4G"
+        },
+        {
+            "version": "1024x600",
+            "device": "Samsung Galaxy Tab"
+        },
+        {
+            "version": "1280x800",
+            "device": "Samsung Galaxy Tab 10.1"
+        }
+    ],
+    "win": [
+        {
+            "version": "3.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "3.6",
+            "browser": "firefox"
+        },
+        {
+            "version": "4.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "5.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "6.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "7.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "8.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "9.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "10.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "11.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "12.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "13.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "14.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "15.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "16.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "17.0",
+            "browser": "firefox"
+        },
+        {
+            "version": "14.0",
+            "browser": "chrome"
+        },
+        {
+            "version": "15.0",
+            "browser": "chrome"
+        },
+        {
+            "version": "16.0",
+            "browser": "chrome"
+        },
+        {
+            "version": "17.0",
+            "browser": "chrome"
+        },
+        {
+            "version": "18.0",
+            "browser": "chrome"
+        },
+        {
+            "version": "19.0",
+            "browser": "chrome"
+        },
+        {
+            "version": "20.0",
+            "browser": "chrome"
+        },
+        {
+            "version": "21.0",
+            "browser": "chrome"
+        },
+        {
+            "version": "22.0",
+            "browser": "chrome"
+        },
+        {
+            "version": "23.0",
+            "browser": "chrome"
+        },
+        {
+            "version": "24.0",
+            "browser": "chrome"
+        },
+        {
+            "version": "10.0",
+            "browser": "opera"
+        },
+        {
+            "version": "11.1",
+            "browser": "opera"
+        },
+        {
+            "version": "11.5",
+            "browser": "opera"
+        },
+        {
+            "version": "11.6",
+            "browser": "opera"
+        },
+        {
+            "version": "12.10",
+            "browser": "opera"
+        },
+        {
+            "version": "12.11",
+            "browser": "opera"
+        },
+        {
+            "version": "6.0",
+            "browser": "ie"
+        },
+        {
+            "version": "7.0",
+            "browser": "ie"
+        },
+        {
+            "version": "8.0",
+            "browser": "ie"
+        },
+        {
+            "version": "4.0",
+            "browser": "safari"
+        },
+        {
+            "version": "5.0",
+            "browser": "safari"
+        },
+        {
+            "version": "5.1",
+            "browser": "safari"
+        },
+        {
+            "version": "8.0",
+            "browser": "ie"
+        },
+        {
+            "version": "9.0",
+            "browser": "ie"
+        },
+        {
+            "version": "10.0",
+            "browser": "ie"
+        }
+    ]
+}

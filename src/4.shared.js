@@ -236,8 +236,8 @@ function renderNodeRepeater(node) {
 				previousElement = createRepeaterChild(node, i, data[i], vars.index, i, previousElement);
 			}
 			else {
-				// todo: dispose node
 				node.parent.element.removeChild(node.childrenRepeater[i].element);
+				node.childrenRepeater[i].dispose();
 			}
 		}
 		if (node.childrenRepeater.length > data.length) {
@@ -253,8 +253,8 @@ function renderNodeRepeater(node) {
 		}
 		var size = count;
 		while (count++ < node.childrenRepeater.length-1) {
-			// todo: dispose node
 			node.parent.element.removeChild(node.childrenRepeater[count].element);
+			node.childrenRepeater[count].dispose();
 		}
 		node.childrenRepeater.length = size+1;
 	}

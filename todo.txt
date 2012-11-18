@@ -1,11 +1,3 @@
-- array parsing: {{item[0]}}
-
 - create dynamic menu in site
 
-- dispose in array repeater
-
 - add benchmark suite (template benchmarks, and comparison benchmarks)
-
-- add time execution in sheet demo?
-
-- run tests on all browsers

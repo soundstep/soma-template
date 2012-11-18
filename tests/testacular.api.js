@@ -12,6 +12,7 @@ files = [
 	JASMINE_ADAPTER,
 	'../build/soma-template.js',
 	'helpers/*.js',
+	'lib/underscore.string.min.js',
 	'spec/api/*.js'
 ];
 
@@ -56,7 +57,7 @@ autoWatch = true;
 // - Safari (only Mac)
 // - PhantomJS
 // - IE (only Windows)
-browsers = ['Chrome'];
+browsers = ['Chrome', 'ChromeCanary', 'Firefox', 'Opera', 'Safari'];
 
 
 // If browser does not capture in given timeout [ms], kill it
