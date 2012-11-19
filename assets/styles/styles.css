@@ -333,6 +333,19 @@ a:hover, a:active {
 		right: 50px;
 		top: 52px;
 	}
+
+    nav {
+	    display: none;
+    }
+
+	#navigation {
+		position: absolute;
+		width: 270px;
+		float: none;
+		position: static;
+		min-height: 80px;
+		margin: 0px;
+	}
 }
 
 @media print, screen and (max-width: 720px) {
