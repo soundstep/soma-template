@@ -152,9 +152,10 @@
 
 
 		<p>A web template engine is a solution that is used to process web templates and content to produce an HTML output.</p>
-		<p>While this is true for the most common web template engine, soma-template differs about the output process. soma-template will also produce an HTML output, but more precisely, will manipulate DOM nodes rather than producing a string that will be injected in the DOM.</p>
+		<p>While this is true for the most common web template engine, soma-template differs about the output process. soma-template will also produce an HTML output, but more precisely, will manipulate DOM nodes rather than producing a "template string" that will be injected in the DOM.</p>
 		<p>This results in a workflow that stays close to a normal HTML development as the template can be directly part of the DOM itself.</p>
-		<p>soma-template is a lightweight library (4.7 KB). It is tested and works in all modern browsers and in Internet Explorer from version 7. Its performance will be directly related to the DOM manipulation performance of the browser itself. This is why today the library is very fast on <a href="https://www.google.com/intl/en/chrome/browser/" target="_blank">Google Chrome</a>, which I recommend.</p>
+		<p>The library aims to reduce as much as possible DOM manipulation if it doesn't need to in order to reduce DOM node destruction.</p>
+		<p>soma-template is lightweight : 4.7 KB. It is tested and works in all modern browsers and in Internet Explorer from version 7 to 10. Its performance will be directly related to the DOM manipulation performance of the browser itself. This is why today the library is very fast on <a href="https://www.google.com/intl/en/chrome/browser/" target="_blank">Google Chrome</a>, which I recommend.</p>
 
 	</section>
 
@@ -165,9 +166,7 @@
 			<a name="installation"></a>
 		</div>
 
-		<p>soma-template will cost you only 4.7 KB on your bandwidth!</p>
-
-		<h3>Browser application</h3>
+		<h3>Browser</h3>
 		<p><a href="https://github.com/soundstep/soma-template/tree/master/build" class="button icon tag" target="_blank">download soma-template</a></p>
 		<p>You can also download a <a href="https://github.com/soundstep/soma-template/zipball/master">zip file</a> containing everything. Finally, add the script to your page:</p>
 		<div class="codehilite"><pre><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src=</span><span class="s">&quot;soma-template.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span></pre></div>
@@ -946,7 +945,7 @@ template = null;</span>
 		<p>A <code>scope</code> is created on the first node and passed to the others. The internal function instances created are  of the type of <code>Node</code>, <code>Attribute</code>, <code>Interpolation</code> and <code>Expression</code>.</p>
 		<p>A <code>Node</code> instance represents a DOM element, an <code>Attribute</code> instance represents an attribute of an element, an <code>Interpolation</code> instance represents a sequence containing strings and expressions, and finally an <code>Expression</code> instance represents a token.</p>
 		<p>The template instance keeps and exposes the reference of the root node and the root scope, which are accessible using the template property <code>node</code> and <code>scope</code> respectively.</p>
-		<p>A node can contain attributes (or value if it is a Text Node), and can contain others node children. Both the nodes and attributes can contain interpolations, and each interpolation can contain a list of expressions (token). In other words, the template instance can be browsed and inspected from the root to its extreme nodes, exposing tokens on the way. The structure has been exposed if some actions have to be made before rendering.</p>
+		<p>A node can contain attributes (or value if it is a Text Node), and can contain other children. Both the nodes and attributes can contain interpolations, and each interpolation can contain a list of expressions (token). In other words, the template instance can be browsed and inspected from the root to its extreme nodes, exposing tokens on the way. The structure has been exposed if some actions have to be made before rendering.</p>
 		<p><img src="assets/images/structure.gif" alt="structure"></p>
 
 		<div class="subtitle">
@@ -961,7 +960,7 @@ template = null;</span>
 		</div>
 
 		<p>All nodes created by the template engine are accessible and it is possible to update and render a single node (and its children), without having to render the whole template.</p>
-		<p>For convenience, the template and each nodes provide a <code>getNode</code> function to quickly access to a specific node if needed. Here is an example to render a specific node without rendering the whole template:</p>
+		<p>For convenience, the template and each node provide a <code>getNode</code> function to quickly access to a specific node if needed. Here is an example to render a specific node without rendering the whole template:</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;p&gt;</span>Only the second paragraph is rendered:<span class="nt">&lt;/p&gt;</span>
   <span class="nt">&lt;p&gt;</span>First paragraph: <span class="cp">{{</span><span class="nv">content1</span><span class="cp">}}</span><span class="nt">&lt;/p&gt;</span>
@@ -984,7 +983,8 @@ template = null;</span>
 			<h3>Render an attribute</h3>
 			<a name="render-an-attribute"></a>
 		</div>
-		<p>As the nodes, the attributes can also be accessed and rendered without rendering the whole template. In the following example, only the class node will be rendered:</p>
+		<p>As the nodes, the attributes can also be accessed and rendered without rendering the whole template.</p>
+		<p>For convenience, each node provide a <code>getAttribute</code> function to quickly access to a specific attribute if needed. In the following example, only the class attribute will be rendered:</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;p</span> <span class="na">class=</span><span class="s">&quot;</span><span class="cp">{{</span><span class="nv">color</span><span class="cp">}}</span><span class="s">&quot;</span><span class="nt">&gt;</span>Only the class attribute is rendered <span class="cp">{{</span><span class="nv">content</span><span class="cp">}}</span>.<span class="nt">&lt;/p&gt;</span>
 <span class="nt">&lt;/div&gt;</span>
@@ -1025,7 +1025,7 @@ template = null;</span>
 			<a name="tests"></a>
 		</div>
 
-		<p>Both the functions exposed and internal are tested on all modern browsers and Internet Explorer from version 7, but if you find something that doesn't work or want to discussed something, please use <a href="https://github.com/soundstep/soma-template/issues">Github issues</a>.</p>
+		<p>soma-template has been tested on all modern browsers and on Internet Explorer from version 7 to 10, but if you find something that doesn't work or want to discussed something, please use <a href="https://github.com/soundstep/soma-template/issues">Github issues</a>.</p>
 
 		<ul>
 			<li><a href="tests/" target="_blank">API tests</a></li>
@@ -1041,7 +1041,7 @@ template = null;</span>
 			<a name="credits"></a>
 		</div>
 
-		<p>I don't have to talk about all these people and great tools that helped me, but not only it is fair, I also think that some details might help other developers to get a better workflow. So here it is!</p>
+		<p>I don't have to talk about all these people and great tools that helped me, but not only it is fair, I also think that some details might help other developers to change or improve their workflow if needed. So here it is!</p>
 
 		<p>The library probably wouldn't have been created without the fully featured framework developed by Google: <a href="http://angularjs.org/" target="_blank">AngularJS</a>. While the code itself has nothing to do with AngularJS, the concept has been greatly inspired by its template system and some similarities can be found. The library has been kept to a minimum to do a single job: update the DOM with content.</p>
 		<p>The primary goal is to use the native DOM API, with a minimal destruction of the nodes. I also believe, as other developers, that DOM-based template engines are the future and will probably be one day be implemented in the browser itself. Google is probably working on that already as stated in this <a href="http://blog.stevensanderson.com/2012/08/01/rich-javascript-applications-the-seven-frameworks-throne-of-js-2012/">excellent post by Steven Sanderson</a>.</p>
@@ -1049,12 +1049,12 @@ template = null;</span>
 
 		<p>Also, very big thanks to the developers who helped me. <a href="https://twitter.com/mdahlstrand" target="_blank">Magnus Dahlstrand</a> for his invaluable advices, and Arpad Ray for his regular expressions magic!</p>
 
-		<p><a href="http://pivotal.github.com/jasmine/" target="_blank">Jasmine</a> is amazing, it is a behavior-driven development framework to test javascript code. Really easy to work with to create your unit tests.</p>
+		<p><a href="http://pivotal.github.com/jasmine/" target="_blank">Jasmine</a> is amazing, it is a behavior-driven development framework to test javascript code. Really easy to work with to run your unit tests.</p>
 		<p><a href="http://www.browserstack.com/" target="_blank">Browserstack</a> is a great tool to check your content on different browsers and os. They also have an API to create workers to connect to. I check my Jasmine tests against their API and check visual features in their online tool.</p>
 		<p><a href="https://pagekite.net/" target="_blank">pagekite</a> is a great tunneling solution. It basically makes you able to see your local development server from anywhere. I use their services to send the Jasmine tests to Browserstack. Seamless, easy and really working well, great tool.</p>
 		<p><a href="http://ryanseddon.github.com/bunyip/" target="_blank">Bunyip</a> is a javascript library that connects everything, so you can run your tests locally. It connects you to the Browserstack API (or local browsers), using pagekite so Browserstack can access to your local server, and internally using <a href="https://github.com/yui/yeti" target="_blank">Yeti</a> (Yahoo) to get the Jasmines tests output back to your command line (yes it does all that).</p>
-		<p><a href="http://vojtajina.github.com/testacular/" target="_blank">Testacular</a> is great to have the Jasmine tests checked at all time while I develop (on files changes). hassle free and very easy.</p>
-		<p>And along the way, <a href="http://www.jetbrains.com/webstorm/" target="http://www.jetbrains.com/webstorm/" target="_blank">Webstorm</a> is the best javascript editor (imho of course) that not only makes my like easier but provide all the tools I need so I can refactor the code and run the tests while staying in the IDE.</p>
+		<p><a href="http://vojtajina.github.com/testacular/" target="_blank">Testacular</a> is great to have the Jasmine tests checked at all time while I develop, on files change and in multiple browsers. Hassle free and very easy.</p>
+		<p>And along the way, <a href="http://www.jetbrains.com/webstorm/" target="http://www.jetbrains.com/webstorm/" target="_blank">Webstorm</a> is the best javascript editor (imho of course) that not only makes my like easier but also provides all the tools I need so I can refactor the code and run the tests while staying in the IDE.</p>
 
 	</section>
 
