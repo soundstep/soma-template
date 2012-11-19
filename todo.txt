@@ -1,3 +1,0 @@
-- create dynamic menu in site
-
-- add benchmark suite (template benchmarks, and comparison benchmarks)

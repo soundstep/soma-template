@@ -6,11 +6,11 @@ module.exports = function(grunt) {
 		pkg:'<json:package.json>',
 		meta:{
 			version:'<%=pkg.version%>',
-			banner:'/*! soma-template - v<%= meta.version %> - ' +
+			banner:'/*! soma-template - v<%= meta.version %> - Romuald Quantin - ' +
 				'<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-				'* http://www.soundstep.com/\n' +
-				'* Copyright (c) <%= grunt.template.today("yyyy") %> ' +
-				'Soundstep */'
+				'* http://soundstep.github.com/soma-template/\n' +
+				'* MIT licence <%= grunt.template.today("yyyy") %> ' +
+				'*/'
 		},
 		concat: {
 			dist: {
