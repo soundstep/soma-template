@@ -1,7 +1,7 @@
 @import url(https://fonts.googleapis.com/css?family=Lato:300italic,700italic,300,700);
 
 body {
-	padding: 30px 50px 50px 50px;
+	padding: 0px 50px 50px 50px;
 	font: 14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
 	color: #676767;
 	font-weight: 300;
@@ -110,6 +110,11 @@ header {
 	float: left;
 	position: fixed;
 }
+header h1 a {
+	color: #222;
+	font-size: 28px;
+	font-weight: bold;
+}
 
 header ul {
 	list-style: none;
@@ -175,12 +180,17 @@ header ul a strong {
 	color: #222;
 }
 
-nav {
-	display: none;
+#navigation {
+	posiion: relative;
 	width: 270px;
 	float: left;
 	position: fixed;
 	margin-top: 190px;
+	min-height: 540px;
+	top: 10px;
+	bottom: 10px;
+}
+nav {
 	font-size: 13px;
 }
 nav p {
@@ -200,9 +210,27 @@ nav > ul > li > ul {
 }
 
 section {
+	position: relative;
 	width: 580px;
 	float: right;
 	padding-bottom: 50px;
+}
+section .title,
+section .subtitle {
+	position: relative;
+}
+section .title a,
+section .subtitle a {
+	position: absolute;
+}
+section .title a {
+	top: -50px;
+}
+section .subtitle a {
+	top: -58px;
+}
+section.last {
+	margin-bottom: 1500px;
 }
 
 small {
@@ -219,8 +247,8 @@ hr {
 footer {
 	width: 270px;
 	float: left;
-	position: fixed;
-	bottom: 50px;
+	position: absolute;
+	bottom: 56px;
 }
 footer p {
 	margin-bottom: 0px;
@@ -268,6 +296,7 @@ a:hover, a:active {
 	height: 300px;
 	border: 1px solid #5299CC;
 }
+
 
 /*QUERY*/
 
