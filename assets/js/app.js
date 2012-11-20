@@ -1,8 +1,9 @@
-;(function(ns, undefined) {
+;(function(ns, $, Modernizr, undefined) {
 
-	var clicked = false;
+	var clicked = false,
+		event = Modernizr.touch ? 'touchstart' : 'click';
 
-    $('nav > ul > li').click(function() {
+    $('nav > ul > li').bind(event, function() {
 	    clicked = true;
 	    $('nav > ul > li > ul').addClass('hidden');
 	    $('ul', $(this)).removeClass('hidden');
@@ -33,4 +34,4 @@
 		clicked = false;
 	});
 
-})(this['ns'] = this['ns'] || {});
+})(this['ns'] = this['ns'] || {}, $, Modernizr);
