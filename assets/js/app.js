@@ -33,6 +33,7 @@
 		var a = $('nav li a[href="#' + currentName + '"]');
 		a.parents('ul').removeClass('hidden');
 		a.addClass('current');
+		a.parents('li').find('ul').removeClass('hidden');
 		clicked = false;
 		// ios fix
 		// http://stackoverflow.com/questions/11297641/mobile-webkit-reflow-issue
