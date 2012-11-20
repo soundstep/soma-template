@@ -1,9 +1,20 @@
-;(function(ns, undefined) {
+;(function(ns, _gaq, undefined) {
 
 	var ios = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/i) ? true : false );
 
 	var clicked = false;
 	var elements = $('a[name]');
+
+	$('a').click(function() {
+		var href = $(this).attr('href');
+		if (href && href !== '#') {
+			var category = href.indexOf('#') !== -1 ? 'menu' : 'link';
+			var link = href.replace(/^#/, '');
+			if (_gaq) {
+				_gaq.push(['_trackEvent', category, link]);
+			}
+		}
+	});
 
 	$('nav > ul > li').click(function() {
 		clicked = true;
@@ -56,4 +67,4 @@
 		}, 0);
 	};
 
-})(this['ns'] = this['ns'] || {});
+})(this['ns'] = this['ns'] || {}, _gaq);
