@@ -194,7 +194,7 @@ nav {
 	font-size: 13px;
 }
 nav p {
-	margin-bottom: -3px;
+	margin-bottom: -2px;
 }
 nav ul {
 	list-style-type: none;
@@ -202,11 +202,19 @@ nav ul {
 	padding: 0;
 }
 nav li {
-	margin-bottom: -4px;
+	margin-bottom: -3px;
 }
 nav > ul > li > ul {
-	display: none;
 	margin-left: 20px;
+}
+nav a.current {
+	background: #C3D6E0;
+	border-radius: 3px;
+	padding: 1px 1px 1px 1px;
+	color: #2979A1;
+}
+nav a.current:hover {
+	color: #0A1D27;
 }
 
 section {
@@ -296,6 +304,9 @@ a:hover, a:active {
 	height: 300px;
 	border: 1px solid #5299CC;
 }
+.back {
+	display: none;
+}
 
 
 /*QUERY*/
@@ -318,6 +329,7 @@ a:hover, a:active {
 	}
 
 	section {
+		clear: both;
 		xborder: 1px solid #e5e5e5;
 		border-width: 1px 0;
 		padding: 20px 0;
@@ -330,21 +342,51 @@ a:hover, a:active {
 
 	header ul {
 		position: absolute;
-		right: 50px;
+		right: 58px;
 		top: 52px;
 	}
 
-    nav {
-	    display: none;
-    }
-
 	#navigation {
-		position: absolute;
-		width: 270px;
-		float: none;
+		position: relative;
+		width: 100%;
 		position: static;
 		min-height: 80px;
 		margin: 0px;
+		float: left;
+	}
+	nav {
+		position: relative;
+		height: 270px;
+		float: left;
+		width: 100%;
+		margin-top: 80px;
+	}
+
+	nav > ul > li > ul {
+		display: none;
+	}
+	nav li {
+		width: 50%;
+		font-size: 15px;
+		margin-bottom: 0px;
+		float: left;
+		height: 30px;
+	}
+	nav > ul {
+		width: 470px;
+	}
+	footer {
+		position: absolute;
+		text-align: right;
+		top: 105px;
+		right: 60px;
+	}
+	.back {
+		position: relative;
+		display: block;
+		float:right;
+		top: -10px;
+		right: 4px;
 	}
 }
 
@@ -365,15 +407,53 @@ a:hover, a:active {
 	pre, code {
 		word-wrap: normal;
 	}
+	footer {
+		position: absolute;
+		text-align: left;
+		top: 185px;
+		left: 57px;
+		height: 70px;
+	}
+    #navigation {
+	    margin-top: 20px;
+    }
+	nav > ul {
+		width: 430px;
+	}
 }
 
 @media print, screen and (max-width: 480px) {
+
 	body {
-		padding: 15px;
+		padding: 0px 15px 15px 15px;
 	}
 
 	header ul {
 		/*display: none;*/
+	}
+	nav {
+
+	}
+	nav > ul {
+		width: 100%;
+	}
+	nav li {
+		width: 79%;
+		font-size: 15px;
+		margin-bottom: 5px;
+		float: left;
+		height: 30px;
+	}
+	footer {
+		position: absolute;
+		text-align: left;
+		top: 185px;
+		left: 23px;
+		height: 70px;
+	}
+	#navigation {
+		margin-top: 0px;
+		height: 650px;
 	}
 }
 
