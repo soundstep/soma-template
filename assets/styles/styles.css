@@ -181,7 +181,6 @@ header ul a strong {
 }
 
 #navigation {
-	posiion: relative;
 	width: 270px;
 	float: left;
 	position: fixed;
