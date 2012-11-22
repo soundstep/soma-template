@@ -2,8 +2,8 @@
 
 	'use strict';
 
-soma.template = soma.source || {};
-soma.template.version = "0.0.1";
+soma.template = soma.template || {};
+soma.template.version = "0.0.3";
 
 var errors = soma.template.errors = {
 	TEMPLATE_STRING_NO_ELEMENT: "Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create('string', element)",
