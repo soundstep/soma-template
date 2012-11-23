@@ -1,1 +1,0 @@
-})(this['soma'] = this['soma'] || {});
