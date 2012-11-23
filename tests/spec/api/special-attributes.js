@@ -111,9 +111,6 @@ describe("api - special attributes", function () {
 		if (ie === 7) {
 			expect(ct.firstChild.getAttribute('checked')).toBeTruthy();
 		}
-		else if (ie === 8) {
-			expect(ct.firstChild.getAttribute('checked')).toEqual('');
-		}
 		else {
 			expect(ct.firstChild.getAttribute('checked')).toEqual('checked');
 		}
@@ -125,9 +122,6 @@ describe("api - special attributes", function () {
 		tpl.render();
 		if (ie === 7) {
 			expect(ct.firstChild.getAttribute('checked')).toBeTruthy();
-		}
-		else if (ie === 8) {
-			expect(ct.firstChild.getAttribute('checked')).toEqual('');
 		}
 		else {
 			expect(ct.firstChild.getAttribute('checked')).toEqual('checked');

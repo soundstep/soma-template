@@ -56,7 +56,8 @@
 				<li><a href="#what-is-a-template">What is a template?</a></li>
 				<li><p><a href="#create-a-template-instance">Create a template instance</a></p>
 					<ul class="hidden">
-						<li><a href="#targeting-a-dom-element">Targeting a dom element</a></li>
+						<li><a href="#targeting-a-dom-element">Targeting a DOM element</a></li>
+						<li><a href="#bootstrapping-from-a-dom-element">Bootstrapping from a DOM element</a></li>
 						<li><a href="#providing-a-string">Providing a string</a></li>
 						<li><a href="#using-a-script-tag">Using a script tag</a></li>
 					</ul>
@@ -87,6 +88,7 @@
 				<li><a href="#scope">Scope</a></li>
 				<li><p><a href="#special-attributes">Special attributes</a></p>
 					<ul class="hidden">
+						<li><a href="#data-template">data-template</a></li>
 						<li><a href="#data-cloak">data-cloak</a></li>
 						<li><a href="#data-skip">data-skip</a></li>
 						<li><a href="#data-src">data-src</a></li>
@@ -217,10 +219,10 @@
 			<a class="anchor" name="create-a-template-instance"></a>
 		</div>
 
-		<p>There are three ways to create a template.</p>
+		<p>There are four ways to create a template.</p>
 
 		<div class="subtitle">
-			<h3>Targeting a dom element</h3>
+			<h3>Targeting a DOM element</h3>
 			<a class="anchor" name="targeting-a-dom-element"></a>
 		</div>
 		<p>This is the easiest way, and the one I recommend. The template is part of the DOM and a reference to it can be sent to the create function. A template instance will be returned, this is what will be used to render data inside it.</p>
@@ -230,6 +232,22 @@
   <span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">);</span>
   <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
 <span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/hqiB8X?p=preview"class="button icon edit" target="_blank">try it yourself</a></p>
+		<div class="back"><a href="#">top</a></div>
+
+		<div class="subtitle">
+			<h3>Bootstrapping from a DOM element</h3>
+			<a class="anchor" name="bootstrapping-from-a-dom-element"></a>
+		</div>
+		<p>An automated template creation can be performed using a <code>data-template</code> attribute. The value of the attribute will be a reference to a function callback (namespace supported). This method will receive the template as a parameter, the scope and the DOM element as a shortcut.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">data-template=</span><span class="s">&quot;Template&quot;</span><span class="nt">&gt;</span><span class="cp">{{</span><span class="nv">name</span><span class="cp">}}</span><span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">function</span> <span class="nx">Template</span><span class="p">(</span><span class="nx">template</span><span class="p">,</span> <span class="nx">scope</span><span class="p">,</span> <span class="nx">element</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">scope</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;john&quot;</span><span class="p">;</span>
+    <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/NJGb52?p=preview"class="button icon edit" target="_blank">try it yourself</a></p>
 		<div class="back"><a href="#">top</a></div>
 
 		<div class="subtitle">
@@ -244,6 +262,7 @@
   <span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">);</span>
   <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">templateString</span><span class="p">,</span> <span class="nx">target</span><span class="p">);</span>
 <span class="nt">&lt;/script&gt;</span></span></pre></div>
+		<p><a href="http://plnkr.co/edit/RTnYLM?p=preview"class="button icon edit" target="_blank">try it yourself</a></p>
 		<div class="back"><a href="#">top</a></div>
 
 		<div class="subtitle">
@@ -260,6 +279,7 @@
   <span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">);</span>
   <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">source</span><span class="p">,</span> <span class="nx">target</span><span class="p">);</span>
 <span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/2BHA5b?p=preview"class="button icon edit" target="_blank">try it yourself</a></p>
 		<div class="back"><a href="#">top</a></div>
 
 	</section>
@@ -465,7 +485,7 @@
   <span class="p">};</span>
   <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
 <span class="nt">&lt;/script&gt;</span></pre></div>
-		<p><a href="http://plnkr.co/edit/ZQbBYn?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+		<p><a href="http://plnkr.co/edit/6ze74a?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
 		<div class="back"><a href="#">top</a></div>
 
 	</section>
@@ -523,7 +543,7 @@
   <span class="p">};</span>
   <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
 <span class="nt">&lt;/script&gt;</span></pre></div>
-		<p><a href="http://plnkr.co/edit/JQtbv6?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+		<p><a href="http://plnkr.co/edit/VRCOLG?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
 		<div class="back"><a href="#">top</a></div>
 
 	</section>
@@ -556,6 +576,28 @@
 
 		<p>Special attributes have already been introduced with the repeaters (<code>data-repeat</code>). The attributes are providing new functionalities or special behaviors for ease-of-use most of the time</p>
 		<p>All the attribute names are customizable in case you want to change them, it can be useful if one of them are conflicting with something else in your application.</p>
+
+		<div class="subtitle">
+			<h3>Boostrapping (data-template)</h3>
+			<a class="anchor" name="data-template"></a>
+		</div>
+		<p>The templates can be created automatically using the <code>data-template</code> attribute. The value must be a function that will be used as a callback (namespace supported).</p>
+		<p>This is method of creation is a shortcut and is completely optional, only the presence of the attribute triggers the creation, which can also be disabled setting the <code>soma.template.settings.autocreate</code> value to false.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;style&gt;</span>
+  <span class="nc">.data-cloak</span> <span class="p">{</span>
+    <span class="k">display</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="nt">&lt;/style&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;p&gt;</span>Next line appears after rendering:<span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;p</span> <span class="na">class=</span><span class="s">&quot;data-cloak&quot;</span><span class="nt">&gt;</span><span class="cp">{{</span><span class="nv">text</span><span class="cp">}}</span><span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">text</span> <span class="o">=</span> <span class="s2">&quot;Here I am!&quot;</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/tsJquz?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+		<div class="back"><a href="#">top</a></div>
 
 		<div class="subtitle">
 			<h3>Hide elements before rendering (data-cloak)</h3>

@@ -40,6 +40,7 @@ describe("api - settings", function () {
 		expect(settings.attributes.multiple).toEqual('data-multiple');
 		expect(settings.attributes.readonly).toEqual('data-readonly');
 		expect(settings.attributes.selected).toEqual('data-selected');
+		expect(settings.attributes.template).toEqual('data-template');
 	});
 
 	it("attributes vars", function () {
@@ -47,6 +48,10 @@ describe("api - settings", function () {
 		expect(settings.vars).toEqual(jasmine.any(Object));
 		expect(settings.vars.index).toEqual('$index');
 		expect(settings.vars.key).toEqual('$key');
+	});
+
+	it("autocreate", function () {
+		expect(settings.autocreate).toBeTruthy();
 	});
 
 	it("change token start", function () {
@@ -182,6 +187,11 @@ describe("api - settings", function () {
 		t1.render();
 		expect(t1.element.childNodes.length).toEqual(3);
 		settings.attributes.repeat = 'data-repeat';
+	});
+
+	it("change template", function () {
+		//settings.attributes.template = 'custom-template';
+
 	});
 
 	it("change index", function () {

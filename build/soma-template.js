@@ -5,10 +5,9 @@
 soma.template = soma.template || {};
 soma.template.version = "0.0.3";
 
-var errors = soma.template.errors = {
+var errors = {
 	TEMPLATE_STRING_NO_ELEMENT: "Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create('string', element)",
-	TEMPLATE_NO_PARAM: "Error in soma.template, a template requires at least 1 parameter - soma.template.create(element)",
-	REPEAT_WRONG_ARGUMENTS: "Error in soma.template, repeat attribute requires this syntax: 'item in items'."
+	TEMPLATE_NO_PARAM: "Error in soma.template, a template requires at least 1 parameter - soma.template.create(element)"
 };
 
 var tokenStart = '{{';
@@ -17,6 +16,8 @@ var helpersObject = {};
 var helpersScopeObject = {};
 
 var settings = soma.template.settings = soma.template.settings || {};
+
+settings.autocreate = true;
 
 var tokens = settings.tokens = {
 	start: function(value) {
@@ -47,7 +48,8 @@ var attributes = settings.attributes = {
 	disabled: "data-disabled",
 	multiple: "data-multiple",
 	readonly: "data-readonly",
-	selected: "data-selected"
+	selected: "data-selected",
+	template: "data-template"
 };
 
 var vars = settings.vars = {
@@ -114,9 +116,6 @@ function isExpFunction(value) {
 	if (!isString(value)) return false;
 	return !!value.match(regex.func);
 }
-//function isIE7() {
-//	return document.all && !window.opera && window.XMLHttpRequest;
-//}
 function childNodeIsTemplate(node) {
 	if (!node || !isElement(node.element)) return false;
 	if (node.parent && templates.get(node.element)) return true;
@@ -215,26 +214,6 @@ function HashMap(){
 		}
 	}
 }
-if (!Array.prototype.filter) {
-	 Array.prototype.filter = function(func) {
-		var len = this.length;
-		if (typeof func !== "function")
-			throw new TypeError();
-
-		var res = [];
-		var thisp = arguments[1];
-		for (var i = 0; i < len; i++) {
-			if (i in this) {
-				var val = this[i];
-				if (func.call(thisp, val, i, this)) {
-					res.push(val);
-				}
-			}
-		}
-		return res;
-	};
-}
-
 
 function getRepeaterData(repeaterValue, scope) {
 	var parts = repeaterValue.match(regex.repeat);
@@ -1031,6 +1010,35 @@ Template.prototype = {
 	}
 };
 
+if (settings.autocreate) {
+	var ready = (function(ie,d){d=document;return ie?
+		function(c){var n=d.firstChild,f=function(){try{c(n.doScroll('left'))}catch(e){setTimeout(f,10)}};f()}:/webkit|safari|khtml/i.test(navigator.userAgent)?
+		function(c){var f=function(){/loaded|complete/.test(d.readyState)?c():setTimeout(f,10)};f()}:
+		function(c){d.addEventListener("DOMContentLoaded", c, false)}
+	})(/*@cc_on 1@*/);
+	ready(function() {
+		var child = document.body.firstChild;
+		while (child) {
+			if (child.nodeType === 1) {
+				var attrValue = child.getAttribute(attributes.template);
+				if (attrValue) {
+					var getFunction = new Function('return ' + attrValue + ';');
+					try {
+						var f = getFunction();
+						if (isFunction(f)) {
+							bootstrapTemplate(attrValue, child, f);
+						}
+					} catch(err){};
+				}
+			}
+			child = child.nextSibling;
+		}
+	});
+}
+function bootstrapTemplate(attrValue, element, func) {
+	var tpl = createTemplate(element);
+	func(tpl, tpl.scope, tpl.element, tpl.node);
+}
 function createTemplate(source, target) {
 	var element;
 	if (isString(source)) {
@@ -1101,6 +1109,7 @@ soma.template.create = createTemplate;
 soma.template.get = getTemplate;
 soma.template.renderAll = renderAllTemplates;
 soma.template.helpers = appendHelpers;
+soma.template.bootstrap = bootstrapTemplate;
 
 // register for AMD module
 if (typeof define === 'function' && define.amd) {
