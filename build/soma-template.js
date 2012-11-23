@@ -3,7 +3,7 @@
 	'use strict';
 
 soma.template = soma.template || {};
-soma.template.version = "0.0.3";
+soma.template.version = "0.0.4";
 
 var errors = {
 	TEMPLATE_STRING_NO_ELEMENT: "Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create('string', element)",
