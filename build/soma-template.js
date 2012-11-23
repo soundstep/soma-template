@@ -3,9 +3,9 @@
 	'use strict';
 
 soma.template = soma.template || {};
-soma.template.version = "0.0.4";
+soma.template.version = "0.0.5";
 
-var errors = {
+var errors = soma.template.errors = {
 	TEMPLATE_STRING_NO_ELEMENT: "Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create('string', element)",
 	TEMPLATE_NO_PARAM: "Error in soma.template, a template requires at least 1 parameter - soma.template.create(element)"
 };
@@ -1026,7 +1026,7 @@ if (settings.autocreate) {
 					try {
 						var f = getFunction();
 						if (isFunction(f)) {
-							bootstrapTemplate(attrValue, child, f);
+							soma.template.bootstrap(attrValue, child, f);
 						}
 					} catch(err){};
 				}

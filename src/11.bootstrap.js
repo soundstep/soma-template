@@ -14,7 +14,7 @@ if (settings.autocreate) {
 					try {
 						var f = getFunction();
 						if (isFunction(f)) {
-							bootstrapTemplate(attrValue, child, f);
+							soma.template.bootstrap(attrValue, child, f);
 						}
 					} catch(err){};
 				}
