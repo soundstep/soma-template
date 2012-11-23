@@ -1,10 +1,9 @@
 soma.template = soma.template || {};
 soma.template.version = "0.0.3";
 
-var errors = soma.template.errors = {
+var errors = {
 	TEMPLATE_STRING_NO_ELEMENT: "Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create('string', element)",
-	TEMPLATE_NO_PARAM: "Error in soma.template, a template requires at least 1 parameter - soma.template.create(element)",
-	REPEAT_WRONG_ARGUMENTS: "Error in soma.template, repeat attribute requires this syntax: 'item in items'."
+	TEMPLATE_NO_PARAM: "Error in soma.template, a template requires at least 1 parameter - soma.template.create(element)"
 };
 
 var tokenStart = '{{';
@@ -13,6 +12,8 @@ var helpersObject = {};
 var helpersScopeObject = {};
 
 var settings = soma.template.settings = soma.template.settings || {};
+
+settings.autocreate = true;
 
 var tokens = settings.tokens = {
 	start: function(value) {
@@ -43,7 +44,8 @@ var attributes = settings.attributes = {
 	disabled: "data-disabled",
 	multiple: "data-multiple",
 	readonly: "data-readonly",
-	selected: "data-selected"
+	selected: "data-selected",
+	template: "data-template"
 };
 
 var vars = settings.vars = {

@@ -42,9 +42,6 @@ function isExpFunction(value) {
 	if (!isString(value)) return false;
 	return !!value.match(regex.func);
 }
-//function isIE7() {
-//	return document.all && !window.opera && window.XMLHttpRequest;
-//}
 function childNodeIsTemplate(node) {
 	if (!node || !isElement(node.element)) return false;
 	if (node.parent && templates.get(node.element)) return true;
@@ -143,23 +140,3 @@ function HashMap(){
 		}
 	}
 }
-if (!Array.prototype.filter) {
-	 Array.prototype.filter = function(func) {
-		var len = this.length;
-		if (typeof func !== "function")
-			throw new TypeError();
-
-		var res = [];
-		var thisp = arguments[1];
-		for (var i = 0; i < len; i++) {
-			if (i in this) {
-				var val = this[i];
-				if (func.call(thisp, val, i, this)) {
-					res.push(val);
-				}
-			}
-		}
-		return res;
-	};
-}
-

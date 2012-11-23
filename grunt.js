@@ -25,8 +25,9 @@ module.exports = function(grunt) {
 					'src/8.interpolation.js',
 					'src/9.expression.js',
 					'src/10.template.js',
-					'src/11.export.js',
-					'src/12.suffix.js'
+					'src/11.bootstrap.js',
+					'src/12.export.js',
+					'src/13.suffix.js'
 				],
 				dest: 'build/soma-template.js'
 			}

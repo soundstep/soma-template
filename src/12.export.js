@@ -68,6 +68,7 @@ soma.template.create = createTemplate;
 soma.template.get = getTemplate;
 soma.template.renderAll = renderAllTemplates;
 soma.template.helpers = appendHelpers;
+soma.template.bootstrap = bootstrapTemplate;
 
 // register for AMD module
 if (typeof define === 'function' && define.amd) {
