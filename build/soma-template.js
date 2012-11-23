@@ -5,7 +5,7 @@
 soma.template = soma.template || {};
 soma.template.version = "0.0.4";
 
-var errors = {
+var errors = soma.template.errors = {
 	TEMPLATE_STRING_NO_ELEMENT: "Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create('string', element)",
 	TEMPLATE_NO_PARAM: "Error in soma.template, a template requires at least 1 parameter - soma.template.create(element)"
 };
