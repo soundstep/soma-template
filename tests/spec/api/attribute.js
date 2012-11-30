@@ -74,10 +74,7 @@ describe("api - attribute", function () {
 		}
 		tpl.scope.class1 = 'data-class';
 		tpl.render();
-		if (ie === 7) {
-			expect(ct.firstChild.className).toBeNull();
-		}
-		else if (ie === 8) {
+		if (ie <= 8) {
 			expect(ct.firstChild.className).toEqual('');
 		}
 		else {
