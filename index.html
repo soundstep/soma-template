@@ -5,10 +5,10 @@
 <!-- Consider adding a manifest.appcache: h5bp.com/d/Offline -->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 <head>
+	<title>soma-template by soundstep</title>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="chrome=1">
-	<title>soma-template by soundstep</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
 	<link rel="icon" type="image/png" href="favicon.png">
 	<link rel="stylesheet" href="assets/gh-buttons/gh-buttons.css">
 	<link rel="stylesheet" href="assets/styles/pygment/native.css">
@@ -17,6 +17,20 @@
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
+	<script type="text/javascript">
+
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-36294101-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+
+	</script>
+
 </head>
 <body>
 
@@ -38,11 +52,12 @@
 		<nav>
 			<ul>
 				<li><a href="#what-is-soma-template">What is soma-template?</a></li>
-				<li><a href="#installation">Installation</a></li>
+				<li><a href="#download">Download</a></li>
 				<li><a href="#what-is-a-template">What is a template?</a></li>
 				<li><p><a href="#create-a-template-instance">Create a template instance</a></p>
 					<ul class="hidden">
-						<li><a href="#targeting-a-dom-element">Targeting a dom element</a></li>
+						<li><a href="#targeting-a-dom-element">Targeting a DOM element</a></li>
+						<li><a href="#bootstrapping-from-a-dom-element">Bootstrapping from a DOM element</a></li>
 						<li><a href="#providing-a-string">Providing a string</a></li>
 						<li><a href="#using-a-script-tag">Using a script tag</a></li>
 					</ul>
@@ -73,6 +88,7 @@
 				<li><a href="#scope">Scope</a></li>
 				<li><p><a href="#special-attributes">Special attributes</a></p>
 					<ul class="hidden">
+						<li><a href="#data-template">data-template</a></li>
 						<li><a href="#data-cloak">data-cloak</a></li>
 						<li><a href="#data-skip">data-skip</a></li>
 						<li><a href="#data-src">data-src</a></li>
@@ -146,24 +162,27 @@
 
 		<div class="title">
 			<h1>What is soma-template?</h1>
-			<a name="what-is-soma-template"></a>
+			<a class="anchor" name="what-is-soma-template"></a>
 		</div>
 
 
+		<p>soma-template is a web template engine.</p>
 		<p>A web template engine is a solution that is used to process web templates and content to produce an HTML output.</p>
-		<p>While this is true for the most common web template engine, soma-template differs about the output process. soma-template will also produce an HTML output, but more precisely, will manipulate DOM nodes rather than producing a "template string" that will be injected in the DOM.</p>
+		<p>While this is true for the most common web template engine, soma-template differs about the output process. soma-template will also produce an HTML output, but more precisely, will manipulate DOM nodes rather than producing a "template string" that will be injected into the DOM.</p>
 		<p>This results in a workflow that stays close to a normal HTML development as the template can be directly part of the DOM itself.</p>
-		<p>The library aims to reduce as much as possible DOM manipulation if it doesn't need to in order to reduce DOM node destruction.</p>
+		<p>The library aims to reduce as much as possible DOM node destruction.</p>
 		<p>soma-template is lightweight : 4.7 KB. It is tested and works in all modern browsers and in Internet Explorer from version 7 to 10. Its performance will be directly related to the DOM manipulation performance of the browser itself. This is why today the library is very fast on <a href="https://www.google.com/intl/en/chrome/browser/" target="_blank">Google Chrome</a>, which I recommend.</p>
 		<div class="back"><a href="#">top</a></div>
+
+		<iframe src="http://player.vimeo.com/video/54085933?badge=0" width="100%" height="375" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
 
 	</section>
 
 	<section>
 
 		<div class="title">
-			<h1>Installation</h1>
-			<a name="installation"></a>
+			<h1>Download</h1>
+			<a class="anchor" name="download"></a>
 		</div>
 
 		<h3>Browser</h3>
@@ -181,7 +200,7 @@
 
 		<div class="title">
 			<h1>What is a template?</h1>
-			<a name="what-is-a-template"></a>
+			<a class="anchor" name="what-is-a-template"></a>
 		</div>
 
 		<p>A template is a DOM element that contains tokens, and these tokens will be replaced by data provided to the template. Here is an example:</p>
@@ -197,14 +216,14 @@
 
 		<div class="title">
 			<h1>Create a template instance</h1>
-			<a name="create-a-template-instance"></a>
+			<a class="anchor" name="create-a-template-instance"></a>
 		</div>
 
-		<p>There are three ways to create a template.</p>
+		<p>There are four ways to create a template.</p>
 
 		<div class="subtitle">
-			<h3>Targeting a dom element</h3>
-			<a name="targeting-a-dom-element"></a>
+			<h3>Targeting a DOM element</h3>
+			<a class="anchor" name="targeting-a-dom-element"></a>
 		</div>
 		<p>This is the easiest way, and the one I recommend. The template is part of the DOM and a reference to it can be sent to the create function. A template instance will be returned, this is what will be used to render data inside it.</p>
 		<p>Note that the tokens will appear in the DOM but the template engine provide a way to easily hide elements (such as the template itself) until the template is rendered. See the class name "<code>data-cloak</code>".</p>
@@ -213,11 +232,27 @@
   <span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">);</span>
   <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
 <span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/hqiB8X?p=preview"class="button icon edit" target="_blank">try it yourself</a></p>
+		<div class="back"><a href="#">top</a></div>
+
+		<div class="subtitle">
+			<h3>Bootstrapping from a DOM element</h3>
+			<a class="anchor" name="bootstrapping-from-a-dom-element"></a>
+		</div>
+		<p>An automated template creation can be performed using a <code>data-template</code> attribute. The value of the attribute will be a reference to a function callback (namespace supported). This method will receive the template as a parameter, the scope and the DOM element as a shortcut.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">data-template=</span><span class="s">&quot;Template&quot;</span><span class="nt">&gt;</span><span class="cp">{{</span><span class="nv">name</span><span class="cp">}}</span><span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">function</span> <span class="nx">Template</span><span class="p">(</span><span class="nx">template</span><span class="p">,</span> <span class="nx">scope</span><span class="p">,</span> <span class="nx">element</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">scope</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;john&quot;</span><span class="p">;</span>
+    <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/NJGb52?p=preview"class="button icon edit" target="_blank">try it yourself</a></p>
 		<div class="back"><a href="#">top</a></div>
 
 		<div class="subtitle">
 			<h3>Providing a string</h3>
-			<a name="providing-a-string"></a>
+			<a class="anchor" name="providing-a-string"></a>
 		</div>
 		<p>Instead of using an element directly, you can also send a string that represents the template. The template engine will inject the string as a real element inside the DOM, this is why you also need to specify an element target when you use a string template.</p>
 		<p>Note that even if you create a template using a string, rendering data inside the template will be done in the same manner: using native DOM manipulation. More specifically, the DOM property <code>innerHTML</code> is never used to render a template in soma-template.</p>
@@ -227,11 +262,12 @@
   <span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">);</span>
   <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">templateString</span><span class="p">,</span> <span class="nx">target</span><span class="p">);</span>
 <span class="nt">&lt;/script&gt;</span></span></pre></div>
+		<p><a href="http://plnkr.co/edit/RTnYLM?p=preview"class="button icon edit" target="_blank">try it yourself</a></p>
 		<div class="back"><a href="#">top</a></div>
 
 		<div class="subtitle">
 			<h3>Using a script tag</h3>
-			<a name="using-a-script-tag"></a>
+			<a class="anchor" name="using-a-script-tag"></a>
 		</div>
 		<p>This method is similar to other template engines. Elements can be surrounded by script tags and to be injected in the DOM. There is no major advantage using this method as the template will inject it in the DOM as soon as you create the template instance. However this makes you able to compile it at a chosen moment and before that, it will never appear in the DOM.</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
@@ -243,6 +279,7 @@
   <span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">);</span>
   <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">source</span><span class="p">,</span> <span class="nx">target</span><span class="p">);</span>
 <span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/2BHA5b?p=preview"class="button icon edit" target="_blank">try it yourself</a></p>
 		<div class="back"><a href="#">top</a></div>
 
 	</section>
@@ -251,7 +288,7 @@
 
 		<div class="title">
 			<h1>Render a template</h1>
-			<a name="render-a-template"></a>
+			<a class="anchor" name="render-a-template"></a>
 		</div>
 
 		<p>Rendering a template is the action of sending data inside the template so it can find information to replace the tokens.</p>
@@ -263,7 +300,7 @@
 
 		<div class="subtitle">
 			<h3>Simple rendering</h3>
-			<a name="simple-rendering"></a>
+			<a class="anchor" name="simple-rendering"></a>
 		</div>
 		<p>Here is an example where a value is provided for an identifier named "<code>name</code>" (to keep the code short and simple, a <code>template</code> variable is used to refer to a template instance, see previous examples).</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;&lt;p&gt;</span>My name is <span class="cp">{{</span><span class="nv">name</span><span class="cp">}}</span> and my age is <span class="cp">{{</span><span class="nv">age</span><span class="cp">}}</span>.<span class="nt">&lt;/p&gt;&lt;/div&gt;</span>
@@ -279,7 +316,7 @@
 
 		<div class="subtitle">
 			<h3>JSON rendering</h3>
-			<a name="json-rendering"></a>
+			<a class="anchor" name="json-rendering"></a>
 		</div>
 		<p>Another example with data received from an API call. The response can simply be assigned to a scope property and accessed using dot notation.</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
@@ -306,14 +343,14 @@
 
 		<div class="title">
 			<h1>Interpolation</h1>
-			<a name="interpolation"></a>
+			<a class="anchor" name="interpolation"></a>
 		</div>
 
 		<p>A String interpolation makes heavy use of string representation of data. It means insert a string or replace a variable with its value making string formatting very intuitive.</p>
 
 		<div class="subtitle">
 			<h3>Attributes</h3>
-			<a name="attributes"></a>
+			<a class="anchor" name="attributes"></a>
 		</div>
 		<p>You can add tokens in text nodes, but you can also use them in attribute names and values. In the following example, a class value is rendered, as well as the attribute name:</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
@@ -330,7 +367,7 @@
 
 		<div class="subtitle">
 			<h3>Anything anywhere</h3>
-			<a name="anything-anywhere"></a>
+			<a class="anchor" name="anything-anywhere"></a>
 		</div>
 		<p>You can use tokens in anything, but also anywhere, even in the middle of other strings.</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
@@ -351,7 +388,7 @@
 
 		<div class="subtitle">
 			<h3>Path access</h3>
-			<a name="path-access"></a>
+			<a class="anchor" name="path-access"></a>
 		</div>
 		<p>A path, or dot notation, can be used in the token to access to specific data:</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
@@ -372,7 +409,7 @@
 
 		<div class="subtitle">
 			<h3>Array access</h3>
-			<a name="array-access"></a>
+			<a class="anchor" name="array-access"></a>
 		</div>
 		<p>The values of an array can be accessed using a standard Javascript syntax:</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
@@ -395,7 +432,7 @@
 
 		<div class="subtitle">
 			<h3>Function call</h3>
-			<a name="function-call"></a>
+			<a class="anchor" name="function-call"></a>
 		</div>
 		<p>Functions can also be called from the token, the value returned by the function will replace the token:</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;&lt;p&gt;</span>My name is <span class="cp">{{</span><span class="nv">getName()</span><span class="cp">}}</span>.<span class="nt">&lt;/p&gt;&lt;/div&gt;</span>
@@ -410,7 +447,7 @@
 
 		<div class="subtitle">
 			<h3>Function parameters</h3>
-			<a name="function-parameters"></a>
+			<a class="anchor" name="function-parameters"></a>
 		</div>
 		<p>Parameters can be sent with a function call. They can be of two types: a string or a reference to another property in the scope:</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;&lt;p&gt;</span>I am <span class="cp">{{</span><span class="nv">getAge</span><span class="o">(</span><span class="s2">&quot;21&quot;</span><span class="o">,</span> <span class="nv">years</span><span class="o">)</span><span class="cp">}}</span>.<span class="nt">&lt;/p&gt;&lt;/div&gt;</span>
@@ -426,7 +463,7 @@
 
 		<div class="subtitle">
 			<h3>Mix everything</h3>
-			<a name="mix-everything"></a>
+			<a class="anchor" name="mix-everything"></a>
 		</div>
 		<p>Paths, strings, functions, parameters, text node, attribute names and values, everything can be mixed altogether:</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
@@ -448,7 +485,7 @@
   <span class="p">};</span>
   <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
 <span class="nt">&lt;/script&gt;</span></pre></div>
-		<p><a href="http://plnkr.co/edit/ZQbBYn?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+		<p><a href="http://plnkr.co/edit/6ze74a?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
 		<div class="back"><a href="#">top</a></div>
 
 	</section>
@@ -457,7 +494,7 @@
 
 		<div class="title">
 			<h1>Repeaters</h1>
-			<a name="repeaters"></a>
+			<a class="anchor" name="repeaters"></a>
 		</div>
 
 		<p>A repeater is a special attribute (<code>data-repeat</code>) that will duplicate the current node. A repeater can be used to perform an iteration on an array or an object to display its content.</p>
@@ -466,7 +503,7 @@
 
 		<div class="subtitle">
 			<h3>Array repeater</h3>
-			<a name="array-repeater"></a>
+			<a class="anchor" name="array-repeater"></a>
 		</div>
 		<p>Here is an example of an array repeater, an <code>$index</code> variable is also available on the current scope and can be passed to a function if needed.</p>
 		<p>The node that contains the <code>data-repeat</code>, and everything inside, will be duplicated three times in this example. One for each item in the array <code>items</code>.</p>
@@ -489,7 +526,7 @@
 
 		<div class="subtitle">
 			<h3>Object repeater</h3>
-			<a name="object-repeater"></a>
+			<a class="anchor" name="object-repeater"></a>
 		</div>
 		<p>You can also perform an iteration on an object, in this case a <code>$key</code> variable will be available on the current scope.</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
@@ -506,7 +543,7 @@
   <span class="p">};</span>
   <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
 <span class="nt">&lt;/script&gt;</span></pre></div>
-		<p><a href="http://plnkr.co/edit/JQtbv6?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+		<p><a href="http://plnkr.co/edit/VRCOLG?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
 		<div class="back"><a href="#">top</a></div>
 
 	</section>
@@ -515,7 +552,7 @@
 
 		<div class="title">
 			<h1>Scope</h1>
-			<a name="scope"></a>
+			<a class="anchor" name="scope"></a>
 		</div>
 
 		<p>A scope provides a data model context for a template, and a new scope child is created for each item of a repeater to provide a new context and avoid data conflict.</p>
@@ -534,15 +571,32 @@
 
 		<div class="title">
 			<h1>Special attributes</h1>
-			<a name="special-attributes"></a>
+			<a class="anchor" name="special-attributes"></a>
 		</div>
 
 		<p>Special attributes have already been introduced with the repeaters (<code>data-repeat</code>). The attributes are providing new functionalities or special behaviors for ease-of-use most of the time</p>
 		<p>All the attribute names are customizable in case you want to change them, it can be useful if one of them are conflicting with something else in your application.</p>
 
 		<div class="subtitle">
+			<h3>Boostrapping (data-template)</h3>
+			<a class="anchor" name="data-template"></a>
+		</div>
+		<p>The templates can be created automatically using the <code>data-template</code> attribute. The value must be a function that will be used as a callback (namespace supported).</p>
+		<p>This is method of creation is a shortcut and is completely optional, only the presence of the attribute triggers the creation, which can also be disabled setting the <code>soma.template.settings.autocreate</code> value to false.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">data-template=</span><span class="s">&quot;Template&quot;</span><span class="nt">&gt;</span><span class="cp">{{</span><span class="nv">name</span><span class="cp">}}</span><span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">function</span> <span class="nx">Template</span><span class="p">(</span><span class="nx">template</span><span class="p">,</span> <span class="nx">scope</span><span class="p">,</span> <span class="nx">element</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">scope</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;john&quot;</span><span class="p">;</span>
+    <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="nt">&lt;/script&gt;</span>
+</pre></div>
+		<p><a href="http://plnkr.co/edit/tsJquz?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+		<div class="back"><a href="#">top</a></div>
+
+		<div class="subtitle">
 			<h3>Hide elements before rendering (data-cloak)</h3>
-			<a name="data-cloak"></a>
+			<a class="anchor" name="data-cloak"></a>
 		</div>
 		<p>Paradoxically, <code>data-cloak</code> is not an attribute but a styled class that is used to hide elements before rendering, in other words, to hide tokens. The class itself is not provided by the template but will be automatically removed on rendering.</p>
 		<p>The class can be set on the root of the template, or on any element inside the template.</p>
@@ -564,7 +618,7 @@
 
 		<div class="subtitle">
 			<h3>Skip parsing (data-skip)</h3>
-			<a name="data-skip"></a>
+			<a class="anchor" name="data-skip"></a>
 		</div>
 		<p>The template engine will stop parsing the elements children if it find a <code>data-skip</code> attribute on an element, with no value or a boolean. The value of the attribute can also be a token, only the children will not be parsed. If there are tokens in skipped elements, they won't be replaced.</p>
 		<p>It can also be useful to skip a large number of elements to keep the best performance possible.</p>
@@ -580,7 +634,7 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 
 		<div class="subtitle">
 			<h3>Source (data-src)</h3>
-			<a name="data-src"></a>
+			<a class="anchor" name="data-src"></a>
 		</div>
 		<p>The <code>data-src</code> attribute will produce a <code>src</code> attribute on rendering. The reason for using this attribute is to avoid to give a wrong path to the browser. Using a token in a <code>src</code> attribute, for example the source of an image, would result in a 404 error.</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;&lt;img</span> <span class="na">data-src=</span><span class="s">&quot;images/</span><span class="cp">{{</span><span class="nv">image</span><span class="cp">}}</span><span class="s">.jpg&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
@@ -593,7 +647,7 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 
 		<div class="subtitle">
 			<h3>Links (data-href)</h3>
-			<a name="data-href"></a>
+			<a class="anchor" name="data-href"></a>
 		</div>
 		<p>The <code>data-href</code> attribute will produce a <code>href</code> attribute on rendering. The reason for using this attribute is to avoid the user clicking on a non-rendered links. Using a token in a <code>href</code> attribute, for example an <code>a</code> tag, would probably result in a dead link (404 error).</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
@@ -608,7 +662,7 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 
 		<div class="subtitle">
 			<h3>Show and hide (data-show and data-hide)</h3>
-			<a name="data-show-and-data-hide"></a>
+			<a class="anchor" name="data-show-and-data-hide"></a>
 		</div>
 		<p>While this behavior can be achieved with tokens, this attribute will show or hide elements depending of its value (boolean). It is something close to a switch on and off.</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
@@ -624,7 +678,7 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 
 		<div class="subtitle">
 			<h3>Checked (data-checked)</h3>
-			<a name="data-checked"></a>
+			<a class="anchor" name="data-checked"></a>
 		</div>
 		<p>A checkbox "initial checked value" is set by the presence or non-presence of the <code>checked</code> attribute. For convenience, the <code>data-checked</code> attribute, which take a boolean, will add or remove the <code>checked</code> attribute.</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
@@ -639,7 +693,7 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 
 		<div class="subtitle">
 			<h3>Disabled (data-disabled)</h3>
-			<a name="data-disabled"></a>
+			<a class="anchor" name="data-disabled"></a>
 		</div>
 		<p>An element <code>disabled</code> value is set by its presence or non-presence. For convenience, the <code>data-disabled</code> attribute, which take a boolean, will add or remove the <code>disabled</code> attribute.</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
@@ -654,7 +708,7 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 
 		<div class="subtitle">
 			<h3>Multiple (data-multiple)</h3>
-			<a name="data-multiple"></a>
+			<a class="anchor" name="data-multiple"></a>
 		</div>
 		<p>A select <code>multiple</code> value is set by its presence or non-presence. For convenience, the <code>data-multiple</code> attribute, which take a boolean, will add or remove the <code>multiple</code> attribute.</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
@@ -673,7 +727,7 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 
 		<div class="subtitle">
 			<h3>Read only (data-readonly)</h3>
-			<a name="data-readonly"></a>
+			<a class="anchor" name="data-readonly"></a>
 		</div>
 		<p>An element <code>readonly</code> value is set by its presence or non-presence. For convenience, the <code>data-readonly</code> attribute, which take a boolean, will add or remove the <code>readonly</code> attribute.</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
@@ -692,7 +746,7 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 
 		<div class="title">
 			<h1>Helpers</h1>
-			<a name="helpers"></a>
+			<a class="anchor" name="helpers"></a>
 		</div>
 
 		<p>Helper functions (or values) can be added to the template engine to help format the output. The functions will be added to the global scope that is shared between all templates.</p>
@@ -700,7 +754,7 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 
 		<div class="subtitle">
 			<h3>Add helpers</h3>
-			<a name="add-helpers"></a>
+			<a class="anchor" name="add-helpers"></a>
 		</div>
 		<p>The helpers can be added to the template engine, wrapped in an object and passed to the <code>helpers</code> function. In the following example, the template engine is enhanced with a <code>replaceDash</code> custom function and with more than fifty string functions from the library <a href="http://epeli.github.com/underscore.string/" target="_blank">underscore.string</a>.</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
@@ -723,7 +777,7 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 
 		<div class="subtitle">
 			<h3>Access helpers</h3>
-			<a name="access-helpers"></a>
+			<a class="anchor" name="access-helpers"></a>
 		</div>
 		<p>The helpers can be accessed outside of the tokens if needed, either from a call to the helpers function without parameters, or from the global scope.</p>
 		<div class="codehilite"><pre><span class="kd">var</span> <span class="nx">camelize</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">helpers</span><span class="p">().</span><span class="nx">camelize</span><span class="p">;</span>
@@ -732,7 +786,7 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 
 		<div class="subtitle">
 			<h3>Remove helpers</h3>
-			<a name="remove-helpers"></a>
+			<a class="anchor" name="remove-helpers"></a>
 		</div>
 		<p>For convenience, the helpers can be removed from the template engine, but note that the templates will need to be re-compiled and that it will affect all the templates created.</p>
 		<div class="codehilite"><pre><span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">helpers</span><span class="p">(null)<span class="p">;</span></pre></div>
@@ -744,14 +798,14 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 
 		<div class="title">
 			<h1>Watchers</h1>
-			<a name="watchers"></a>
+			<a class="anchor" name="watchers"></a>
 		</div>
 
 		<p>To provide flexibility, a specific rendering can be intercepted so you can alter it. They are called watchers, and you can watch either a token or an element.</p>
 
 		<div class="subtitle">
 			<h3>Watch a token</h3>
-			<a name="watch-a-token"></a>
+			<a class="anchor" name="watch-a-token"></a>
 		</div>
 
 		<p>The following example adds a watcher to the <code>date</code> token. The full string date received as a parameter will be formatted to display only the day, the month and the year.</p>
@@ -768,7 +822,7 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 
 		<div class="subtitle">
 			<h3>Watch an element</h3>
-			<a name="watch-an-element"></a>
+			<a class="anchor" name="watch-an-element"></a>
 		</div>
 
 		<p>The following example is watching a div element. For convenience, the template engine will not only watch the token <code>{{color}}</code> in the div but will also watch any token that is a text node and a direct child of the element watched: the token <code>{{content}}</code> in this example.</p>
@@ -787,7 +841,7 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 
 		<div class="subtitle">
 			<h3>Remove a watcher</h3>
-			<a name="remove-a-watcher"></a>
+			<a class="anchor" name="remove-a-watcher"></a>
 		</div>
 		<p>To remove a watcher, the <code>unwatch</code> function can be used with either a token or an element. Additionally, the function <code>clearWatchers</code> can be used to remove all the watchers at once.</p>
 		<div class="codehilite"><pre><span class="nx">template.unwatch(<span class="s2">&quot;date&quot;</span>);
@@ -802,7 +856,7 @@ template.clearWatchers();</span>
 
 		<div class="title">
 			<h1>Settings</h1>
-			<a name="settings"></a>
+			<a class="anchor" name="settings"></a>
 		</div>
 
 		<p>soma-template exposes some settings to customize variables that might be a problem in some configurations. All the settings are applied on the library in a static way, I recommend changing them before creating templates and the changes will affect all created templates.</p>
@@ -811,7 +865,7 @@ template.clearWatchers();</span>
 
 		<div class="subtitle">
 			<h3>Tokens</h3>
-			<a name="tokens"></a>
+			<a class="anchor" name="tokens"></a>
 		</div>
 		<p>The default double curly braces that surround an identifier <code>{{name}}</code> can be customized. I recommend using at least 2 characters. Some common characters have been tested, but there might be some problems with weird ones!</p>
 		<p>Two methods can be used to get or set the "start token" and the "end token" characters:</p>
@@ -822,7 +876,7 @@ settings.tokens.end(<span class="s">&quot;]]&quot;</span>);</span>
 
 		<div class="subtitle">
 			<h3>Special attributes</h3>
-			<a name="special-attributes-settings"></a>
+			<a class="anchor" name="special-attributes-settings"></a>
 		</div>
 		<p>Here is a list of attributes (and their default values) that can be changed:</p>
 		<ul>
@@ -848,7 +902,7 @@ settings.tokens.end(<span class="s">&quot;]]&quot;</span>);</span>
 
 		<div class="subtitle">
 			<h3>Variables in repeaters</h3>
-			<a name="variables-in-repeaters"></a>
+			<a class="anchor" name="variables-in-repeaters"></a>
 		</div>
 		<p>The variables used the repeaters (<code>$index</code> and <code>$key</code>) can also be changed:</p>
 		<div class="codehilite"><pre><span class="nx">settings</span><span class="p">.</span><span class="nx">vars</span><span class="p">.</span><span class="nx">index</span> <span class="o">=</span> <span class="s2">&quot;_index&quot;</span><span class="p">;</span>
@@ -861,12 +915,12 @@ settings.tokens.end(<span class="s">&quot;]]&quot;</span>);</span>
 
 		<div class="title">
 			<h1>Managing templates</h1>
-			<a name="managing-templates"></a>
+			<a class="anchor" name="managing-templates"></a>
 		</div>
 
 		<div class="subtitle">
 			<h3>Multiple templates</h3>
-			<a name="multiple-templates"></a>
+			<a class="anchor" name="multiple-templates"></a>
 		</div>
 
 		<p>Templates can be created side-by-side but also contain each others. The templates can be rendered separately, or all at once using the function <code>soma.template.renderAll()</code>.</p>
@@ -895,7 +949,7 @@ settings.tokens.end(<span class="s">&quot;]]&quot;</span>);</span>
 
 		<div class="subtitle">
 			<h3>Get a template from an element</h3>
-			<a name="get-a-template"></a>
+			<a class="anchor" name="get-a-template"></a>
 		</div>
 
 		<p>A reference to a template can be retrieved with the element target of the template, using the function <code>soma.template.get(element)</code>.</p>
@@ -912,7 +966,7 @@ settings.tokens.end(<span class="s">&quot;]]&quot;</span>);</span>
 
 		<div class="subtitle">
 			<h3>Re-compile a template</h3>
-			<a name="re-compile"></a>
+			<a class="anchor" name="re-compile"></a>
 		</div>
 		<p>Templates can be re-compiled using the <code>compile</code> function, which is very close to creating a new template, except that you can keep the same template reference.</p>
 		<p>Note that re-compiling a template with an element that has been already compiled will not work as the tokens are not in the DOM anymore. To achieve this, a cache of the element can be stored before creating the template.</p>
@@ -937,7 +991,7 @@ settings.tokens.end(<span class="s">&quot;]]&quot;</span>);</span>
 
 		<div class="subtitle">
 			<h3>Updating data without rendering</h3>
-			<a name="updating-data"></a>
+			<a class="anchor" name="updating-data"></a>
 		</div>
 		<p>Updating the data but not rendering the template is possible using the <code>update</code> method.</p>
 		<div class="codehilite"><pre><span class="nx">template.scope.name = "John";
@@ -947,14 +1001,14 @@ template.update();</span>
 
 		<div class="subtitle">
 			<h3>Invalidate data</h3>
-			<a name="invalidate-data"></a>
+			<a class="anchor" name="invalidate-data"></a>
 		</div>
 		<p>The template engine rely on data change to update the nodes and attributes. If the values of the tokens do not change, the DOM will not be updated. The reason is to keep the performance high and change only what is necessary. You can however "invalidate" the data and force a DOM update using the template function "<code>invalidate</code>".</p>
 		<div class="back"><a href="#">top</a></div>
 
 		<div class="subtitle">
 			<h3>Rendering without scope</h3>
-			<a name="rendering-without-scope"></a>
+			<a class="anchor" name="rendering-without-scope"></a>
 		</div>
 		<p><strong>This is not recommended!</strong> Data can be sent straight into the template without using the scope. An object can be sent as a parameter in the <code>update</code> or <code>render</code> functions.</p>
 		<p>This method is not recommended because the template engine is meant to work with existing scopes. This will force the template engine to iterate the object and assign the properties to the existing scopes, which will be significantly slower than using the scope. Assigning an object, even a very big object, on an existing scope (<code>scope.big = bigObject</code>) is the right way to use the template engine.</p>
@@ -962,7 +1016,7 @@ template.update();</span>
 
 		<div class="subtitle">
 			<h3>Disposing templates</h3>
-			<a name="disposing-templates"></a>
+			<a class="anchor" name="disposing-templates"></a>
 		</div>
 		<p>Disposing of something that fill the memory is always a good idea, even a small object. To dispose a template, the <code>dispose</code> function can be called, this will destroy everything that has been created internally by the template engine.</p>
 		<div class="codehilite"><pre><span class="nx">template.dispose();
@@ -976,14 +1030,14 @@ template = null;</span>
 
 		<div class="title">
 			<h1>Template engine process</h1>
-			<a name="template-engine-process"></a>
+			<a class="anchor" name="template-engine-process"></a>
 		</div>
 
 		<p>The template engine is going through several steps at compile-time, and render-time</p>
 
 		<div class="subtitle">
 			<h3>Compile-time</h3>
-			<a name="compile-time"></a>
+			<a class="anchor" name="compile-time"></a>
 		</div>
 		<p>The compile-time process is what is happening inside the template engine when it is created. The template instance will keep a reference to the element root and start to parse the DOM to create instances of internal functions to mimic and represent the DOM structure of the current template.</p>
 		<p>A <code>scope</code> is created on the first node and passed to the others. The internal function instances created are  of the type of <code>Node</code>, <code>Attribute</code>, <code>Interpolation</code> and <code>Expression</code>.</p>
@@ -995,13 +1049,13 @@ template = null;</span>
 
 		<div class="subtitle">
 			<h3>Render-time</h3>
-			<a name="render-time"></a>
+			<a class="anchor" name="render-time"></a>
 		</div>
 		<p>The template will start two processes, one after the other. The first step is to update the expressions values using the scope data, invalidating the nodes and attributes if the values have changed. And the second step is parsing its nodes and attributes to update the DOM if necessary.</p>
 
 		<div class="subtitle">
 			<h3>Render a node</h3>
-			<a name="render-a-node"></a>
+			<a class="anchor" name="render-a-node"></a>
 		</div>
 
 		<p>All nodes created by the template engine are accessible and it is possible to update and render a single node (and its children), without having to render the whole template.</p>
@@ -1026,7 +1080,7 @@ template = null;</span>
 
 		<div class="subtitle">
 			<h3>Render an attribute</h3>
-			<a name="render-an-attribute"></a>
+			<a class="anchor" name="render-an-attribute"></a>
 		</div>
 		<p>As the nodes, the attributes can also be accessed and rendered without rendering the whole template.</p>
 		<p>For convenience, each node provide a <code>getAttribute</code> function to quickly access to a specific attribute if needed. In the following example, only the class attribute will be rendered:</p>
@@ -1051,7 +1105,7 @@ template = null;</span>
 
 		<div class="title">
 			<h1>Demos</h1>
-			<a name="demos"></a>
+			<a class="anchor" name="demos"></a>
 		</div>
 
 		<p>The <a href="https://github.com/soundstep/soma-template/tree/master/demos" target="_blank">demos source code</a> are available on the github repo.</p>
@@ -1069,7 +1123,7 @@ template = null;</span>
 
 		<div class="title">
 			<h1>Tests</h1>
-			<a name="tests"></a>
+			<a class="anchor" name="tests"></a>
 		</div>
 
 		<p>soma-template has been tested on all modern browsers and on Internet Explorer from version 7 to 10, but if you find something that doesn't work or want to discussed something, please use <a href="https://github.com/soundstep/soma-template/issues">Github issues</a>.</p>
@@ -1087,13 +1141,13 @@ template = null;</span>
 
 		<div class="title">
 			<h1>Credits</h1>
-			<a name="credits"></a>
+			<a class="anchor" name="credits"></a>
 		</div>
 
 		<p>I don't have to talk about all these people and great tools that helped me, but not only it is fair, I also think that some details might help other developers to change or improve their workflow if needed. So here it is!</p>
 
 		<p>The library probably wouldn't have been created without the fully featured framework developed by Google: <a href="http://angularjs.org/" target="_blank">AngularJS</a>. While the code itself has nothing to do with AngularJS, the concept has been greatly inspired by its template system and some similarities can be found. The library has been kept to a minimum to do a single job: update the DOM with content.</p>
-		<p>The primary goal is to use the native DOM API, with a minimal destruction of the nodes. I also believe, as other developers, that DOM-based template engines are the future and will probably be one day be implemented in the browser itself. Google is probably working on that already as stated in this <a href="http://blog.stevensanderson.com/2012/08/01/rich-javascript-applications-the-seven-frameworks-throne-of-js-2012/">excellent post by Steven Sanderson</a>.</p>
+		<p>The primary goal is to use the native DOM API, with a minimal destruction of the nodes. I also believe, as other developers, that DOM-based template engines are the future and will probably be one day be implemented in the browser itself. Google is probably working on that already as stated in this <a href="http://blog.stevensanderson.com/2012/08/01/rich-javascript-applications-the-seven-frameworks-throne-of-js-2012/" target="_blank">excellent post by Steven Sanderson</a>.</p>
 		<p>So, big thanks to the AngularJS team for a great inspiration, at least to me.</p>
 
 		<p>Also, very big thanks to the developers who helped me. <a href="https://twitter.com/mdahlstrand" target="_blank">Magnus Dahlstrand</a> for his invaluable advices, and Arpad Ray for his regular expressions magic!</p>
@@ -1102,7 +1156,7 @@ template = null;</span>
 		<p><a href="http://www.browserstack.com/" target="_blank">Browserstack</a> is a great tool to check your content on different browsers and os. They also have an API to create workers to connect to. I check my Jasmine tests against their API and check visual features in their online tool.</p>
 		<p><a href="https://pagekite.net/" target="_blank">pagekite</a> is a great tunneling solution. It basically makes you able to see your local development server from anywhere. I use their services to send the Jasmine tests to Browserstack. Seamless, easy and really working well, great tool.</p>
 		<p><a href="http://ryanseddon.github.com/bunyip/" target="_blank">Bunyip</a> is a javascript library that connects everything, so you can run your tests locally. It connects you to the Browserstack API (or local browsers), using pagekite so Browserstack can access to your local server, and internally using <a href="https://github.com/yui/yeti" target="_blank">Yeti</a> (Yahoo) to get the Jasmines tests output back to your command line (yes it does all that).</p>
-		<p><a href="http://gruntjs.com/">grunt.js</a> to concatenate scripts, compress Javascript, generate files or do anything with all the plugins that are already built.</p>
+		<p><a href="http://gruntjs.com/" target="_blank">grunt.js</a> to concatenate scripts, compress Javascript, generate files or do anything with all the plugins that are already built.</p>
 		<p><a href="http://vojtajina.github.com/testacular/" target="_blank">Testacular</a> is great to have the Jasmine tests checked at all time while I develop, on files change and in multiple browsers. Hassle free and very easy.</p>
 		<p>And along the way, <a href="http://www.jetbrains.com/webstorm/" target="http://www.jetbrains.com/webstorm/" target="_blank">Webstorm</a> is the best javascript editor (imho of course). It is not only makes my like easier but also provides all the tools I need so I can refactor the code and run the tests while staying in the IDE.</p>
 
@@ -1118,20 +1172,6 @@ template = null;</span>
 <script src="assets/js/libs/modernizr.js"></script>
 <script src="assets/js/libs/scale.fix.js"></script>
 <script src="assets/js/app.js"></script>
-
-<script type="text/javascript">
-
-	var _gaq = _gaq || [];
-	_gaq.push(['_setAccount', 'UA-36294101-1']);
-	_gaq.push(['_trackPageview']);
-
-	(function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	})();
-
-</script>
 
 </body>
 </html>

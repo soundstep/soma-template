@@ -181,12 +181,11 @@ header ul a strong {
 }
 
 #navigation {
-	posiion: relative;
 	width: 270px;
 	float: left;
 	position: fixed;
 	margin-top: 190px;
-	min-height: 540px;
+	min-height: 560px;
 	top: 10px;
 	bottom: 10px;
 }
