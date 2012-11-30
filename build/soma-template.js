@@ -3,7 +3,7 @@
 	'use strict';
 
 soma.template = soma.template || {};
-soma.template.version = "0.0.6";
+soma.template.version = "0.0.8";
 
 var errors = soma.template.errors = {
 	TEMPLATE_STRING_NO_ELEMENT: "Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create('string', element)",
@@ -740,8 +740,8 @@ Attribute.prototype = {
 		if (this.invalidate) {
 			this.invalidate = false;
 			this.previousName = this.name;
-			this.name = this.interpolationName.render() || this.name;
-			this.value = this.interpolationValue.render() || this.value;
+			this.value = this.interpolationName ? this.interpolationName.render() : this.name;
+			this.value = this.interpolationValue ? this.interpolationValue.render() : this.value;
 			if (this.name === attributes.src) {
 				renderSrc(this.name, this.value);
 			}
