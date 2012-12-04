@@ -57,6 +57,15 @@ var vars = settings.vars = {
 	key: "$key"
 };
 
+var events = settings.events = {};
+settings.eventsPrefix = 'data-';
+var eventsString = 'click dblclick mousedown mouseup mouseover mouseout mousemove mouseenter mouseleave keydown keyup focus blur change select selectstart scroll copy cut paste mousewheel keypress error contextmenu input textinput drag dragenter dragleave dragover dragend dragstart dragover drop load submit reset search resize beforepaste beforecut beforecopy';
+var eventsArray = eventsString.split(' ');
+var i = -1, l = eventsArray.length;
+while(++i < l) {
+	events[settings.eventsPrefix + eventsArray[i]] = eventsArray[i];
+}
+
 var regex = {
 	sequence: null,
 	token: null,
@@ -261,7 +270,7 @@ function getValueFromPattern(scope, pattern) {
 	return getValue(scope, exp.pattern, exp.path, exp.params, exp.isFunction);
 }
 
-function getValue(scope, pattern, pathString, params, paramsFound) {
+function getValue(scope, pattern, pathString, params, getFunction, getParams, paramsFound) {
 	// string
 	if (regex.string.test(pattern)) {
 		return trimQuotes(pattern);
@@ -275,6 +284,7 @@ function getValue(scope, pattern, pathString, params, paramsFound) {
 		}
 	}
 	else paramsValues = paramsFound;
+	if (getParams) return paramsValues;
 	// find scope
 	var scopeTarget = getScopeFromPattern(scope, pattern);
 	// remove parent string
@@ -292,7 +302,7 @@ function getValue(scope, pattern, pathString, params, paramsFound) {
 			}
 			if (!isDefined(path)) {
 				// no path, search in parent
-				if (scopeTarget._parent) return getValue(scopeTarget._parent, pattern, pathString, params, paramsValues);
+				if (scopeTarget._parent) return getValue(scopeTarget._parent, pattern, pathString, params, getFunction, getParams, paramsValues);
 				else return undefined;
 			}
 		}
@@ -302,7 +312,8 @@ function getValue(scope, pattern, pathString, params, paramsFound) {
 		return path;
 	}
 	else {
-		return path.apply(null, paramsValues);
+		if (getFunction) return path;
+		else return path.apply(null, paramsValues);
 	}
 	return undefined;
 }
@@ -353,6 +364,16 @@ function getNodeFromElement(element, scope, isRepeaterDescendant) {
 					value.indexOf(settings.attributes.cloak) !== -1
 				) {
 				attributes.push(new Attribute(name, value, node));
+			}
+			if (events[name]) {
+				var handler = function(event) {
+					var exp = new Expression(value, node);
+					var func = exp.getValue(scope, true);
+					var params = exp.getValue(scope, false, true);
+					params.unshift(event);
+					func.apply(null, params);
+				}
+				addEvent(element, events[name], handler);
 			}
 		}
 	}
@@ -943,8 +964,8 @@ Expression.prototype = {
 			(this.node || this.attribute).invalidate = true;
 		}
 	},
-	getValue: function(scope) {
-		return getValue(scope, this.pattern, this.path, this.params);
+	getValue: function(scope, getFunction, getParams) {
+		return getValue(scope, this.pattern, this.path, this.params, getFunction, getParams);
 	}
 };
 
@@ -1005,6 +1026,71 @@ Template.prototype = {
 	}
 };
 
+// written by Dean Edwards, 2005
+// with input from Tino Zijdel, Matthias Miller, Diego Perini
+// http://dean.edwards.name/weblog/2005/10/add-event/
+function addEvent(element, type, handler) {
+	if (element.addEventListener) {
+		element.addEventListener(type, handler, false);
+	} else {
+		// assign each event handler a unique ID
+		if (!handler.$$guid) handler.$$guid = addEvent.guid++;
+		// create a hash table of event types for the element
+		if (!element.events) element.events = {};
+		// create a hash table of event handlers for each element/event pair
+		var handlers = element.events[type];
+		if (!handlers) {
+			handlers = element.events[type] = {};
+			// store the existing event handler (if there is one)
+			if (element["on" + type]) {
+				handlers[0] = element["on" + type];
+			}
+		}
+		// store the event handler in the hash table
+		handlers[handler.$$guid] = handler;
+		// assign a global event handler to do all the work
+		element["on" + type] = handleEvent;
+	}
+};
+// a counter used to create unique IDs
+addEvent.guid = 1;
+function removeEvent(element, type, handler) {
+	if (element.removeEventListener) {
+		element.removeEventListener(type, handler, false);
+	} else {
+		// delete the event handler from the hash table
+		if (element.events && element.events[type]) {
+			delete element.events[type][handler.$$guid];
+		}
+	}
+};
+function handleEvent(event) {
+	var returnValue = true;
+	// grab the event object (IE uses a global event object)
+	event = event || fixEvent(((this.ownerDocument || this.document || this).parentWindow || window).event);
+	// get a reference to the hash table of event handlers
+	var handlers = this.events[event.type];
+	// execute each event handler
+	for (var i in handlers) {
+		this.$$handleEvent = handlers[i];
+		if (this.$$handleEvent(event) === false) {
+			returnValue = false;
+		}
+	}
+	return returnValue;
+};
+function fixEvent(event) {
+	// add W3C standard event methods
+	event.preventDefault = fixEvent.preventDefault;
+	event.stopPropagation = fixEvent.stopPropagation;
+	return event;
+};
+fixEvent.preventDefault = function() {
+	this.returnValue = false;
+};
+fixEvent.stopPropagation = function() {
+	this.cancelBubble = true;
+};
 if (settings.autocreate) {
 	// https://github.com/ded/domready
 	var ready=function(){function l(b){for(k=1;b=a.shift();)b()}var b,a=[],c=!1,d=document,e=d.documentElement,f=e.doScroll,g="DOMContentLoaded",h="addEventListener",i="onreadystatechange",j="readyState",k=/^loade|c/.test(d[j]);return d[h]&&d[h](g,b=function(){d.removeEventListener(g,b,c),l()},c),f&&d.attachEvent(i,b=function(){/^c/.test(d[j])&&(d.detachEvent(i,b),l())}),f?function(b){self!=top?k?b():a.push(b):function(){try{e.doScroll("left")}catch(a){return setTimeout(function(){ready(b)},50)}b()}()}:function(b){k?b():a.push(b)}}();

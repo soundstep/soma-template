@@ -44,7 +44,7 @@ function getValueFromPattern(scope, pattern) {
 	return getValue(scope, exp.pattern, exp.path, exp.params, exp.isFunction);
 }
 
-function getValue(scope, pattern, pathString, params, paramsFound) {
+function getValue(scope, pattern, pathString, params, getFunction, getParams, paramsFound) {
 	// string
 	if (regex.string.test(pattern)) {
 		return trimQuotes(pattern);
@@ -58,6 +58,7 @@ function getValue(scope, pattern, pathString, params, paramsFound) {
 		}
 	}
 	else paramsValues = paramsFound;
+	if (getParams) return paramsValues;
 	// find scope
 	var scopeTarget = getScopeFromPattern(scope, pattern);
 	// remove parent string
@@ -75,7 +76,7 @@ function getValue(scope, pattern, pathString, params, paramsFound) {
 			}
 			if (!isDefined(path)) {
 				// no path, search in parent
-				if (scopeTarget._parent) return getValue(scopeTarget._parent, pattern, pathString, params, paramsValues);
+				if (scopeTarget._parent) return getValue(scopeTarget._parent, pattern, pathString, params, getFunction, getParams, paramsValues);
 				else return undefined;
 			}
 		}
@@ -85,7 +86,8 @@ function getValue(scope, pattern, pathString, params, paramsFound) {
 		return path;
 	}
 	else {
-		return path.apply(null, paramsValues);
+		if (getFunction) return path;
+		else return path.apply(null, paramsValues);
 	}
 	return undefined;
 }
@@ -136,6 +138,16 @@ function getNodeFromElement(element, scope, isRepeaterDescendant) {
 					value.indexOf(settings.attributes.cloak) !== -1
 				) {
 				attributes.push(new Attribute(name, value, node));
+			}
+			if (events[name]) {
+				var handler = function(event) {
+					var exp = new Expression(value, node);
+					var func = exp.getValue(scope, true);
+					var params = exp.getValue(scope, false, true);
+					params.unshift(event);
+					func.apply(null, params);
+				}
+				addEvent(element, events[name], handler);
 			}
 		}
 	}
