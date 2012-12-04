@@ -1,8 +1,1 @@
-
 - function in empty repeaster get triggered (low)
-- force checked value and test on all browsers (bug found in the todo)
-		// checked
-		if (this.name === attributes.checked) {
-			renderSpecialAttribute(this.name, this.value, 'checked');
-			element.checked = isAttributeDefined(this.value) ? true : false;
-		}

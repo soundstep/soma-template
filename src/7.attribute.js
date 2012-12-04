@@ -30,8 +30,8 @@ Attribute.prototype = {
 		if (this.invalidate) {
 			this.invalidate = false;
 			this.previousName = this.name;
-			this.value = this.interpolationName ? this.interpolationName.render() : this.name;
-			this.value = this.interpolationValue ? this.interpolationValue.render() : this.value;
+			this.name = this.interpolationName.render() ? this.interpolationName.render() : this.name;
+			this.value = this.interpolationValue.render() ? this.interpolationValue.render() : this.value;
 			if (this.name === attributes.src) {
 				renderSrc(this.name, this.value);
 			}
@@ -76,13 +76,8 @@ Attribute.prototype = {
 		}
 		// checked
 		if (this.name === attributes.checked) {
-			if (ie === 7) {
-				// IE
-				element.checked = isAttributeDefined(this.value) ? true : false;
-			}
-			else {
-				renderSpecialAttribute(this.name, this.value, 'checked');
-			}
+			renderSpecialAttribute(this.name, this.value, 'checked');
+			element.checked = isAttributeDefined(this.value) ? true : false;
 		}
 		// disabled
 		if (this.name === attributes.disabled) {
