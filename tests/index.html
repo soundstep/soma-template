@@ -8,12 +8,6 @@
 
 <body>
 
-<div>
-	<div id="tpl-bootstrap" data-template="TemplateBootstrap" style="display: none">{{name}}</div>
-	<div id="tpl-bootstrap-package" data-template="path.namespace.TemplateBootstrap" style="display: none">{{name}}</div>
-	<div id="tpl-bootstrap-error" data-template="TemplateError" style="display: none">{{name}}</div>
-</div>
-
 <script type="text/javascript" src="lib/jasmine-1.2.0/jasmine.js"></script>
 <script type="text/javascript" src="lib/jasmine-1.2.0/jasmine-html.js"></script>
 <script type="text/javascript" src="lib/jasmine-yeti-adaptor.js"></script>
@@ -35,21 +29,7 @@
 <script type="text/javascript" src="spec/api/special-attributes.js"></script>
 <script type="text/javascript" src="spec/api/variables.js"></script>
 <script type="text/javascript" src="spec/api/rendering.js"></script>
-
-<script type="text/javascript">
-	var TemplateBootstrap = function(template, scope, element) {
-		scope.name = 'john';
-		template.render();
-	}
-	var path = {
-		namespace: {
-			TemplateBootstrap: function(template, scope, element) {
-				scope.name = 'david';
-				template.render();
-			}
-		}
-	}
-</script>
+<script type="text/javascript" src="spec/api/events.js"></script>
 
 <!-- include source files here... -->
 <script type="text/javascript" src="../build/soma-template.js"></script>
