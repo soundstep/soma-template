@@ -50,6 +50,12 @@ describe("api - settings", function () {
 		expect(settings.vars.key).toEqual('$key');
 	});
 
+	it("attributes events", function () {
+		expect(settings.events).toBeDefined();
+		expect(settings.events['data-click']).toEqual('click');
+		expect(settings.events['data-mouseover']).toEqual('mouseover');
+	});
+
 	it("autocreate", function () {
 		expect(settings.autocreate).toBeTruthy();
 	});
@@ -192,6 +198,18 @@ describe("api - settings", function () {
 	it("change template", function () {
 		//settings.attributes.template = 'custom-template';
 
+	});
+
+	it("change event", function () {
+		soma.template.settings.events['custom-click'] = 'click';
+		ct.innerHTML = '<button id="bt1" custom-click="clickHandler()">click</button>';
+		tpl.compile();
+		tpl.render();
+		tpl.scope.clickHandler = function(){};
+		spyOn(tpl.scope, 'clickHandler');
+		simulate(document.getElementById('bt1'), 'click');
+		expect(tpl.scope.clickHandler).toHaveBeenCalled();
+		expect(tpl.scope.clickHandler.mostRecentCall.args[0].type).toEqual('click');
 	});
 
 	it("change index", function () {

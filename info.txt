@@ -6,6 +6,7 @@ http://api.browserstack.com/2/browsers
 
 run tests example:
 bunyip -f tests/index.html -c config.js -b 'firefox:win/16.0'
+bunyip -f tests/index.html -c config.js -b 'ie:win/10.0'
 
 iPad 3rd (6.0):ios/6.0
 iPad 2 (5.0):ios/5.0

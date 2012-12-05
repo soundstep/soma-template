@@ -103,10 +103,9 @@ describe("internal - shared", function () {
 		expect(getValue(child2, '../d1.d2.name', 'd1.d2.name', [])).toEqual('david');
 		expect(getValue(child2, '../../d1.d2.name', 'd1.d2.name', [])).toEqual('john');
 	});
-
 	it("getValue function", function () {
 		scope.name = function() {return 'john';};
-		expect(getValue(scope, 'name()', 'name', 'name', [])).toEqual('john');
+		expect(getValue(scope, 'name()', 'name', [])).toEqual('john');
 		expect(getValue(child, 'name()', 'name', [])).toEqual('john');
 	});
 
@@ -124,8 +123,8 @@ describe("internal - shared", function () {
 
 	it("getValue function deep", function () {
 		scope.d1 = { d2: { name: function() {return 'john';} } };
-		expect(getValue(scope, 'd1.d2.name()', 'd1.d2.name', 'name', [])).toEqual('john');
-		expect(getValue(child, 'd1.d2.name()', 'd1.d2.name', 'name', [])).toEqual('john');
+		expect(getValue(scope, 'd1.d2.name()', 'd1.d2.name', [])).toEqual('john');
+		expect(getValue(child, 'd1.d2.name()', 'd1.d2.name', [])).toEqual('john');
 	});
 
 	it("getValue function deep depth", function () {
@@ -327,11 +326,11 @@ describe("internal - shared", function () {
 	it("getValue array accessor", function() {
 		scope.names = ['john', 'david', 'mike'];
 		scope.names[100] = 'olivia';
-		expect(getValue(scope, 'names[0]', 'names[0]', 'names[0]', [])).toEqual('john');
-		expect(getValue(scope, 'names[1]', 'names[1]', 'names[1]', [])).toEqual('david');
-		expect(getValue(scope, 'names[2]', 'names[2]', 'names[2]', [])).toEqual('mike');
-		expect(getValue(scope, 'names[100]', 'names[100]', 'names[100]', [])).toEqual('olivia');
-		expect(getValue(scope, 'names[3]', 'names[3]', 'names[3]', [])).toBeUndefined();
+		expect(getValue(scope, 'names[0]', 'names[0]', [])).toEqual('john');
+		expect(getValue(scope, 'names[1]', 'names[1]', [])).toEqual('david');
+		expect(getValue(scope, 'names[2]', 'names[2]', [])).toEqual('mike');
+		expect(getValue(scope, 'names[100]', 'names[100]', [])).toEqual('olivia');
+		expect(getValue(scope, 'names[3]', 'names[3]', [])).toBeUndefined();
 	});
 
 	it("getValue array accessor param", function() {
@@ -350,11 +349,11 @@ describe("internal - shared", function () {
 	it("getValue array accessor from child", function() {
 		scope.names = ['john', 'david', 'mike'];
 		scope.names[100] = 'olivia';
-		expect(getValue(child, 'names[0]', 'names[0]', 'names[0]', [])).toEqual('john');
-		expect(getValue(child, 'names[1]', 'names[1]', 'names[1]', [])).toEqual('david');
-		expect(getValue(child, 'names[2]', 'names[2]', 'names[2]', [])).toEqual('mike');
-		expect(getValue(child, 'names[100]', 'names[100]', 'names[100]', [])).toEqual('olivia');
-		expect(getValue(child, 'names[3]', 'names[3]', 'names[3]', [])).toBeUndefined();
+		expect(getValue(child, 'names[0]', 'names[0]', [])).toEqual('john');
+		expect(getValue(child, 'names[1]', 'names[1]', [])).toEqual('david');
+		expect(getValue(child, 'names[2]', 'names[2]', [])).toEqual('mike');
+		expect(getValue(child, 'names[100]', 'names[100]', [])).toEqual('olivia');
+		expect(getValue(child, 'names[3]', 'names[3]', [])).toBeUndefined();
 	});
 
 	it("getValue array accessor param from child", function() {
@@ -532,6 +531,87 @@ describe("internal - shared", function () {
 		expect(getValue(child, 'func(../path[0].name)', 'func', ['../path[0].name'])).toEqual('My name is john');
 		expect(getValue(child, 'func(../path[1].name)', 'func', ['../path[1].name'])).toEqual('My name is david');
 		expect(getValue(child, 'func(../path[3].name)', 'func', ['../path[3].name'])).toBeNull();
+	});
+
+	it("getValue get function", function() {
+		scope.getName = function() { return ''; };
+		expect(getValue(scope, 'getName()', 'getName', [], true)).toEqual(scope.getName);
+	});
+
+	it("getValue get function with param", function() {
+		scope.getName = function() { return ''; };
+		expect(getValue(scope, 'getName(name)', 'getName', ['name'], true)).toEqual(scope.getName);
+	});
+
+	it("getValue get function path", function() {
+		scope.path= {
+			getName: function() { return ''; }
+		}
+		expect(getValue(scope, 'path.getName()', 'getName', [], true)).toEqual(scope.getName);
+	});
+
+	it("getValue get function path with param", function() {
+		scope.path= {
+			getName: function() { return ''; }
+		}
+		expect(getValue(scope, 'path.getName(name)', 'getName', ['name'], true)).toEqual(scope.getName);
+	});
+
+	it("getValue get function child", function() {
+		scope.getName = function() { return ''; };
+		expect(getValue(child, 'getName()', 'getName', [], true)).toEqual(scope.getName);
+	});
+
+	it("getValue get function child with param", function() {
+		scope.getName = function() { return ''; };
+		expect(getValue(child, 'getName(name)', 'getName', ['name'], true)).toEqual(scope.getName);
+	});
+
+	it("getValue get function child with parent string", function() {
+		scope.getName = function() { return ''; };
+		child.getName = function() { return 'another'; };
+		expect(getValue(child, '../getName(name)', 'getName', ['name'], true)).toEqual(scope.getName);
+	});
+
+	it("getValue get params", function() {
+		scope.name = 'john';
+		scope.age = 21;
+		scope.getName = function() { return ''; };
+		expect(getValue(scope, 'getName(name, age)', 'getName', ['name', 'age'], false, true)).toEqual(['john', 21]);
+	});
+
+	it("getValue get params path", function() {
+		scope.path = {
+			name: 'john',
+			age: 21
+		}
+		scope.getName = function() { return ''; };
+		expect(getValue(scope, 'getName(path.name, path.age)', 'getName', ['path.name', 'path.age'], false, true)).toEqual(['john', 21]);
+	});
+
+	it("getValue get params child", function() {
+		scope.name = 'john';
+		scope.age = 21;
+		scope.getName = function() { return ''; };
+		expect(getValue(child, 'getName(name, age)', 'getName', ['name', 'age'], false, true)).toEqual(['john', 21]);
+	});
+
+	it("getValue get params path child", function() {
+		scope.path = {
+			name: 'john',
+			age: 21
+		}
+		scope.getName = function() { return ''; };
+		expect(getValue(child, 'getName(path.name, path.age)', 'getName', ['path.name', 'path.age'], false, true)).toEqual(['john', 21]);
+	});
+
+	it("getValue get params with parent string", function() {
+		scope.name = 'john';
+		scope.age = 21;
+		scope.getName = function() { return ''; };
+		child.name = 'david';
+		child.age = 22;
+		expect(getValue(child, 'getName(../name, ../age)', 'getName', ['../name', '../age'], false, true)).toEqual(['john', 21]);
 	});
 
 	it("getExpressionPath single", function () {

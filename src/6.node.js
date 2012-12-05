@@ -14,6 +14,7 @@ var Node = function(element, scope) {
 	this.previousSibling = null;
 	this.nextSibling = null;
 	this.template = null;
+	this.eventHandlers = {};
 
 	if (isTextNode(this.element)) {
 		this.value = this.element.nodeValue;
@@ -26,6 +27,7 @@ Node.prototype = {
 		return '[object Node]';
 	},
 	dispose: function() {
+		this.clearEvents();
 		var i, l;
 		if (this.children) {
 			i = -1; l = this.children.length;
@@ -61,6 +63,7 @@ Node.prototype = {
 		this.previousSibling = null;
 		this.nextSibling = null;
 		this.template = null;
+		this.eventHandlers = null;
 	},
 	getNode: function(element) {
 		var node;
@@ -69,7 +72,6 @@ Node.prototype = {
 			var k = -1, kl = this.childrenRepeater.length;
 			while (++k < kl) {
 				node = this.childrenRepeater[k].getNode(element);
-
 				if (node) return node;
 			}
 		}
@@ -126,6 +128,47 @@ Node.prototype = {
 		l = this.children.length;
 		while (++i < l) {
 			this.children[i].invalidateData();
+		}
+	},
+	addEvent: function(type, pattern) {
+		if (this.repeater) return;
+		if (this.eventHandlers[type]) {
+			this.removeEvent(type);
+		}
+		var scope = this.scope;
+		var node = node;
+		var handler = function(event) {
+			var exp = new Expression(pattern, node);
+			var func = exp.getValue(scope, true);
+			var params = exp.getValue(scope, false, true);
+			params.unshift(event);
+			if (func) func.apply(null, params);
+		};
+		this.eventHandlers[type] = handler;
+		addEvent(this.element, type, handler);
+	},
+	removeEvent: function(type) {
+		removeEvent(this.element, type, this.eventHandlers[type]);
+		this.eventHandlers[type] = null;
+		delete this.eventHandlers[type];
+	},
+	clearEvents: function() {
+		if (this.eventHandlers) {
+			for (var key in this.eventHandlers) {
+				this.removeEvent(key, this.eventHandlers[key]);
+			}
+		}
+		if (this.children) {
+			var k = -1, kl = this.children.length;
+			while (++k < kl) {
+				this.children[k].clearEvents();
+			}
+		}
+		if (this.childrenRepeater) {
+			var f = -1, fl = this.childrenRepeater.length;
+			while (++f < fl) {
+				this.childrenRepeater[f].clearEvents();
+			}
 		}
 	},
 	render: function() {

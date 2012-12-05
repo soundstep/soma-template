@@ -63,3 +63,67 @@ fixEvent.preventDefault = function() {
 fixEvent.stopPropagation = function() {
 	this.cancelBubble = true;
 };
+
+var maxDepth;
+var eventStore = [];
+
+function parseEvents(element, object, depth) {
+	maxDepth = depth === undefined ? Number.MAX_VALUE : depth;
+	parseNode(element, object, 0, true);
+}
+
+function parseNode(element, object, depth, isRoot) {
+	if (!isElement(element)) throw new Error('Error in soma.template.parseEvents, only a DOM Element can be parsed.');
+	if (isRoot) parseAttributes(element, object);
+	if (maxDepth === 0) return;
+	var child = element.firstChild;
+	while (child) {
+		if (child.nodeType === 1) {
+			if (depth < maxDepth) {
+				parseNode(child, object, ++depth);
+				parseAttributes(child, object);
+			}
+		}
+		child = child.nextSibling;
+	}
+}
+
+function parseAttributes(element, object) {
+	var attributes = [];
+	for (var attr, name, value, attrs = element.attributes, j = 0, jj = attrs && attrs.length; j < jj; j++) {
+		attr = attrs[j];
+		if (attr.specified) {
+			name = attr.name;
+			value = attr.value;
+			if (events[name]) {
+				var handler = getHandlerFromPattern(object, value, element);
+				if (handler && isFunction(handler)) {
+					addEvent(element, events[name], handler);
+					eventStore.push({element:element, type:events[name], handler:handler});
+				}
+			}
+		}
+	}
+}
+
+function getHandlerFromPattern(object, pattern, child) {
+	var parts = pattern.match(regex.func);
+	if (parts) {
+		var func = parts[1];
+		if (isFunction(object[func])) {
+			return object[func];
+		}
+	}
+}
+
+function clearEvents(element) {
+	var i = eventStore.length, l = 0;
+	while (--i >= l) {
+		var item = eventStore[i];
+		if (element === item.element || contains(element, item.element)) {
+			removeEvent(item.element, item.type, item.handler);
+			eventStore.splice(i, 1);
+		}
+	}
+}
+

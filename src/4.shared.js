@@ -41,7 +41,7 @@ function getScopeFromPattern(scope, pattern) {
 
 function getValueFromPattern(scope, pattern) {
 	var exp = new Expression(pattern);
-	return getValue(scope, exp.pattern, exp.path, exp.params, exp.isFunction);
+	return getValue(scope, exp.pattern, exp.path, exp.params);
 }
 
 function getValue(scope, pattern, pathString, params, getFunction, getParams, paramsFound) {
@@ -140,14 +140,8 @@ function getNodeFromElement(element, scope, isRepeaterDescendant) {
 				attributes.push(new Attribute(name, value, node));
 			}
 			if (events[name]) {
-				var handler = function(event) {
-					var exp = new Expression(value, node);
-					var func = exp.getValue(scope, true);
-					var params = exp.getValue(scope, false, true);
-					params.unshift(event);
-					func.apply(null, params);
-				}
-				addEvent(element, events[name], handler);
+				node.addEvent(events[name], value);
+				attributes.push(new Attribute(name, value, node));
 			}
 		}
 	}
@@ -287,6 +281,9 @@ function cloneRepeaterNode(element, node) {
 			if (node.attributes[i].name !== attributes.repeat) {
 				var attribute = new Attribute(node.attributes[i].name, node.attributes[i].value, newNode);
 				attrs.push(attribute);
+			}
+			if (events[node.attributes[i].name]) {
+				newNode.addEvent(events[node.attributes[i].name], node.attributes[i].value);
 			}
 		}
 		newNode.isRepeaterDescendant = true;

@@ -3,7 +3,7 @@
 	'use strict';
 
 soma.template = soma.template || {};
-soma.template.version = "0.0.8";
+soma.template.version = "0.1.0";
 
 var errors = soma.template.errors = {
 	TEMPLATE_STRING_NO_ELEMENT: "Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create('string', element)",
@@ -189,6 +189,25 @@ function removeClass(elm, className) {
 	}
 	removeClass(elm, className);
 }
+// jquery contains
+var contains = document.documentElement.contains ?
+	function( a, b ) {
+		var adown = a.nodeType === 9 ? a.documentElement : a,
+			bup = b && b.parentNode;
+		return a === bup || !!( bup && bup.nodeType === 1 && adown.contains && adown.contains(bup) );
+	} :
+	document.documentElement.compareDocumentPosition ?
+		function( a, b ) {
+			return b && !!( a.compareDocumentPosition( b ) & 16 );
+		} :
+		function( a, b ) {
+			while ( (b = b.parentNode) ) {
+				if ( b === a ) {
+					return true;
+				}
+			}
+			return false;
+		};
 function HashMap(){
 	var uuid = function(a,b){for(b=a='';a++<36;b+=a*51&52?(a^15?8^Math.random()*(a^20?16:4):4).toString(16):'-');return b;}
 	var data = {};
@@ -267,7 +286,7 @@ function getScopeFromPattern(scope, pattern) {
 
 function getValueFromPattern(scope, pattern) {
 	var exp = new Expression(pattern);
-	return getValue(scope, exp.pattern, exp.path, exp.params, exp.isFunction);
+	return getValue(scope, exp.pattern, exp.path, exp.params);
 }
 
 function getValue(scope, pattern, pathString, params, getFunction, getParams, paramsFound) {
@@ -366,14 +385,8 @@ function getNodeFromElement(element, scope, isRepeaterDescendant) {
 				attributes.push(new Attribute(name, value, node));
 			}
 			if (events[name]) {
-				var handler = function(event) {
-					var exp = new Expression(value, node);
-					var func = exp.getValue(scope, true);
-					var params = exp.getValue(scope, false, true);
-					params.unshift(event);
-					func.apply(null, params);
-				}
-				addEvent(element, events[name], handler);
+				node.addEvent(events[name], value);
+				attributes.push(new Attribute(name, value, node));
 			}
 		}
 	}
@@ -514,6 +527,9 @@ function cloneRepeaterNode(element, node) {
 				var attribute = new Attribute(node.attributes[i].name, node.attributes[i].value, newNode);
 				attrs.push(attribute);
 			}
+			if (events[node.attributes[i].name]) {
+				newNode.addEvent(events[node.attributes[i].name], node.attributes[i].value);
+			}
 		}
 		newNode.isRepeaterDescendant = true;
 		newNode.attributes = attrs;
@@ -593,6 +609,7 @@ var Node = function(element, scope) {
 	this.previousSibling = null;
 	this.nextSibling = null;
 	this.template = null;
+	this.eventHandlers = {};
 
 	if (isTextNode(this.element)) {
 		this.value = this.element.nodeValue;
@@ -605,6 +622,7 @@ Node.prototype = {
 		return '[object Node]';
 	},
 	dispose: function() {
+		this.clearEvents();
 		var i, l;
 		if (this.children) {
 			i = -1; l = this.children.length;
@@ -640,6 +658,7 @@ Node.prototype = {
 		this.previousSibling = null;
 		this.nextSibling = null;
 		this.template = null;
+		this.eventHandlers = null;
 	},
 	getNode: function(element) {
 		var node;
@@ -648,7 +667,6 @@ Node.prototype = {
 			var k = -1, kl = this.childrenRepeater.length;
 			while (++k < kl) {
 				node = this.childrenRepeater[k].getNode(element);
-
 				if (node) return node;
 			}
 		}
@@ -705,6 +723,47 @@ Node.prototype = {
 		l = this.children.length;
 		while (++i < l) {
 			this.children[i].invalidateData();
+		}
+	},
+	addEvent: function(type, pattern) {
+		if (this.repeater) return;
+		if (this.eventHandlers[type]) {
+			this.removeEvent(type);
+		}
+		var scope = this.scope;
+		var node = node;
+		var handler = function(event) {
+			var exp = new Expression(pattern, node);
+			var func = exp.getValue(scope, true);
+			var params = exp.getValue(scope, false, true);
+			params.unshift(event);
+			if (func) func.apply(null, params);
+		};
+		this.eventHandlers[type] = handler;
+		addEvent(this.element, type, handler);
+	},
+	removeEvent: function(type) {
+		removeEvent(this.element, type, this.eventHandlers[type]);
+		this.eventHandlers[type] = null;
+		delete this.eventHandlers[type];
+	},
+	clearEvents: function() {
+		if (this.eventHandlers) {
+			for (var key in this.eventHandlers) {
+				this.removeEvent(key, this.eventHandlers[key]);
+			}
+		}
+		if (this.children) {
+			var k = -1, kl = this.children.length;
+			while (++k < kl) {
+				this.children[k].clearEvents();
+			}
+		}
+		if (this.childrenRepeater) {
+			var f = -1, fl = this.childrenRepeater.length;
+			while (++f < fl) {
+				this.childrenRepeater[f].clearEvents();
+			}
 		}
 	},
 	render: function() {
@@ -1009,6 +1068,9 @@ Template.prototype = {
 	clearWatchers: function() {
 		this.watchers.dispose();
 	},
+	clearEvents: function() {
+		this.node.clearEvents();
+	},
 	getNode: function(element) {
 		return this.node.getNode(element);
 	},
@@ -1091,11 +1153,76 @@ fixEvent.preventDefault = function() {
 fixEvent.stopPropagation = function() {
 	this.cancelBubble = true;
 };
+
+var maxDepth;
+var eventStore = [];
+
+function parseEvents(element, object, depth) {
+	maxDepth = depth === undefined ? Number.MAX_VALUE : depth;
+	parseNode(element, object, 0, true);
+}
+
+function parseNode(element, object, depth, isRoot) {
+	if (!isElement(element)) throw new Error('Error in soma.template.parseEvents, only a DOM Element can be parsed.');
+	if (isRoot) parseAttributes(element, object);
+	if (maxDepth === 0) return;
+	var child = element.firstChild;
+	while (child) {
+		if (child.nodeType === 1) {
+			if (depth < maxDepth) {
+				parseNode(child, object, ++depth);
+				parseAttributes(child, object);
+			}
+		}
+		child = child.nextSibling;
+	}
+}
+
+function parseAttributes(element, object) {
+	var attributes = [];
+	for (var attr, name, value, attrs = element.attributes, j = 0, jj = attrs && attrs.length; j < jj; j++) {
+		attr = attrs[j];
+		if (attr.specified) {
+			name = attr.name;
+			value = attr.value;
+			if (events[name]) {
+				var handler = getHandlerFromPattern(object, value, element);
+				if (handler && isFunction(handler)) {
+					addEvent(element, events[name], handler);
+					eventStore.push({element:element, type:events[name], handler:handler});
+				}
+			}
+		}
+	}
+}
+
+function getHandlerFromPattern(object, pattern, child) {
+	var parts = pattern.match(regex.func);
+	if (parts) {
+		var func = parts[1];
+		if (isFunction(object[func])) {
+			return object[func];
+		}
+	}
+}
+
+function clearEvents(element) {
+	var i = eventStore.length, l = 0;
+	while (--i >= l) {
+		var item = eventStore[i];
+		if (element === item.element || contains(element, item.element)) {
+			removeEvent(item.element, item.type, item.handler);
+			eventStore.splice(i, 1);
+		}
+	}
+}
+
+
 if (settings.autocreate) {
 	// https://github.com/ded/domready
 	var ready=function(){function l(b){for(k=1;b=a.shift();)b()}var b,a=[],c=!1,d=document,e=d.documentElement,f=e.doScroll,g="DOMContentLoaded",h="addEventListener",i="onreadystatechange",j="readyState",k=/^loade|c/.test(d[j]);return d[h]&&d[h](g,b=function(){d.removeEventListener(g,b,c),l()},c),f&&d.attachEvent(i,b=function(){/^c/.test(d[j])&&(d.detachEvent(i,b),l())}),f?function(b){self!=top?k?b():a.push(b):function(){try{e.doScroll("left")}catch(a){return setTimeout(function(){ready(b)},50)}b()}()}:function(b){k?b():a.push(b)}}();
 	var parse = function(element) {
-		var child = !element ? document.body.firstChild : element.firstChild;
+		var child = !element ? document.body : element.firstChild;
 		while (child) {
 			if (child.nodeType === 1) {
 				parse(child);
@@ -1223,6 +1350,11 @@ soma.template.get = getTemplate;
 soma.template.renderAll = renderAllTemplates;
 soma.template.helpers = appendHelpers;
 soma.template.bootstrap = bootstrapTemplate;
+soma.template.addEvent = addEvent;
+soma.template.removeEvent = removeEvent;
+soma.template.parseEvents = parseEvents;
+soma.template.clearEvents = clearEvents;
+soma.template.ready = ready;
 
 // register for AMD module
 if (typeof define === 'function' && define.amd) {

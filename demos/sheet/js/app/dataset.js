@@ -190,6 +190,32 @@
 		    'data-readonly': [
 			    { 'readonly': true },
 			    { 'readonly': false }
+		    ],
+		    'data-click': [
+			    { 'label': 'Click Me', clickMe: function(event, label) {
+    alert('You clicked on: ' + label);
+  }
+			    },
+			    { 'label': 'Press here', clickMe: function(event, label) {
+    alert('You clicked on: ' + label);
+  }
+			    }
+		    ],
+		    'data-mouseover': [
+			    { 'rollOverMe': function(event) {
+    event.currentTarget.style.backgroundColor = 'red';
+  },
+  'out': function(event) {
+	  event.currentTarget.style.backgroundColor = 'gold';
+  }
+			    },
+			    { 'rollOverMe': function(event) {
+    event.currentTarget.style.backgroundColor = 'green';
+  },
+  'out': function(event) {
+	  event.currentTarget.style.backgroundColor = 'gold';
+  }
+			    }
 		    ]
 	    };
 
