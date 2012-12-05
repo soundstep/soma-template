@@ -64,3 +64,8 @@ pre.prettyprint {
 .data-cloak {
 	display: none;
 }
+.mo {
+	float: left;
+	padding: 3px;
+	background-color: gold;
+}

@@ -41,7 +41,7 @@ Expression.prototype = {
 			(this.node || this.attribute).invalidate = true;
 		}
 	},
-	getValue: function(scope) {
-		return getValue(scope, this.pattern, this.path, this.params);
+	getValue: function(scope, getFunction, getParams) {
+		return getValue(scope, this.pattern, this.path, this.params, getFunction, getParams);
 	}
 };

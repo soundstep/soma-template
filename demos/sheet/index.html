@@ -137,6 +137,22 @@
 	<div class="tpl"><p id="elementToWatch">Watch my name: {{name}}</p></div>
 </div>
 
+<div data-id="data-click" class="container bs-docs-example">
+	<div class="title">Click event</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl"><button type="text" data-click="clickMe(label)">{{label}}</button></div>
+</div>
+
+<div data-id="data-mouseover" class="container bs-docs-example">
+	<div class="title">Mouse event</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl"><div class="mo" data-mouseover="rollOverMe(label)" data-mouseout="out()">Roll over me</div></div>
+</div>
+
 <div data-id="data-skip" class="container bs-docs-example">
 	<div class="title">Skip from an element</div>
 	<div><pre class="tpl-print prettyprint"></pre></div>
@@ -222,7 +238,7 @@
 	<div class="tpl"><input type="text" data-readonly="{{readonly}}" value="Read only?"></div>
 </div>
 
-<script type="text/javascript" src="../../build/soma-template-v0.0.8.min.js"></script>
+<script type="text/javascript" src="../../build/soma-template.js"></script>
 <script type="text/javascript" src="js/libs/jquery-1.8.2.min.js"></script>
 <script type="text/javascript" src="js/libs/soma-v2.0.0.min.js"></script>
 <script type="text/javascript" src="js/app/dataset.js"></script>

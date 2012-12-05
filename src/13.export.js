@@ -102,6 +102,11 @@ soma.template.get = getTemplate;
 soma.template.renderAll = renderAllTemplates;
 soma.template.helpers = appendHelpers;
 soma.template.bootstrap = bootstrapTemplate;
+soma.template.addEvent = addEvent;
+soma.template.removeEvent = removeEvent;
+soma.template.parseEvents = parseEvents;
+soma.template.clearEvents = clearEvents;
+soma.template.ready = ready;
 
 // register for AMD module
 if (typeof define === 'function' && define.amd) {

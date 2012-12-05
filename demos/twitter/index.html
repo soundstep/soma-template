@@ -7,14 +7,14 @@
 </head>
 <body>
 
-<div class="twitter data-cloak">
+<div id="twitter" class="twitter data-cloak">
 	<div class="search">
-		<input class="queryInput" placeholder="Search twitter" />
+		<input class="queryInput" placeholder="Search twitter" data-keypress="search()" autofocus/>
 		<div class="message">{{message}}</div>
 	</div>
 	<div class="result">
 		<ul>
-			<li data-repeat="item in results" data-user="{{item.from_user}}" data-id="{{item.id_str}}">
+			<li data-repeat="item in results" data-click="visit(item.from_user, item.id_str)">
 				<div class="tpl-tweet {{getClassRow($index)}}">
 					<img data-src="{{item.profile_image_url}}"/>
 					<div class="tpl-tweet-username">{{item.from_user}}</div>

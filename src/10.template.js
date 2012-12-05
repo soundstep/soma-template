@@ -38,6 +38,9 @@ Template.prototype = {
 	clearWatchers: function() {
 		this.watchers.dispose();
 	},
+	clearEvents: function() {
+		this.node.clearEvents();
+	},
 	getNode: function(element) {
 		return this.node.getNode(element);
 	},

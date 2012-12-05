@@ -20,7 +20,9 @@ files = [
 	"../src/8.interpolation.js",
 	"../src/9.expression.js",
 	"../src/10.template.js",
-	"../src/11.export.js",
+	"../src/11.events.js",
+	"../src/12.bootstrap.js",
+	"../src/13.export.js",
 	"helpers/dom.js",
 	'spec/internal/*.js'
 ];
@@ -66,11 +68,11 @@ autoWatch = true;
 // - Safari (only Mac)
 // - PhantomJS
 // - IE (only Windows)
-browsers = ['Chrome', 'ChromeCanary', 'Firefox', 'Opera', 'Safari'];
+browsers = ['Chrome', 'ChromeCanary', 'Firefox', 'Safari'];
 
 
 // If browser does not capture in given timeout [ms], kill it
-captureTimeout = 5000;
+captureTimeout = 10000;
 
 
 // Continuous Integration mode
