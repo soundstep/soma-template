@@ -30,8 +30,8 @@ Attribute.prototype = {
 		if (this.invalidate) {
 			this.invalidate = false;
 			this.previousName = this.name;
-			this.name = this.interpolationName.render() ? this.interpolationName.render() : this.name;
-			this.value = this.interpolationValue.render() ? this.interpolationValue.render() : this.value;
+			this.name = isDefined(this.interpolationName.render()) ? this.interpolationName.render() : this.name;
+			this.value = isDefined(this.interpolationValue.render()) ? this.interpolationValue.render() : this.value;
 			if (this.name === attributes.src) {
 				renderSrc(this.name, this.value);
 			}
