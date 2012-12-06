@@ -8,6 +8,7 @@ var Node = function(element, scope) {
 	this.skip = false;
 	this.repeater = null;
 	this.isRepeaterDescendant = false;
+	this.isRepeaterChild = false;
 	this.parent = null;
 	this.children = [];
 	this.childrenRepeater = [];
@@ -136,13 +137,14 @@ Node.prototype = {
 			this.removeEvent(type);
 		}
 		var scope = this.scope;
-		var node = node;
 		var handler = function(event) {
-			var exp = new Expression(pattern, node);
+			var exp = new Expression(pattern, this.node);
 			var func = exp.getValue(scope, true);
 			var params = exp.getValue(scope, false, true);
 			params.unshift(event);
-			if (func) func.apply(null, params);
+			if (func) {
+				func.apply(null, params);
+			}
 		};
 		this.eventHandlers[type] = handler;
 		addEvent(this.element, type, handler);
