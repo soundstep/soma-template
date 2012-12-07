@@ -3,37 +3,8 @@ var todo = window.todo || {};
 (function( window ) {
 	'use strict';
 
-
 	var ENTER_KEY = 13,
 		STORE_KEY = 'todo-soma-template';
-
-	var c = 0;
-
-	todo.Template2 = function( template, scope ) {
-		var c = 0;
-		scope.keyboard = function() {
-			console.log('OK');
-		}
-		scope.items = [1, 2, 3];
-		scope.editing = "ee1";
-		scope.select = function(event) {
-			scope.checked = c++;
-			var target = event.currentTarget ? event.currentTarget : event.srcElement;
-				scope.editing = (target.checked) ? "ee2" : "ee1";
-			console.log(scope.editing);
-			template.render();
-		}
-		scope.clickHandler = function(event, it) {
-			console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-			console.log(event.srcElement);
-			if (++c > 10) return;
-			console.log(it)
-			scope.checked = !scope.checked;
-			template.render();
-//			return false;
-		}
-		template.render();
-	}
 
 	todo.Template = function( template, scope ) {
 
@@ -60,7 +31,6 @@ var todo = window.todo || {};
 
 
 		scope.add = function( event ) {
-			console.log('add');
 			var value = getTarget(event).value.trim();
 			if ( event.keyCode === ENTER_KEY && value !== '' ) {
 				todos.push({
