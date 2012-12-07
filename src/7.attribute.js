@@ -32,6 +32,8 @@ Attribute.prototype = {
 			this.previousName = this.name;
 			this.name = isDefined(this.interpolationName.render()) ? this.interpolationName.render() : this.name;
 			this.value = isDefined(this.interpolationValue.render()) ? this.interpolationValue.render() : this.value;
+
+
 			if (this.name === attributes.src) {
 				renderSrc(this.name, this.value);
 			}
@@ -39,7 +41,7 @@ Attribute.prototype = {
 				renderHref(this.name, this.value);
 			}
 			else {
-				if (this.node.isRepeaterDescendant && ie === 7) {
+				if (this.node.isRepeaterChild && ie === 7) {
 					// delete attributes on cloned elements crash IE7
 				}
 				else {
@@ -51,7 +53,7 @@ Attribute.prototype = {
 						this.node.element.className = "";
 					}
 					else {
-						if (this.node.isRepeaterDescendant && ie === 7) {
+						if (this.node.isRepeaterChild && ie === 7) {
 							// delete attributes on cloned elements crash IE7
 						}
 						else {

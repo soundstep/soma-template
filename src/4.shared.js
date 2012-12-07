@@ -113,6 +113,7 @@ function getNodeFromElement(element, scope, isRepeaterDescendant) {
 	node.previousSibling = element.previousSibling;
 	node.nextSibling = element.nextSibling;
 	var attributes = [];
+	var eventsArray = [];
 	for (var attr, name, value, attrs = element.attributes, j = 0, jj = attrs && attrs.length; j < jj; j++) {
 		attr = attrs[j];
 		if (attr.specified) {
@@ -121,7 +122,7 @@ function getNodeFromElement(element, scope, isRepeaterDescendant) {
 			if (name === settings.attributes.skip) {
 				node.skip = (value === "" || value === "true");
 			}
-			if (!isRepeaterDescendant && name === settings.attributes.repeat) {
+			if (name === settings.attributes.repeat && !isRepeaterDescendant) {
 				node.repeater = value;
 			}
 			if (
@@ -139,13 +140,17 @@ function getNodeFromElement(element, scope, isRepeaterDescendant) {
 				) {
 				attributes.push(new Attribute(name, value, node));
 			}
-			if (events[name]) {
-				node.addEvent(events[name], value);
+			if (events[name] && !isRepeaterDescendant) {
+				eventsArray.push({name:events[name], value:value});
 				attributes.push(new Attribute(name, value, node));
 			}
 		}
 	}
 	node.attributes = attributes;
+	var i = -1, l = eventsArray.length;
+	while (++i < l) {
+		node.addEvent(eventsArray[i].name, eventsArray[i].value);
+	}
 	return node;
 }
 
@@ -175,11 +180,14 @@ function compile(template, element, parent, nodeTarget) {
 	// get node
 	var node;
 	if (!nodeTarget) {
-		node = getNodeFromElement(element, parent ? parent.scope : new Scope(helpersScopeObject)._createChild());
+		node = getNodeFromElement(element, parent ? parent.scope : new Scope(helpersScopeObject)._createChild(), parent && (parent.repeater || parent.isRepeaterDescendant) );
 	}
 	else {
 		node = nodeTarget;
 		node.parent = parent;
+	}
+	if (parent && (parent.repeater || parent.isRepeaterDescendant)) {
+		node.isRepeaterDescendant = true;
 	}
 	node.template = template;
 	// children
@@ -286,7 +294,7 @@ function cloneRepeaterNode(element, node) {
 				newNode.addEvent(events[node.attributes[i].name], node.attributes[i].value);
 			}
 		}
-		newNode.isRepeaterDescendant = true;
+		//newNode.isRepeaterDescendant = true;
 		newNode.attributes = attrs;
 	}
 	return newNode;
@@ -301,6 +309,7 @@ function createRepeaterChild(node, count, data, indexVar, indexVarValue, previou
 		// be cause the attributes are not specified annymore (attribute.specified)
 		//var newNode = getNodeFromElement(newElement, node.scope._createChild(), true);
 		var newNode = cloneRepeaterNode(newElement, node)
+		newNode.isRepeaterChild = true;
 		newNode.parent = node.parent;
 		newNode.template = node.template;
 		node.childrenRepeater[count] = newNode;
