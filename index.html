@@ -92,7 +92,8 @@
 						<li><a href="#add-events-manually">Add events manually</a></li>
 						<li><a href="#remove-events">Remove events</a></li>
 						<li><a href="#handlers-parameters">Handler parameters</a></li>
-						<!--<li><a href="#events-without-template">Events without template</a></li>-->
+						<li><a href="#parse-events-without-template">Parse events without template</a></li>
+						<li><a href="#add-and-remove-events-without-template">Add and remove events without template</a></li>
 					</ul>
 				</li>
 				<li><p><a href="#special-attributes">Special attributes</a></p>
@@ -681,32 +682,42 @@
 		<p><a href="http://plnkr.co/edit/9WVviDfD2JKRkKywy3C4?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
 		<div class="back"><a href="#">top</a></div>
 
-		<!--<div class="subtitle">-->
-			<!--<h3>Events without template</h3>-->
-			<!--<a class="anchor" name="events-without-template"></a>-->
-		<!--</div>-->
-		<!--<p>The library also makes possible to parse the DOM and attach event handlers without creating templates. The functions <code>soma.template.parseEvents</code> and <code>soma.template.clearEvents</code> can be used for that purpose.</p>-->
-		<!--<p>The first parameter with the element from which you want to start to parse the DOM, the second parameter is the object that contains the handlers, and the third optional parameter is a depth value for the parsing (0 to parse only one element).</p>-->
-		<!--<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>-->
-  <!--<span class="nt">&lt;ul&gt;</span>-->
-    <!--<span class="nt">&lt;li</span> <span class="na">data-repeat=</span><span class="s">&quot;person in people&quot;</span><span class="nt">&gt;</span>-->
-      <!--<span class="nt">&lt;button</span> <span class="na">data-click=</span><span class="s">&quot;showAge(person)&quot;</span><span class="nt">&gt;</span>Click on <span class="cp">{{</span><span class="nv">person.name</span><span class="cp">}}</span><span class="nt">&lt;/button&gt;</span>-->
-    <!--<span class="nt">&lt;/li&gt;</span>-->
-  <!--<span class="nt">&lt;/ul&gt;</span>-->
-<!--<span class="nt">&lt;/div&gt;</span>-->
-<!--<span class="nt">&lt;script&gt;</span>-->
-  <!--<span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">people</span> <span class="o">=</span> <span class="p">[</span>-->
-    <!--<span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;John&#39;</span><span class="p">,</span> <span class="nx">age</span><span class="o">:</span> <span class="mi">21</span><span class="p">},</span>-->
-    <!--<span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;David&#39;</span><span class="p">,</span> <span class="nx">age</span><span class="o">:</span> <span class="mi">32</span><span class="p">}</span>-->
-  <!--<span class="p">];</span>-->
-  <!--<span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">showAge</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">person</span><span class="p">)</span> <span class="p">{</span>-->
-    <!--<span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;I am &#39;</span> <span class="o">+</span> <span class="nx">person</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;, and my age is &#39;</span> <span class="o">+</span> <span class="nx">person</span><span class="p">.</span><span class="nx">age</span><span class="p">);</span>-->
-  <!--<span class="p">}</span>-->
-  <!--<span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>-->
-<!--<span class="nt">&lt;/script&gt;</span>-->
-<!--</pre></div>-->
-		<!--<p><a href="http://plnkr.co/edit/9WVviDfD2JKRkKywy3C4?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>-->
-		<!--<div class="back"><a href="#">top</a></div>-->
+		<div class="subtitle">
+			<h3>Parse events without template</h3>
+			<a class="anchor" name="parse-events-without-template"></a>
+		</div>
+		<p>The library also makes possible to parse the DOM and attach event handlers without creating templates. The functions <code>soma.template.parseEvents</code> and <code>soma.template.clearEvents</code> can be used for that purpose.</p>
+		<p>The first parameter with the element from which you want to start to parse the DOM, the second parameter is the object that contains the handlers, and the third optional parameter is a depth value for the parsing (0 to parse only one element). Parameters from the scope can't be sent using this method as it is not related to a template.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;button</span> <span class="na">data-click=</span><span class="s">&quot;handler()&quot;</span><span class="nt">&gt;</span>Click me<span class="nt">&lt;/button&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">parseEvents</span><span class="p">(</span><span class="nb">document</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+  <span class="kd">function</span> <span class="nx">handler</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;The event: &quot;&#39;</span> <span class="o">+</span> <span class="nx">event</span><span class="p">.</span><span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;&quot;, has been triggered!&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="nt">&lt;/script&gt;</span>
+</pre></div>
+		<p><a href="http://plnkr.co/edit/dDIH5UzZj9oEwEkujQj5?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+		<div class="back"><a href="#">top</a></div>
+
+		<div class="subtitle">
+			<h3>Add and remove events without template</h3>
+			<a class="anchor" name="add-and-remove-events-without-template"></a>
+		</div>
+		<p>Events can be added and removed manually without template using the <code>soma.template.addEvent</code> and <code>soma.template.removeEvent</code> functions. Parameters from the scope can't be sent using this method as it is not related to a template.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;button</span> <span class="na">id =</span><span class="s">&quot;bt&quot;</span><span class="nt">&gt;</span>Click me<span class="nt">&lt;/button&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">addEvent</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;bt&#39;</span><span class="p">),</span> <span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="nx">handler</span><span class="p">);</span>
+  <span class="kd">function</span> <span class="nx">handler</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;The event: &quot;&#39;</span> <span class="o">+</span> <span class="nx">event</span><span class="p">.</span><span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;&quot;, has been triggered!&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="nt">&lt;/script&gt;</span>
+</pre></div>
+		<p><a href="http://plnkr.co/edit/PCi1PS2NCShYDnZVVpM1?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+		<div class="back"><a href="#">top</a></div>
 
 	</section>
 
@@ -1257,6 +1268,7 @@ template = null;</span>
 			<li><a href="demos/todo/" target="_blank">Todo app demo</a></li>
 			<li><a href="demos/twitter/" target="_blank">Twitter search demo</a></li>
 			<li><a href="demos/sheet/" target="_blank">Sheet demo</a></li>
+			<li><a href="demos/events/" target="_blank">Events demo</a></li>
 		</ul>
 
 		<div class="back"><a href="#">top</a></div>
