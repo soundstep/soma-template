@@ -1059,7 +1059,52 @@ settings.tokens.end(<span class="s">&quot;]]&quot;</span>);</span>
 			<h3>Events</h3>
 			<a class="anchor" name="events-settings"></a>
 		</div>
-		<p>The events such as <code>data-click</code> or other <code>mouseover</code> events can also be changed (or added). The events object in <code>soma-template.settings.events</code> contains all the events parsed by the template engine. The keys of the object are the custom node attributes and the values are the <a href="https://developer.mozilla.org/en-US/docs/Mozilla_event_reference" target="_blank">DOM events</a> types.</p>
+		<p>The events such as <code>data-click</code> or other <code>data-mouseover</code> events can also be changed (or added). The events object in <code>soma-template.settings.events</code> contains all the events parsed by the template engine. The keys of the object are the custom node attributes and the values are the <a href="https://developer.mozilla.org/en-US/docs/Mozilla_event_reference" target="_blank">DOM events</a> types.</p>
+		<p>Here is a list of the events handled by the template engine:</p>
+		<ul>
+			<li>click (<code>data-click</code>)</li>
+			<li>dblclick (<code>data-dblclick</code>)</li>
+			<li>mousedown (<code>data-mousedown</code>)</li>
+			<li>mouseup (<code>data-mouseup</code>)</li>
+			<li>mouseover (<code>data-mouseover</code>)</li>
+			<li>mouseout (<code>data-mouseout</code>)</li>
+			<li>mousemove (<code>data-mousemove</code>)</li>
+			<li>mouseenter (<code>data-mouseenter</code>)</li>
+			<li>mouseleave (<code>data-mouseleave</code>)</li>
+			<li>keydown (<code>data-keydown</code>)</li>
+			<li>keyup (<code>data-keyup</code>)</li>
+			<li>focus (<code>data-focus</code>)</li>
+			<li>blur (<code>data-blur</code>)</li>
+			<li>change (<code>data-change</code>)</li>
+			<li>select (<code>data-select</code>)</li>
+			<li>selectstart (<code>data-selectstart</code>)</li>
+			<li>scroll (<code>data-scroll</code>)</li>
+			<li>copy (<code>data-copy</code>)</li>
+			<li>cut (<code>data-cut</code>)</li>
+			<li>paste (<code>data-paste</code>)</li>
+			<li>mousewheel (<code>data-mousewheel</code>)</li>
+			<li>keypress (<code>data-keypress</code>)</li>
+			<li>error (<code>data-error</code>)</li>
+			<li>contextmenu (<code>data-contextmenu</code>)</li>
+			<li>input (<code>data-input</code>)</li>
+			<li>textinput (<code>data-textinput</code>)</li>
+			<li>drag (<code>data-drag</code>)</li>
+			<li>dragenter (<code>data-dragenter</code>)</li>
+			<li>dragleave (<code>data-dragleave</code>)</li>
+			<li>dragover (<code>data-dragover</code>)</li>
+			<li>dragend (<code>data-dragend</code>)</li>
+			<li>dragstart (<code>data-dragstart</code>)</li>
+			<li>dragover (<code>data-dragover</code>)</li>
+			<li>drop (<code>data-drop</code>)</li>
+			<li>load (<code>data-load</code>)</li>
+			<li>submit (<code>data-submit</code>)</li>
+			<li>reset (<code>data-reset</code>)</li>
+			<li>search (<code>data-search</code>)</li>
+			<li>resize (<code>data-resize</code>)</li>
+			<li>beforepaste (<code>data-beforepaste</code>)</li>
+			<li>beforecut (<code>data-beforecut</code>)</li>
+			<li>beforecopy (<code>data-beforecopy</code>)</li>
+		</ul>
 		<div class="codehilite"><pre><span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">settings</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="s1">&#39;custom-click&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;click&#39;</span><span class="p">;</span>
 <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">settings</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="s1">&#39;custom-mouseover&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;mouseover&#39;</span><span class="p">;</span>
 </pre></div>
