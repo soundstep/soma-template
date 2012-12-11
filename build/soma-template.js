@@ -3,7 +3,7 @@
 	'use strict';
 
 soma.template = soma.template || {};
-soma.template.version = "0.1.2";
+soma.template.version = "0.1.3";
 
 var errors = soma.template.errors = {
 	TEMPLATE_STRING_NO_ELEMENT: "Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create('string', element)",
@@ -126,9 +126,7 @@ function isExpFunction(value) {
 	return !!value.match(regex.func);
 }
 function childNodeIsTemplate(node) {
-	if (!node || !isElement(node.element)) return false;
-	if (node.parent && templates.get(node.element)) return true;
-	return false;
+	return node && node.parent && templates.get(node.element);
 }
 function escapeRegExp(str) {
 	return str.replace(regex.escape, "\\$&");
@@ -208,10 +206,14 @@ var contains = document.documentElement.contains ?
 			}
 			return false;
 		};
-function HashMap(){
-	var uuid = function(a,b){for(b=a='';a++<36;b+=a*51&52?(a^15?8^Math.random()*(a^20?16:4):4).toString(16):'-');return b;}
-	var data = {};
-	var getKey = function(target) {
+
+
+function HashMap() {
+	var items = {};
+	var id = 1;
+	//var uuid = function(a,b){for(b=a='';a++<36;b+=a*51&52?(a^15?8^Math.random()*(a^20?16:4):4).toString(16):'-');return b;}
+	function uuid() { return ++id; };
+	function getKey(target) {
 		if (!target) return;
 		if (typeof target !== 'object') return target;
 		var result;
@@ -221,25 +223,26 @@ function HashMap(){
 		} catch(err){};
 		return result;
 	}
-	return {
-		put: function(key, value) {
-			data[getKey(key)] = value;
-		},
-		get: function(key) {
-			return data[getKey(key)];
-		},
-		remove: function(key) {
-			delete data[getKey(key)];
-		},
-		getData: function() {
-			return data;
-		},
-		dispose: function() {
-			for (var k in data) {
-				data[k] = null;
-				delete data[k];
-			}
+	this.remove = function(key) {
+		delete items[getKey(key)];
+	}
+	this.get = function(key) {
+		return items[getKey(key)];
+	}
+	this.put = function(key, value) {
+		items[getKey(key)] = value;
+	}
+	this.has = function(key) {
+		return typeof items[getKey(key)] !== 'undefined';
+	}
+	this.getData = function() {
+		return items;
+	}
+	this.dispose = function() {
+		for (var key in items) {
+			delete items[key];
 		}
+		this.length = 0;
 	}
 }
 
@@ -297,8 +300,7 @@ function getValue(scope, pattern, pathString, params, getFunction, getParams, pa
 	// find params
 	var paramsValues = [];
 	if (!paramsFound && params) {
-		var j = -1, jl = params.length;
-		while (++j < jl) {
+		for (var j = 0, jl = params.length; j < jl; j++) {
 			paramsValues.push(getValueFromPattern(scope, params[j]));
 		}
 	}
@@ -314,8 +316,7 @@ function getValue(scope, pattern, pathString, params, getFunction, getParams, pa
 	var path = scopeTarget;
 	var pathParts = pathString.split(/\.|\[|\]/g);
 	if (pathParts.length > 0) {
-		var i = -1, l = pathParts.length;
-		while (++i < l) {
+		for (var i = 0, l = pathParts.length; i < l; i++) {
 			if (pathParts[i] !== "") {
 				path = path[pathParts[i]];
 			}
@@ -392,8 +393,7 @@ function getNodeFromElement(element, scope, isRepeaterDescendant) {
 		}
 	}
 	node.attributes = attributes;
-	var i = -1, l = eventsArray.length;
-	while (++i < l) {
+	for (var i = 0, l = eventsArray.length; i < l; i++) {
 		node.addEvent(eventsArray[i].name, eventsArray[i].value);
 	}
 	return node;
@@ -466,17 +466,15 @@ function clearScope(scope) {
 }
 
 function updateNodeChildren(node) {
-	if (childNodeIsTemplate(node) || node.repeater || !node.children) return;
-	var i = -1, l = node.children.length;
-	while (++i < l) {
+	if (node.repeater || !node.children || childNodeIsTemplate(node)) return;
+	for (var i = 0, l = node.children.length; i < l; i++) {
 		node.children[i].update();
 	}
 }
 
 function renderNodeChildren(node) {
-	if (childNodeIsTemplate(node) || !node.children) return;
-	var i = -1, l = node.children.length;
-	while (++i < l) {
+	if (!node.children || childNodeIsTemplate(node)) return;
+	for (var i = 0, l = node.children.length; i < l; i++) {
 		node.children[i].render();
 	}
 }
@@ -486,11 +484,7 @@ function renderNodeRepeater(node) {
 	var previousElement;
 	if (isArray(data)) {
 		// process array
-		var i = -1;
-		var l1 = data.length;
-		var l2 = node.childrenRepeater.length;
-		var l = l1 > l2 ? l1 : l2;
-		while (++i < l) {
+		for (var i = 0, l1 = data.length, l2 = node.childrenRepeater.length, l = l1 > l2 ? l1 : l2; i < l; i++) {
 			if (i < l1) {
 				previousElement = createRepeaterChild(node, i, data[i], vars.index, i, previousElement);
 			}
@@ -525,9 +519,8 @@ function renderNodeRepeater(node) {
 function cloneRepeaterNode(element, node) {
 	var newNode = new Node(element, node.scope._createChild());
 	if (node.attributes) {
-		var i = -1, l = node.attributes.length;
 		var attrs = [];
-		while (++i < l) {
+		for (var i = 0, l = node.attributes.length; i < l; i++) {
 			if (node.attributes[i].name === settings.attributes.skip) {
 				newNode.skip = (node.attributes[i].value === "" || node.attributes[i].value === "true");
 			}
@@ -539,7 +532,6 @@ function cloneRepeaterNode(element, node) {
 				newNode.addEvent(events[node.attributes[i].name], node.attributes[i].value);
 			}
 		}
-		//newNode.isRepeaterDescendant = true;
 		newNode.attributes = attrs;
 	}
 	return newNode;
@@ -635,20 +627,17 @@ Node.prototype = {
 		this.clearEvents();
 		var i, l;
 		if (this.children) {
-			i = -1; l = this.children.length;
-			while (++i < l) {
+			for (i = 0, l = this.children.length; i < l; i++) {
 				this.children[i].dispose();
 			}
 		}
 		if (this.childrenRepeater) {
-			i = 0; l = this.childrenRepeater.length;
-			while (++i < l) {
+			for (i = 0, l = this.childrenRepeater.length; i < l; i++) {
 				this.childrenRepeater[i].dispose();
 			}
 		}
 		if (this.attributes) {
-			i = 0; l = this.attributes.length;
-			while (++i < l) {
+			for (i = 0, l = this.attributes.length; i < l; i++) {
 				this.attributes[i].dispose();
 			}
 		}
@@ -674,15 +663,13 @@ Node.prototype = {
 		var node;
 		if (element === this.element) return this;
 		else if (this.childrenRepeater.length > 0) {
-			var k = -1, kl = this.childrenRepeater.length;
-			while (++k < kl) {
+			for (var k = 0, kl = this.childrenRepeater.length; k < kl; k++) {
 				node = this.childrenRepeater[k].getNode(element);
 				if (node) return node;
 			}
 		}
 		else {
-			var i = -1, l = this.children.length;
-			while (++i < l) {
+			for (var i = 0, l = this.children.length; i < l; i++) {
 				node = this.children[i].getNode(element);
 				if (node) return node;
 			}
@@ -691,8 +678,7 @@ Node.prototype = {
 	},
 	getAttribute: function(name) {
 		if (this.attributes) {
-			var i = -1, l = this.attributes.length;
-			while (++i < l) {
+			for (var i = 0, l = this.attributes.length; i < l; i++) {
 				var att = this.attributes[i];
 				if (att.interpolationName && att.interpolationName.value === name) {
 					return att;
@@ -706,8 +692,7 @@ Node.prototype = {
 			this.interpolation.update();
 		}
 		if (isDefined(this.attributes)) {
-			var i = -1, l = this.attributes.length;
-			while (++i < l) {
+			for (var i = 0, l = this.attributes.length; i < l; i++) {
 				this.attributes[i].update();
 			}
 		}
@@ -718,20 +703,14 @@ Node.prototype = {
 		this.invalidate = true;
 		var i, l;
 		if (this.attributes) {
-			i = -1
-			l = this.attributes.length;
-			while (++i < l) {
+			for (i = 0, l = this.attributes.length; i < l; i++) {
 				this.attributes[i].invalidate = true;
 			}
 		}
-		i = -1;
-		l = this.childrenRepeater.length;
-		while (++i < l) {
+		for (i = 0, l = this.childrenRepeater.length; i < l; i++) {
 			this.childrenRepeater[i].invalidateData();
 		}
-		i = -1;
-		l = this.children.length;
-		while (++i < l) {
+		for (i = 0, l = this.children.length; i < l; i++) {
 			this.children[i].invalidateData();
 		}
 	},
@@ -765,14 +744,12 @@ Node.prototype = {
 			}
 		}
 		if (this.children) {
-			var k = -1, kl = this.children.length;
-			while (++k < kl) {
+			for (var k = 0, kl = this.children.length; k < kl; k++) {
 				this.children[k].clearEvents();
 			}
 		}
 		if (this.childrenRepeater) {
-			var f = -1, fl = this.childrenRepeater.length;
-			while (++f < fl) {
+			for (var f = 0, fl = this.childrenRepeater.length; f < fl; f++) {
 				this.childrenRepeater[f].clearEvents();
 			}
 		}
@@ -786,8 +763,7 @@ Node.prototype = {
 			}
 		}
 		if (this.attributes) {
-			var i = -1, l = this.attributes.length;
-			while (++i < l) {
+			for (var i = 0, l = this.attributes.length; i < l; i++) {
 				this.attributes[i].render();
 			}
 		}
@@ -940,8 +916,7 @@ var Interpolation = function(value, node, attribute) {
 	this.expressions = [];
 	var parts = this.value.match(regex.sequence);
 	if (parts) {
-		var i = -1, l = parts.length;
-		while (++i < l) {
+		for (var i = 0, l = parts.length; i < l; i++) {
 			if (parts[i].match(regex.token)) {
 				var exp = new Expression(trimTokens(parts[i]), this.node, this.attribute);
 				this.sequence.push(exp);
@@ -960,8 +935,7 @@ Interpolation.prototype = {
 	},
 	dispose: function() {
 		if (this.expressions) {
-			var i = -1, l = this.expressions.length;
-			while (++i < l) {
+			for (var i = 0, l = this.expressions.length; i < l; i++) {
 				this.expressions[i].dispose();
 			}
 		}
@@ -980,8 +954,7 @@ Interpolation.prototype = {
 	render: function() {
 		var rendered = "";
 		if (this.sequence) {
-			var i = -1, l = this.sequence.length;
-			while (++i < l) {
+			for (var i = 0, l = this.sequence.length; i < l; i++) {
 				var val = "";
 				if (isExpression(this.sequence[i])) val = this.sequence[i].value;
 				else val = this.sequence[i];
@@ -1295,7 +1268,6 @@ function createTemplate(source, target) {
 }
 
 function getTemplate(element) {
-	if (!isElement(element)) return null;
 	return templates.get(element);
 }
 

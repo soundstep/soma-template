@@ -21,13 +21,11 @@ var path = {
 describe("api - bootstrap", function () {
 
 	beforeEach(function () {
-		createContainer();
-		createTemplate();
+
 	});
 
 	afterEach(function () {
-		disposeTemplate();
-		disposeContainer();
+
 	});
 
 	it("template created", function () {
