@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>soma-template benchmarks</title>
+	<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+	<meta charset="UTF-8">
+</head>
+<body>
+
+<button id="bt" data-click="clickHandler()">RUN</button>
+
+<div id="report"></div>
+
+<h3>soma-template:</h3>
+<div id="ct-soma-template">
+	<div>
+		<div>
+			<div>{{content.path.value}}</div>
+		</div>
+	</div>
+	<div data-repeat="item in items">{{item.name}}</div>
+</div>
+
+<script type="text/javascript" src="../build/soma-template.js"></script>
+<script type="text/javascript" src="js/benchmarks.js"></script>
+
+<script type="text/javascript">
+
+//soma.template.parseEvents(document.getElementById('bt'), {
+//	clickHandler: function() {
+//		suite.run({'async':true});
+//	}
+//});
+
+document.getElementById('bt').addEventListener('click', function() {
+	suite.run({'async':true});
+}, false);
+
+var report = document.getElementById('report');
+
+var ctSomaTemplate = document.getElementById('ct-soma-template');
+var tpl = soma.template.create(ctSomaTemplate);
+tpl.scope.content = {
+	path: {
+		value: 0
+	}
+};
+tpl.scope.items = [{name:'john'}, {name:'david'}, {name:'mike'}];
+
+var count = 0;
+
+// benchmarks
+
+Benchmark.prototype.setup = function() {
+	count = 0;
+};
+
+var suite = new Benchmark.Suite;
+
+// add tests
+suite.add('[soma-template] render text node', function() {
+	tpl.scope.content.path.value = "new content" + count++;
+	tpl.scope.items = [{name:'john'+count++}, {name:'david'+count++}, {name:'mike'+count++}];
+	tpl.render();
+})
+//.add('[soma-template] render unchanged text node', function() {
+//	tpl.scope.content.path.value = "new content" + count;
+//	tpl.scope.items = [{name:'john'+count}, {name:'david'+count}, {name:'mike'+count}];
+//	tpl.render();
+//})
+// add listeners
+.on('cycle', function(event) {
+	report.innerHTML += String(event.target) + '<br/>'
+})
+.on('complete', function() {
+	report.innerHTML += 'Fastest is ' + this.filter('fastest').pluck('name') + '<br/>'
+})
+// run async
+//.run({ 'async': true });
+
+</script>
+
+</body>
+</html>

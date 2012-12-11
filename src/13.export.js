@@ -34,7 +34,6 @@ function createTemplate(source, target) {
 }
 
 function getTemplate(element) {
-	if (!isElement(element)) return null;
 	return templates.get(element);
 }
 

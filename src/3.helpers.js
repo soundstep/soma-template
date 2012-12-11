@@ -43,9 +43,7 @@ function isExpFunction(value) {
 	return !!value.match(regex.func);
 }
 function childNodeIsTemplate(node) {
-	if (!node || !isElement(node.element)) return false;
-	if (node.parent && templates.get(node.element)) return true;
-	return false;
+	return node && node.parent && templates.get(node.element);
 }
 function escapeRegExp(str) {
 	return str.replace(regex.escape, "\\$&");
@@ -125,10 +123,14 @@ var contains = document.documentElement.contains ?
 			}
 			return false;
 		};
-function HashMap(){
-	var uuid = function(a,b){for(b=a='';a++<36;b+=a*51&52?(a^15?8^Math.random()*(a^20?16:4):4).toString(16):'-');return b;}
-	var data = {};
-	var getKey = function(target) {
+
+
+function HashMap() {
+	var items = {};
+	var id = 1;
+	//var uuid = function(a,b){for(b=a='';a++<36;b+=a*51&52?(a^15?8^Math.random()*(a^20?16:4):4).toString(16):'-');return b;}
+	function uuid() { return ++id; };
+	function getKey(target) {
 		if (!target) return;
 		if (typeof target !== 'object') return target;
 		var result;
@@ -138,24 +140,25 @@ function HashMap(){
 		} catch(err){};
 		return result;
 	}
-	return {
-		put: function(key, value) {
-			data[getKey(key)] = value;
-		},
-		get: function(key) {
-			return data[getKey(key)];
-		},
-		remove: function(key) {
-			delete data[getKey(key)];
-		},
-		getData: function() {
-			return data;
-		},
-		dispose: function() {
-			for (var k in data) {
-				data[k] = null;
-				delete data[k];
-			}
+	this.remove = function(key) {
+		delete items[getKey(key)];
+	}
+	this.get = function(key) {
+		return items[getKey(key)];
+	}
+	this.put = function(key, value) {
+		items[getKey(key)] = value;
+	}
+	this.has = function(key) {
+		return typeof items[getKey(key)] !== 'undefined';
+	}
+	this.getData = function() {
+		return items;
+	}
+	this.dispose = function() {
+		for (var key in items) {
+			delete items[key];
 		}
+		this.length = 0;
 	}
 }

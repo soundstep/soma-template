@@ -31,20 +31,17 @@ Node.prototype = {
 		this.clearEvents();
 		var i, l;
 		if (this.children) {
-			i = -1; l = this.children.length;
-			while (++i < l) {
+			for (i = 0, l = this.children.length; i < l; i++) {
 				this.children[i].dispose();
 			}
 		}
 		if (this.childrenRepeater) {
-			i = 0; l = this.childrenRepeater.length;
-			while (++i < l) {
+			for (i = 0, l = this.childrenRepeater.length; i < l; i++) {
 				this.childrenRepeater[i].dispose();
 			}
 		}
 		if (this.attributes) {
-			i = 0; l = this.attributes.length;
-			while (++i < l) {
+			for (i = 0, l = this.attributes.length; i < l; i++) {
 				this.attributes[i].dispose();
 			}
 		}
@@ -70,15 +67,13 @@ Node.prototype = {
 		var node;
 		if (element === this.element) return this;
 		else if (this.childrenRepeater.length > 0) {
-			var k = -1, kl = this.childrenRepeater.length;
-			while (++k < kl) {
+			for (var k = 0, kl = this.childrenRepeater.length; k < kl; k++) {
 				node = this.childrenRepeater[k].getNode(element);
 				if (node) return node;
 			}
 		}
 		else {
-			var i = -1, l = this.children.length;
-			while (++i < l) {
+			for (var i = 0, l = this.children.length; i < l; i++) {
 				node = this.children[i].getNode(element);
 				if (node) return node;
 			}
@@ -87,8 +82,7 @@ Node.prototype = {
 	},
 	getAttribute: function(name) {
 		if (this.attributes) {
-			var i = -1, l = this.attributes.length;
-			while (++i < l) {
+			for (var i = 0, l = this.attributes.length; i < l; i++) {
 				var att = this.attributes[i];
 				if (att.interpolationName && att.interpolationName.value === name) {
 					return att;
@@ -102,8 +96,7 @@ Node.prototype = {
 			this.interpolation.update();
 		}
 		if (isDefined(this.attributes)) {
-			var i = -1, l = this.attributes.length;
-			while (++i < l) {
+			for (var i = 0, l = this.attributes.length; i < l; i++) {
 				this.attributes[i].update();
 			}
 		}
@@ -114,20 +107,14 @@ Node.prototype = {
 		this.invalidate = true;
 		var i, l;
 		if (this.attributes) {
-			i = -1
-			l = this.attributes.length;
-			while (++i < l) {
+			for (i = 0, l = this.attributes.length; i < l; i++) {
 				this.attributes[i].invalidate = true;
 			}
 		}
-		i = -1;
-		l = this.childrenRepeater.length;
-		while (++i < l) {
+		for (i = 0, l = this.childrenRepeater.length; i < l; i++) {
 			this.childrenRepeater[i].invalidateData();
 		}
-		i = -1;
-		l = this.children.length;
-		while (++i < l) {
+		for (i = 0, l = this.children.length; i < l; i++) {
 			this.children[i].invalidateData();
 		}
 	},
@@ -161,14 +148,12 @@ Node.prototype = {
 			}
 		}
 		if (this.children) {
-			var k = -1, kl = this.children.length;
-			while (++k < kl) {
+			for (var k = 0, kl = this.children.length; k < kl; k++) {
 				this.children[k].clearEvents();
 			}
 		}
 		if (this.childrenRepeater) {
-			var f = -1, fl = this.childrenRepeater.length;
-			while (++f < fl) {
+			for (var f = 0, fl = this.childrenRepeater.length; f < fl; f++) {
 				this.childrenRepeater[f].clearEvents();
 			}
 		}
@@ -182,8 +167,7 @@ Node.prototype = {
 			}
 		}
 		if (this.attributes) {
-			var i = -1, l = this.attributes.length;
-			while (++i < l) {
+			for (var i = 0, l = this.attributes.length; i < l; i++) {
 				this.attributes[i].render();
 			}
 		}

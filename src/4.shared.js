@@ -52,8 +52,7 @@ function getValue(scope, pattern, pathString, params, getFunction, getParams, pa
 	// find params
 	var paramsValues = [];
 	if (!paramsFound && params) {
-		var j = -1, jl = params.length;
-		while (++j < jl) {
+		for (var j = 0, jl = params.length; j < jl; j++) {
 			paramsValues.push(getValueFromPattern(scope, params[j]));
 		}
 	}
@@ -69,8 +68,7 @@ function getValue(scope, pattern, pathString, params, getFunction, getParams, pa
 	var path = scopeTarget;
 	var pathParts = pathString.split(/\.|\[|\]/g);
 	if (pathParts.length > 0) {
-		var i = -1, l = pathParts.length;
-		while (++i < l) {
+		for (var i = 0, l = pathParts.length; i < l; i++) {
 			if (pathParts[i] !== "") {
 				path = path[pathParts[i]];
 			}
@@ -147,8 +145,7 @@ function getNodeFromElement(element, scope, isRepeaterDescendant) {
 		}
 	}
 	node.attributes = attributes;
-	var i = -1, l = eventsArray.length;
-	while (++i < l) {
+	for (var i = 0, l = eventsArray.length; i < l; i++) {
 		node.addEvent(eventsArray[i].name, eventsArray[i].value);
 	}
 	return node;
@@ -221,17 +218,15 @@ function clearScope(scope) {
 }
 
 function updateNodeChildren(node) {
-	if (childNodeIsTemplate(node) || node.repeater || !node.children) return;
-	var i = -1, l = node.children.length;
-	while (++i < l) {
+	if (node.repeater || !node.children || childNodeIsTemplate(node)) return;
+	for (var i = 0, l = node.children.length; i < l; i++) {
 		node.children[i].update();
 	}
 }
 
 function renderNodeChildren(node) {
-	if (childNodeIsTemplate(node) || !node.children) return;
-	var i = -1, l = node.children.length;
-	while (++i < l) {
+	if (!node.children || childNodeIsTemplate(node)) return;
+	for (var i = 0, l = node.children.length; i < l; i++) {
 		node.children[i].render();
 	}
 }
@@ -241,11 +236,7 @@ function renderNodeRepeater(node) {
 	var previousElement;
 	if (isArray(data)) {
 		// process array
-		var i = -1;
-		var l1 = data.length;
-		var l2 = node.childrenRepeater.length;
-		var l = l1 > l2 ? l1 : l2;
-		while (++i < l) {
+		for (var i = 0, l1 = data.length, l2 = node.childrenRepeater.length, l = l1 > l2 ? l1 : l2; i < l; i++) {
 			if (i < l1) {
 				previousElement = createRepeaterChild(node, i, data[i], vars.index, i, previousElement);
 			}
@@ -280,9 +271,8 @@ function renderNodeRepeater(node) {
 function cloneRepeaterNode(element, node) {
 	var newNode = new Node(element, node.scope._createChild());
 	if (node.attributes) {
-		var i = -1, l = node.attributes.length;
 		var attrs = [];
-		while (++i < l) {
+		for (var i = 0, l = node.attributes.length; i < l; i++) {
 			if (node.attributes[i].name === settings.attributes.skip) {
 				newNode.skip = (node.attributes[i].value === "" || node.attributes[i].value === "true");
 			}
@@ -294,7 +284,6 @@ function cloneRepeaterNode(element, node) {
 				newNode.addEvent(events[node.attributes[i].name], node.attributes[i].value);
 			}
 		}
-		//newNode.isRepeaterDescendant = true;
 		newNode.attributes = attrs;
 	}
 	return newNode;

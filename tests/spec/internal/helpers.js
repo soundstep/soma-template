@@ -95,14 +95,14 @@ describe("internal - helpers", function () {
 		expect(isExpFunction()).toBeFalsy();
 	});
 
-	it("is node template", function () {
-		var div = doc.createElement('div');
-		ct.appendChild(div);
-		tpl.compile();
-		var t1 = soma.template.create(div);
-		expect(childNodeIsTemplate(tpl.node)).toBeFalsy();
-		expect(childNodeIsTemplate(tpl.node.children[0])).toBeTruthy();
-	});
+//	it("is node template", function () {
+//		var div = doc.createElement('div');
+//		ct.appendChild(div);
+//		tpl.compile();
+//		var t1 = soma.template.create(div);
+//		expect(childNodeIsTemplate(tpl.node)).toBeFalsy();
+//		expect(childNodeIsTemplate(tpl.node.children[0])).toBeTruthy();
+//	});
 
 	it("escape reg exp", function () {
 		var str = "\ ^ $ * + ? . ( ) | { } [ ]";
@@ -271,6 +271,27 @@ describe("internal - helpers", function () {
 		expect(map.get(obj)).toBeUndefined();
 		expect(map.get(arr)).toBeUndefined();
 		expect(map.get(ct)).toBeUndefined();
+	});
+
+	it("hash data", function() {
+		var map = new HashMap();
+		var obj = {};
+		var arr = [];
+		map.put(1, 'string');
+		map.put('str', 'string');
+		map.put(obj, 'string');
+		map.put(arr, 'string');
+		map.put(ct, 'string');
+		var data = map.getData();
+		var clone = {};
+		var count = 0;
+		for (var k in data) {
+			expect(typeof k).toEqual('string');
+			clone[k] = data[k];
+			count++;
+		}
+		expect(clone).toEqual(data);
+		expect(count).toEqual(5);
 	});
 
 	it("hash data", function() {
