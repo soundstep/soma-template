@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>soma-template node.js demo</title>
+	<link rel="stylesheet" type="text/css" href="/styles/main.css" media="all">
+</head>
+<body>
+
+<div class="content">
+	<h1>Hello {{name}}</h1>
+	<ul>
+		<li data-repeat="link in links"><a data-href="{{link.url}}">{{link.name}}</a></li>
+	</ul>
+</div>
+
+<div class="footer">
+	<div>Made with <a href="http://soundstep.github.com/soma-template/">soma-template</a></div>
+	<div>Using <a href="http://nodejs.org/" target="_blank">node.js</a>, <a href="http://expressjs.com/" target="_blank">express.js</a> and <a href="https://github.com/tmpvar/jsdom" target="_blank">jsdom</a></div>
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+body {
+	font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	line-height: 1.4em;
+	background: #eaeaea;
+	color: #4d4d4d;
+	width: 550px;
+	-webkit-font-smoothing: antialiased;
+	-moz-font-smoothing: antialiased;
+	-ms-font-smoothing: antialiased;
+	-o-font-smoothing: antialiased;
+	font-smoothing: antialiased;
+	padding: 20px;
+}
+.content a {
+	color: #444;
+	font-weight: bold;
+	text-decoration: none;
+}
+.footer {
+	color: #777;
+	font-size: 13px;
+}
+.footer a {
+	color: #666;
+}
