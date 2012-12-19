@@ -14,7 +14,7 @@
 </div>
 
 <div class="footer">
-	<div>Made with <a href="http://soundstep.github.com/soma-template/">soma-template</a></div>
+	<div>Made with <a href="http://soundstep.github.com/soma-template/">soma-template</a> (<a href="https://github.com/soundstep/soma-template/tree/master/demos/nodejs" target="_blank">link to the code</a>)</div>
 	<div>Using <a href="http://nodejs.org/" target="_blank">node.js</a>, <a href="http://expressjs.com/" target="_blank">express.js</a> and <a href="https://github.com/tmpvar/jsdom" target="_blank">jsdom</a></div>
 </div>
 
@@ -22,55 +22,55 @@
 <!-- code example --------------------->
 
 <div class="hlcode">
-	<div class="syntax"><pre>  <span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">),</span>
-    <span class="nx">jsdom</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;jsdom&#39;</span><span class="p">).</span><span class="nx">jsdom</span><span class="p">,</span>
-    <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">),</span>
-    <span class="nx">template</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;soma-template&#39;</span><span class="p">);</span>
+	<div class="syntax"><pre><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">),</span>
+  <span class="nx">jsdom</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;jsdom&#39;</span><span class="p">).</span><span class="nx">jsdom</span><span class="p">,</span>
+  <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">),</span>
+  <span class="nx">template</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;soma-template&#39;</span><span class="p">);</span>
 
-  <span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">();</span>
 
-  <span class="nx">app</span><span class="p">.</span><span class="nx">configure</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">express</span><span class="p">.</span><span class="nx">logger</span><span class="p">(</span><span class="s1">&#39;dev&#39;</span><span class="p">));</span>
-    <span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">express</span><span class="p">.</span><span class="nx">cookieParser</span><span class="p">());</span>
-    <span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">express</span><span class="p">.</span><span class="nx">bodyParser</span><span class="p">());</span>
-    <span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">express</span><span class="p">.</span><span class="nx">favicon</span><span class="p">());</span>
-    <span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s2">&quot;/styles&quot;</span><span class="p">,</span> <span class="nx">express</span><span class="p">.</span><span class="kr">static</span><span class="p">(</span><span class="nx">__dirname</span> <span class="o">+</span> <span class="s1">&#39;/static/styles&#39;</span><span class="p">));</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">configure</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">express</span><span class="p">.</span><span class="nx">logger</span><span class="p">(</span><span class="s1">&#39;dev&#39;</span><span class="p">));</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">express</span><span class="p">.</span><span class="nx">cookieParser</span><span class="p">());</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">express</span><span class="p">.</span><span class="nx">bodyParser</span><span class="p">());</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">express</span><span class="p">.</span><span class="nx">favicon</span><span class="p">());</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s2">&quot;/styles&quot;</span><span class="p">,</span> <span class="nx">express</span><span class="p">.</span><span class="kr">static</span><span class="p">(</span><span class="nx">__dirname</span> <span class="o">+</span> <span class="s1">&#39;/static/styles&#39;</span><span class="p">));</span>
+<span class="p">});</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/Node.js&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/:path&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">getTemplate</span><span class="p">(</span><span class="nx">__dirname</span> <span class="o">+</span> <span class="s1">&#39;/views/index.html&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">tpl</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">tpl</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">path</span><span class="p">;</span>
+    <span class="nx">tpl</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">links</span> <span class="o">=</span> <span class="nx">getLinks</span><span class="p">();</span>
+    <span class="nx">tpl</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">);</span>
   <span class="p">});</span>
+<span class="p">});</span>
 
-  <span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/Node.js&#39;</span><span class="p">);</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Listening on port 3000&#39;</span><span class="p">);</span>
+
+<span class="kd">function</span> <span class="nx">getTemplate</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="s1">&#39;utf8&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="nx">callback</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+    <span class="k">else</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nb">document</span> <span class="o">=</span> <span class="nx">jsdom</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+      <span class="nx">callback</span><span class="p">(</span><span class="kc">undefined</span><span class="p">,</span> <span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">),</span> <span class="nb">document</span><span class="p">);</span>
+    <span class="p">}</span>
   <span class="p">});</span>
+<span class="p">}</span>
 
-  <span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/:path&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">getTemplate</span><span class="p">(</span><span class="nx">__dirname</span> <span class="o">+</span> <span class="s1">&#39;/views/index.html&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">tpl</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">tpl</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">path</span><span class="p">;</span>
-        <span class="nx">tpl</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">links</span> <span class="o">=</span> <span class="nx">getLinks</span><span class="p">();</span>
-        <span class="nx">tpl</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
-        <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">);</span>
-    <span class="p">});</span>
-  <span class="p">});</span>
-
-  <span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">);</span>
-  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Listening on port 3000&#39;</span><span class="p">);</span>
-
-  <span class="kd">function</span> <span class="nx">getTemplate</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="s1">&#39;utf8&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="nx">callback</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">);</span>
-        <span class="k">else</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nb">document</span> <span class="o">=</span> <span class="nx">jsdom</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-            <span class="nx">callback</span><span class="p">(</span><span class="kc">undefined</span><span class="p">,</span> <span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">),</span> <span class="nb">document</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
-
-  <span class="kd">function</span> <span class="nx">getLinks</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">[</span>
-        <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Click here&#39;</span><span class="p">,</span> <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;/click-here&#39;</span> <span class="p">},</span>
-        <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Try another&#39;</span><span class="p">,</span> <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;/try-another&#39;</span> <span class="p">},</span>
-        <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;And the last link&#39;</span><span class="p">,</span> <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;/and-the-last-link&#39;</span> <span class="p">},</span>
-        <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Send me home&#39;</span><span class="p">,</span> <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;/&#39;</span> <span class="p">}</span>
-    <span class="p">]</span>
-  <span class="p">}</span>
+<span class="kd">function</span> <span class="nx">getLinks</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">[</span>
+    <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Click here&#39;</span><span class="p">,</span> <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;/click-here&#39;</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Try another&#39;</span><span class="p">,</span> <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;/try-another&#39;</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;And the last link&#39;</span><span class="p">,</span> <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;/and-the-last-link&#39;</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Send me home&#39;</span><span class="p">,</span> <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;/&#39;</span> <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 

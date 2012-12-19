@@ -31,7 +31,7 @@ console.log('Listening on port 3000');
 
 function getTemplate(path, callback) {
 	fs.readFile(path, 'utf8', function (err, data) {
-		if (err) callback(err, undefined);
+		if (err) callback(err);
 		else {
 			var document = jsdom(data);
 			callback(undefined, template.create(document.body), document);
