@@ -1,4 +1,5 @@
 var ie = (function(){
+	if (typeof document !== 'object') return undefined;
 	var undef,
 		v = 3,
 		div = document.createElement('div'),
@@ -105,7 +106,7 @@ function removeClass(elm, className) {
 	removeClass(elm, className);
 }
 // jquery contains
-var contains = document.documentElement.contains ?
+var contains = typeof document !== 'object' ? function(){} : document.documentElement.contains ?
 	function( a, b ) {
 		var adown = a.nodeType === 9 ? a.documentElement : a,
 			bup = b && b.parentNode;
