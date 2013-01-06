@@ -85,6 +85,16 @@
 				    greet: ['Hello', 'world']
 			    }
 		    ],
+		    'data-html': [
+			    {
+				    'firstLine': 'first line<br/>',
+				    'secondLine': 'second line'
+			    },
+			    {
+				    'firstLine': 'another first line<br/>',
+				    'secondLine': 'and another second line'
+			    }
+		    ],
 		    'data-repeat-array': [
 			    {
 				    'greet': 'Hello',

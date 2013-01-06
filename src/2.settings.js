@@ -1,5 +1,5 @@
 soma.template = soma.template || {};
-soma.template.version = "0.1.4";
+soma.template.version = "0.1.5";
 
 var errors = soma.template.errors = {
 	TEMPLATE_STRING_NO_ELEMENT: "Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create('string', element)",
@@ -45,7 +45,8 @@ var attributes = settings.attributes = {
 	multiple: "data-multiple",
 	readonly: "data-readonly",
 	selected: "data-selected",
-	template: "data-template"
+	template: "data-template",
+	html: "data-html"
 };
 
 var vars = settings.vars = {

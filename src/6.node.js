@@ -16,10 +16,11 @@ var Node = function(element, scope) {
 	this.nextSibling = null;
 	this.template = null;
 	this.eventHandlers = {};
+	this.html = false;
 
 	if (isTextNode(this.element)) {
 		this.value = this.element.nodeValue;
-		this.interpolation = new Interpolation(this.value, this);
+		this.interpolation = new Interpolation(this.value, this, undefined);
 	}
 
 };
@@ -163,7 +164,12 @@ Node.prototype = {
 		if (this.invalidate) {
 			this.invalidate = false;
 			if (isTextNode(this.element)) {
-				this.value = this.element.nodeValue = this.interpolation.render();
+				if (this.parent && this.parent.html) {
+					this.value = this.parent.element.innerHTML = this.interpolation.render();
+				}
+				else {
+					this.value = this.element.nodeValue = this.interpolation.render();
+				}
 			}
 		}
 		if (this.attributes) {
