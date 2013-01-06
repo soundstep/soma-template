@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src="../../build/soma-template.js"></script>
+</head>
+<style type="text/css">
+	html {
+		font-family: Helvetica, Arial, sans-serif;
+		font-size: 12px;
+	}
+	#ct {
+		background: #a6b779;
+		margin: 0 0 10px 0;
+		padding: 5px 5px 0px 5px;
+	}
+	.content > div > div {
+		background: gold;
+		float: left;
+		width: 120px;
+		height: 40px;
+		margin: 0px 5px 5px 0px;
+		padding: 5px;
+	}
+	.content > div > div::selection {
+		background-color: transparent;
+	}
+	.content > div > div.selection-enabled::selection {
+		background-color: initial;
+	}
+	.content > div > div > input {
+		width: 115px;
+	}
+	#output {
+		background: #dcdcdc;
+		height: 200px;
+		overflow: auto;
+		padding: 5px;
+	}
+	#imgError, #imgLoading, #imgUnloading {
+		display: none;
+	}
+	.scroll {
+		overflow: auto;
+	}
+	.grey {
+		color: #777777;
+	}
+	.drag-pointer:hover {
+		cursor: move;
+	}
+	.resizable {
+		background: rgba(255, 0, 0, 0.2);
+		overflow: auto;
+		resize: both;
+		width: 160px;
+		height: 120px;
+	}
+	.cf:before,
+	.cf:after {
+		content: " "; /* 1 */
+		display: table; /* 2 */
+	}
+	.cf:after {
+		clear: both;
+	}
+	.cf {
+		*zoom: 1;
+	}
+</style>
+<body>
+
+<div id="ct" class="content">
+	<div class="cf">
+		<div data-click="handler()">click</div>
+		<div data-dblclick="handler()">double click</div>
+		<div data-mousedown="handler()">mouse down</div>
+		<div data-mouseup="handler()">mouse up</div>
+		<div data-mouseover="handler()">mouse over</div>
+		<div data-mouseout="handler()">mouse out</div>
+		<div data-mousemove="handler()">mouse move</div>
+		<div data-mouseenter="handler()">mouse enter</div>
+		<div data-mouseleave="handler()">mouse leave</div>
+		<div data-mousewheel="handler()">mouse wheel</div>
+		<div data-selectstart="handler()" class="selection-enabled">select start (text selection)</div>
+		<div data-scroll="handler()" class="scroll">scroll scroll scroll scroll scroll scroll scroll scroll scroll scroll scroll</div>
+		<div data-contextmenu="handler()">context menu (right click)</div>
+		<div data-dragenter="handler()" draggable="true" class="drag-pointer">drag enter</div>
+		<div data-dragleave="handler()" draggable="true" class="drag-pointer">drag leave</div>
+		<div data-drag="handler()" draggable="true" class="drag-pointer">drag</div>
+		<div data-dragenter="handler()" draggable="true" class="drag-pointer">drag start</div>
+		<div data-dragend="handler()" draggable="true" class="drag-pointer">drag end</div>
+		<div data-dragover="handler()" draggable="true" class="drag-pointer">drag over</div>
+		<div data-draggesture="handler()" draggable="true" class="drag-pointer">drag gesture</div>
+		<div data-drop="handler()" id="drop">drop</div>
+		<div><input data-keydown="handler()" type="text" value="keydown"></div>
+		<div><input data-keyup="handler()" type="text" value="keyup"></div>
+		<div><input data-keypress="handler()" type="text" value="keypress"></div>
+		<div><input data-focus="handler()" type="text" value="focus"></div>
+		<div><input data-blur="handler()" type="text" value="blur"></div>
+		<div><input data-change="handler()" type="checkbox" value="change"></div>
+		<div><input data-select="handler()" type="text" value="select"></div>
+		<div><input data-copy="handler()" type="text" value="copy"></div>
+		<div><input data-cut="handler()" type="text" value="cut"></div>
+		<div><input data-paste="handler()" type="text" value="paste"></div>
+		<div><input data-beforecopy="handler()" type="text" value="beforecopy"></div>
+		<div><input data-beforecut="handler()" type="text" value="beforecut"></div>
+		<div><input data-input="handler()" type="text" value="input"></div>
+		<div><input data-textinput="handler()" type="text" value="textinput"></div>
+		<div><input data-search="handler()" type="search"></div>
+		<div><button data-click="insertImage()">make error</button><img id="imgError" data-error="handler()"></div>
+		<div><button data-click="loadImage()">make loading</button><img id="imgLoading" data-load="handler()"></div>
+		<div><form data-submit="handler()" action="#"><input type="submit"></form></div>
+		<div><form data-reset="handler()"><input type="reset"></form></div>
+	</div>
+	<div class="clear"></div>
+</div>
+
+<div id="output"></div>
+
+<script type="text/javascript">
+
+	var template = soma.template.create(document.getElementById('ct'));
+	// without creating a template, you can also use:
+	// soma.template.parseEvents(document, objectThatContainsHandlers);
+	template.scope.handler = function() {
+		output.innerHTML = new Date().getTime() + ": " + "<strong>[" + event.type + "]</strong> <span class=grey>" + escapeHTML(getHTML(event.currentTarget, 1)) + '</span><br/>' + output.innerHTML;
+	}
+	template.scope.insertImage = function(event) {
+		document.getElementById('imgError').setAttribute('src', 'non-existing.jpg');
+	}
+	template.scope.loadImage = function(event) {
+		document.getElementById('imgLoading').setAttribute('src', 'images/img.jpg?z='+new Date().getTime());
+	}
+
+	// cancel the drag over event on chrome and safari to allow the drop
+	var drop = document.getElementById('drop');
+	if (drop.addEventListener){
+		drop.addEventListener('dragover', function(event) {
+			if (event.preventDefault) {
+				event.preventDefault ();
+			}
+		});
+	}
+	var output = document.getElementById('output');
+
+	function escapeHTML(value) {
+		return value.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+	}
+	function getHTML(who, deep){
+		if(!who || !who.tagName) return '';
+		var txt, ax, el= document.createElement("div");
+		el.appendChild(who.cloneNode(false));
+		txt = el.innerHTML;
+		if(deep){
+			ax= txt.indexOf('>')+1;
+			txt= txt.substring(0, ax)+who.innerHTML+ txt.substring(ax);
+		}
+		el= null;
+		return txt;
+	}
+
+
+</script>
+
+<script type="text/javascript">
+
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-36294101-1']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+
+</script>
+
+</body>
+</html>

@@ -34,6 +34,15 @@ describe("api - rendering", function () {
 		expect(ct.innerHTML).toEqual('my name is david and my age is 22');
 	});
 
+//	it("html", function () {
+//		ct.innerHTML = "{{myHtml}}";
+//		tpl.compile();
+//		//tpl.getNode(ct).renderAsHtml = true;
+//		tpl.scope.myHtml = 'first<br>second';
+//		tpl.render();
+//		expect(ct.innerHTML).toEqual('first<br>second');
+//	});
+
 	it("attribute name", function () {
 		ct.innerHTML = '<p {{name}}="value"></p>';
 		tpl.compile();

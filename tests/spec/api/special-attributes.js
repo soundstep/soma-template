@@ -470,6 +470,58 @@ describe("api - special attributes", function () {
 
 	});
 
+	it("data-html", function () {
+		ct.innerHTML = "<p data-html>{{myHtml}}</p>";
+		tpl.compile();
+		tpl.scope.myHtml = 'first<br>second';
+		tpl.render();
+		expect(ct.firstChild.innerHTML.toLowerCase()).toEqual('first<br>second');
+	});
+
+	it("data-html true", function () {
+		ct.innerHTML = '<p data-html="true">{{myHtml}}</p>';
+		tpl.compile();
+		tpl.scope.myHtml = 'first<br>second';
+		tpl.render();
+		expect(ct.firstChild.innerHTML.toLowerCase()).toEqual('first<br>second');
+	});
+
+	it("data-html false", function () {
+		ct.innerHTML = '<p data-html="false">{{myHtml}}</p>';
+		tpl.compile();
+		tpl.scope.myHtml = 'first<br>second';
+		tpl.render();
+		expect(ct.firstChild.innerHTML.toLowerCase()).toEqual('first&lt;br&gt;second');
+	});
+
+	it("data-html with data-repeat", function () {
+		ct.innerHTML = '<div data-repeat="item in items" data-html>{{item}}</div>';
+		tpl.compile();
+		tpl.scope.items = [
+			'first<br>one',
+			'<span>second<br>two</span>',
+			'third<br>three'
+		];
+		tpl.render();
+		expect(ct.childNodes[0].innerHTML.toLowerCase()).toEqual(tpl.scope.items[0]);
+		expect(ct.childNodes[1].innerHTML.toLowerCase()).toEqual(tpl.scope.items[1]);
+		expect(ct.childNodes[2].innerHTML.toLowerCase()).toEqual(tpl.scope.items[2]);
+	});
+
+	it("data-html with data-repeat deep", function () {
+		ct.innerHTML = '<div data-repeat="item in items"><p data-html>{{item}}</p></div>';
+		tpl.compile();
+		tpl.scope.items = [
+			'first<br>one',
+			'<span>second<br>two</span>',
+			'third<br>three'
+		];
+		tpl.render();
+		expect(ct.childNodes[0].firstChild.innerHTML.toLowerCase()).toEqual(tpl.scope.items[0]);
+		expect(ct.childNodes[1].firstChild.innerHTML.toLowerCase()).toEqual(tpl.scope.items[1]);
+		expect(ct.childNodes[2].firstChild.innerHTML.toLowerCase()).toEqual(tpl.scope.items[2]);
+	});
+
 
 
 });

@@ -119,6 +119,17 @@
 	</div>
 </div>
 
+<div data-id="data-html" class="container bs-docs-example">
+	<div class="title">render html</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<!--<div class="label label-info">Result</div>-->
+	<div class="tpl">
+		<div data-html="true">{{firstLine}}{{secondLine}}</div>
+</div>
+</div>
+
 <div data-id="watch-token" class="container-watch-token bs-docs-example">
 	<div class="title">Watch token</div>
 	<div><pre class="tpl-print prettyprint"></pre></div>
@@ -135,6 +146,22 @@
 	<div><pre class="js-print prettyprint"></pre></div>
 	<div class="buttons"></div>
 	<div class="tpl"><p id="elementToWatch">Watch my name: {{name}}</p></div>
+</div>
+
+<div data-id="data-click" class="container bs-docs-example">
+	<div class="title">Click event</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl"><button type="text" data-click="clickMe(label)">{{label}}</button></div>
+</div>
+
+<div data-id="data-mouseover" class="container bs-docs-example">
+	<div class="title">Mouse event</div>
+	<div><pre class="tpl-print prettyprint"></pre></div>
+	<div><pre class="data-print prettyprint"></pre></div>
+	<div class="buttons"></div>
+	<div class="tpl"><div class="mo" data-mouseover="rollOverMe(label)" data-mouseout="out()">Roll over me</div></div>
 </div>
 
 <div data-id="data-skip" class="container bs-docs-example">

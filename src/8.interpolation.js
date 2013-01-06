@@ -6,8 +6,7 @@ var Interpolation = function(value, node, attribute) {
 	this.expressions = [];
 	var parts = this.value.match(regex.sequence);
 	if (parts) {
-		var i = -1, l = parts.length;
-		while (++i < l) {
+		for (var i = 0, l = parts.length; i < l; i++) {
 			if (parts[i].match(regex.token)) {
 				var exp = new Expression(trimTokens(parts[i]), this.node, this.attribute);
 				this.sequence.push(exp);
@@ -26,8 +25,7 @@ Interpolation.prototype = {
 	},
 	dispose: function() {
 		if (this.expressions) {
-			var i = -1, l = this.expressions.length;
-			while (++i < l) {
+			for (var i = 0, l = this.expressions.length; i < l; i++) {
 				this.expressions[i].dispose();
 			}
 		}
@@ -46,8 +44,7 @@ Interpolation.prototype = {
 	render: function() {
 		var rendered = "";
 		if (this.sequence) {
-			var i = -1, l = this.sequence.length;
-			while (++i < l) {
+			for (var i = 0, l = this.sequence.length; i < l; i++) {
 				var val = "";
 				if (isExpression(this.sequence[i])) val = this.sequence[i].value;
 				else val = this.sequence[i];

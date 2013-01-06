@@ -2,12 +2,13 @@ from pygments import highlight
 from pygments.lexers import HtmlDjangoLexer
 from pygments.formatters import HtmlFormatter
 
-code = """<div data-template="Template">{{name}}</div>
+code = """<div id="target">
+  <div data-html>{{firstLine}}{{secondLine}}</div>
+</div>
 <script>
-  function Template(template, scope, element, node) {
-    scope.name = "john";
-    template.render();
-  }
+  template.scope.firstLine = 'first line<br/>';
+  template.scope.secondLine = 'second line';
+  template.render();
 </script>
 """
 

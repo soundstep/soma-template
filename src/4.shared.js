@@ -41,10 +41,10 @@ function getScopeFromPattern(scope, pattern) {
 
 function getValueFromPattern(scope, pattern) {
 	var exp = new Expression(pattern);
-	return getValue(scope, exp.pattern, exp.path, exp.params, exp.isFunction);
+	return getValue(scope, exp.pattern, exp.path, exp.params);
 }
 
-function getValue(scope, pattern, pathString, params, paramsFound) {
+function getValue(scope, pattern, pathString, params, getFunction, getParams, paramsFound) {
 	// string
 	if (regex.string.test(pattern)) {
 		return trimQuotes(pattern);
@@ -52,12 +52,12 @@ function getValue(scope, pattern, pathString, params, paramsFound) {
 	// find params
 	var paramsValues = [];
 	if (!paramsFound && params) {
-		var j = -1, jl = params.length;
-		while (++j < jl) {
+		for (var j = 0, jl = params.length; j < jl; j++) {
 			paramsValues.push(getValueFromPattern(scope, params[j]));
 		}
 	}
 	else paramsValues = paramsFound;
+	if (getParams) return paramsValues;
 	// find scope
 	var scopeTarget = getScopeFromPattern(scope, pattern);
 	// remove parent string
@@ -68,14 +68,13 @@ function getValue(scope, pattern, pathString, params, paramsFound) {
 	var path = scopeTarget;
 	var pathParts = pathString.split(/\.|\[|\]/g);
 	if (pathParts.length > 0) {
-		var i = -1, l = pathParts.length;
-		while (++i < l) {
+		for (var i = 0, l = pathParts.length; i < l; i++) {
 			if (pathParts[i] !== "") {
 				path = path[pathParts[i]];
 			}
 			if (!isDefined(path)) {
 				// no path, search in parent
-				if (scopeTarget._parent) return getValue(scopeTarget._parent, pattern, pathString, params, paramsValues);
+				if (scopeTarget._parent) return getValue(scopeTarget._parent, pattern, pathString, params, getFunction, getParams, paramsValues);
 				else return undefined;
 			}
 		}
@@ -85,7 +84,8 @@ function getValue(scope, pattern, pathString, params, paramsFound) {
 		return path;
 	}
 	else {
-		return path.apply(null, paramsValues);
+		if (getFunction) return path;
+		else return path.apply(null, paramsValues);
 	}
 	return undefined;
 }
@@ -111,6 +111,7 @@ function getNodeFromElement(element, scope, isRepeaterDescendant) {
 	node.previousSibling = element.previousSibling;
 	node.nextSibling = element.nextSibling;
 	var attributes = [];
+	var eventsArray = [];
 	for (var attr, name, value, attrs = element.attributes, j = 0, jj = attrs && attrs.length; j < jj; j++) {
 		attr = attrs[j];
 		if (attr.specified) {
@@ -119,12 +120,17 @@ function getNodeFromElement(element, scope, isRepeaterDescendant) {
 			if (name === settings.attributes.skip) {
 				node.skip = (value === "" || value === "true");
 			}
-			if (!isRepeaterDescendant && name === settings.attributes.repeat) {
+			if (name === settings.attributes.html) {
+				node.html = (value === "" || value === "true");
+			}
+			if (name === settings.attributes.repeat && !isRepeaterDescendant) {
 				node.repeater = value;
 			}
 			if (
 				hasInterpolation(name + ':' + value) ||
 					name === settings.attributes.repeat ||
+					name === settings.attributes.skip ||
+					name === settings.attributes.html ||
 					name === settings.attributes.show ||
 					name === settings.attributes.hide ||
 					name === settings.attributes.href ||
@@ -137,9 +143,16 @@ function getNodeFromElement(element, scope, isRepeaterDescendant) {
 				) {
 				attributes.push(new Attribute(name, value, node));
 			}
+			if (events[name] && !isRepeaterDescendant) {
+				eventsArray.push({name:events[name], value:value});
+				attributes.push(new Attribute(name, value, node));
+			}
 		}
 	}
 	node.attributes = attributes;
+	for (var i = 0, l = eventsArray.length; i < l; i++) {
+		node.addEvent(eventsArray[i].name, eventsArray[i].value);
+	}
 	return node;
 }
 
@@ -169,11 +182,14 @@ function compile(template, element, parent, nodeTarget) {
 	// get node
 	var node;
 	if (!nodeTarget) {
-		node = getNodeFromElement(element, parent ? parent.scope : new Scope(helpersScopeObject)._createChild());
+		node = getNodeFromElement(element, parent ? parent.scope : new Scope(helpersScopeObject)._createChild(), parent && (parent.repeater || parent.isRepeaterDescendant) );
 	}
 	else {
 		node = nodeTarget;
 		node.parent = parent;
+	}
+	if (parent && (parent.repeater || parent.isRepeaterDescendant)) {
+		node.isRepeaterDescendant = true;
 	}
 	node.template = template;
 	// children
@@ -207,17 +223,15 @@ function clearScope(scope) {
 }
 
 function updateNodeChildren(node) {
-	if (childNodeIsTemplate(node) || node.repeater || !node.children) return;
-	var i = -1, l = node.children.length;
-	while (++i < l) {
+	if (node.repeater || !node.children || childNodeIsTemplate(node)) return;
+	for (var i = 0, l = node.children.length; i < l; i++) {
 		node.children[i].update();
 	}
 }
 
 function renderNodeChildren(node) {
-	if (childNodeIsTemplate(node) || !node.children) return;
-	var i = -1, l = node.children.length;
-	while (++i < l) {
+	if (!node.children || childNodeIsTemplate(node)) return;
+	for (var i = 0, l = node.children.length; i < l; i++) {
 		node.children[i].render();
 	}
 }
@@ -227,11 +241,7 @@ function renderNodeRepeater(node) {
 	var previousElement;
 	if (isArray(data)) {
 		// process array
-		var i = -1;
-		var l1 = data.length;
-		var l2 = node.childrenRepeater.length;
-		var l = l1 > l2 ? l1 : l2;
-		while (++i < l) {
+		for (var i = 0, l1 = data.length, l2 = node.childrenRepeater.length, l = l1 > l2 ? l1 : l2; i < l; i++) {
 			if (i < l1) {
 				previousElement = createRepeaterChild(node, i, data[i], vars.index, i, previousElement);
 			}
@@ -266,18 +276,23 @@ function renderNodeRepeater(node) {
 function cloneRepeaterNode(element, node) {
 	var newNode = new Node(element, node.scope._createChild());
 	if (node.attributes) {
-		var i = -1, l = node.attributes.length;
 		var attrs = [];
-		while (++i < l) {
+		for (var i = 0, l = node.attributes.length; i < l; i++) {
+			newNode.renderAsHtml = node.renderAsHtml;
 			if (node.attributes[i].name === settings.attributes.skip) {
 				newNode.skip = (node.attributes[i].value === "" || node.attributes[i].value === "true");
+			}
+			if (node.attributes[i].name === settings.attributes.html) {
+				newNode.html = (node.attributes[i].value === "" || node.attributes[i].value === "true");
 			}
 			if (node.attributes[i].name !== attributes.repeat) {
 				var attribute = new Attribute(node.attributes[i].name, node.attributes[i].value, newNode);
 				attrs.push(attribute);
 			}
+			if (events[node.attributes[i].name]) {
+				newNode.addEvent(events[node.attributes[i].name], node.attributes[i].value);
+			}
 		}
-		newNode.isRepeaterDescendant = true;
 		newNode.attributes = attrs;
 	}
 	return newNode;
@@ -291,7 +306,8 @@ function createRepeaterChild(node, count, data, indexVar, indexVarValue, previou
 		// can't recreate the node with a cloned element on IE7
 		// be cause the attributes are not specified annymore (attribute.specified)
 		//var newNode = getNodeFromElement(newElement, node.scope._createChild(), true);
-		var newNode = cloneRepeaterNode(newElement, node)
+		var newNode = cloneRepeaterNode(newElement, node);
+		newNode.isRepeaterChild = true;
 		newNode.parent = node.parent;
 		newNode.template = node.template;
 		node.childrenRepeater[count] = newNode;

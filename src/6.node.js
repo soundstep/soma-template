@@ -8,16 +8,19 @@ var Node = function(element, scope) {
 	this.skip = false;
 	this.repeater = null;
 	this.isRepeaterDescendant = false;
+	this.isRepeaterChild = false;
 	this.parent = null;
 	this.children = [];
 	this.childrenRepeater = [];
 	this.previousSibling = null;
 	this.nextSibling = null;
 	this.template = null;
+	this.eventHandlers = {};
+	this.html = false;
 
 	if (isTextNode(this.element)) {
 		this.value = this.element.nodeValue;
-		this.interpolation = new Interpolation(this.value, this);
+		this.interpolation = new Interpolation(this.value, this, undefined);
 	}
 
 };
@@ -26,22 +29,20 @@ Node.prototype = {
 		return '[object Node]';
 	},
 	dispose: function() {
+		this.clearEvents();
 		var i, l;
 		if (this.children) {
-			i = -1; l = this.children.length;
-			while (++i < l) {
+			for (i = 0, l = this.children.length; i < l; i++) {
 				this.children[i].dispose();
 			}
 		}
 		if (this.childrenRepeater) {
-			i = 0; l = this.childrenRepeater.length;
-			while (++i < l) {
+			for (i = 0, l = this.childrenRepeater.length; i < l; i++) {
 				this.childrenRepeater[i].dispose();
 			}
 		}
 		if (this.attributes) {
-			i = 0; l = this.attributes.length;
-			while (++i < l) {
+			for (i = 0, l = this.attributes.length; i < l; i++) {
 				this.attributes[i].dispose();
 			}
 		}
@@ -61,21 +62,19 @@ Node.prototype = {
 		this.previousSibling = null;
 		this.nextSibling = null;
 		this.template = null;
+		this.eventHandlers = null;
 	},
 	getNode: function(element) {
 		var node;
 		if (element === this.element) return this;
 		else if (this.childrenRepeater.length > 0) {
-			var k = -1, kl = this.childrenRepeater.length;
-			while (++k < kl) {
+			for (var k = 0, kl = this.childrenRepeater.length; k < kl; k++) {
 				node = this.childrenRepeater[k].getNode(element);
-
 				if (node) return node;
 			}
 		}
 		else {
-			var i = -1, l = this.children.length;
-			while (++i < l) {
+			for (var i = 0, l = this.children.length; i < l; i++) {
 				node = this.children[i].getNode(element);
 				if (node) return node;
 			}
@@ -84,8 +83,7 @@ Node.prototype = {
 	},
 	getAttribute: function(name) {
 		if (this.attributes) {
-			var i = -1, l = this.attributes.length;
-			while (++i < l) {
+			for (var i = 0, l = this.attributes.length; i < l; i++) {
 				var att = this.attributes[i];
 				if (att.interpolationName && att.interpolationName.value === name) {
 					return att;
@@ -99,8 +97,7 @@ Node.prototype = {
 			this.interpolation.update();
 		}
 		if (isDefined(this.attributes)) {
-			var i = -1, l = this.attributes.length;
-			while (++i < l) {
+			for (var i = 0, l = this.attributes.length; i < l; i++) {
 				this.attributes[i].update();
 			}
 		}
@@ -111,21 +108,55 @@ Node.prototype = {
 		this.invalidate = true;
 		var i, l;
 		if (this.attributes) {
-			i = -1
-			l = this.attributes.length;
-			while (++i < l) {
+			for (i = 0, l = this.attributes.length; i < l; i++) {
 				this.attributes[i].invalidate = true;
 			}
 		}
-		i = -1;
-		l = this.childrenRepeater.length;
-		while (++i < l) {
+		for (i = 0, l = this.childrenRepeater.length; i < l; i++) {
 			this.childrenRepeater[i].invalidateData();
 		}
-		i = -1;
-		l = this.children.length;
-		while (++i < l) {
+		for (i = 0, l = this.children.length; i < l; i++) {
 			this.children[i].invalidateData();
+		}
+	},
+	addEvent: function(type, pattern) {
+		if (this.repeater) return;
+		if (this.eventHandlers[type]) {
+			this.removeEvent(type);
+		}
+		var scope = this.scope;
+		var handler = function(event) {
+			var exp = new Expression(pattern, this.node);
+			var func = exp.getValue(scope, true);
+			var params = exp.getValue(scope, false, true);
+			params.unshift(event);
+			if (func) {
+				func.apply(null, params);
+			}
+		};
+		this.eventHandlers[type] = handler;
+		addEvent(this.element, type, handler);
+	},
+	removeEvent: function(type) {
+		removeEvent(this.element, type, this.eventHandlers[type]);
+		this.eventHandlers[type] = null;
+		delete this.eventHandlers[type];
+	},
+	clearEvents: function() {
+		if (this.eventHandlers) {
+			for (var key in this.eventHandlers) {
+				this.removeEvent(key, this.eventHandlers[key]);
+			}
+		}
+		if (this.children) {
+			for (var k = 0, kl = this.children.length; k < kl; k++) {
+				this.children[k].clearEvents();
+			}
+		}
+		if (this.childrenRepeater) {
+			for (var f = 0, fl = this.childrenRepeater.length; f < fl; f++) {
+				this.childrenRepeater[f].clearEvents();
+			}
 		}
 	},
 	render: function() {
@@ -133,12 +164,16 @@ Node.prototype = {
 		if (this.invalidate) {
 			this.invalidate = false;
 			if (isTextNode(this.element)) {
-				this.value = this.element.nodeValue = this.interpolation.render();
+				if (this.parent && this.parent.html) {
+					this.value = this.parent.element.innerHTML = this.interpolation.render();
+				}
+				else {
+					this.value = this.element.nodeValue = this.interpolation.render();
+				}
 			}
 		}
 		if (this.attributes) {
-			var i = -1, l = this.attributes.length;
-			while (++i < l) {
+			for (var i = 0, l = this.attributes.length; i < l; i++) {
 				this.attributes[i].render();
 			}
 		}

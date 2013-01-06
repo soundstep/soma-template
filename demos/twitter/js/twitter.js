@@ -1,24 +1,24 @@
 ;(function (ns, template, $, undefined) {
 
-	var Application = function() {
-		var tpl = template.create($('.twitter')[0]);
+	var Twitter = function() {
+
+		var tpl = template.create(document.getElementById('twitter'));
 		var scope = tpl.node.scope;
 		var service = new TwitterService();
 
 		scope.message = "";
-		tpl.render();
-
-		$('.queryInput').keypress(function (event) {
-			if (event.keyCode === 13 && this.value !== "") {
+		scope.search = function(event) {
+			var value = event.currentTarget.value;
+			if (event.which === 13 && value !== "") {
 				scope.message = "searching..."
 				tpl.render();
-				service.search($(this).val(), successHandler);
+				service.search(value, successHandler);
 			}
-		});
-
-		$('.result').on('click', 'li', function() {
-			window.open("http://twitter.com/" + $(this).attr('data-user') + "/statuses/" + $(this).attr('data-id'));
-		});
+		}
+		scope.visit = function(event, user, id) {
+			window.open("http://twitter.com/" + user + "/statuses/" + id);
+		}
+		tpl.render();
 
 		function successHandler(data) {
 			scope.results = data.results;
@@ -51,6 +51,6 @@
 		}
 	};
 
-	var app = new Application();
+	var app = new Twitter();
 
 })(this['ns'] = this['ns'] || {}, soma.template, $);
