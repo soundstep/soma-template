@@ -39,6 +39,11 @@ module.exports = function(grunt) {
 				dest:'build/soma-template-v<%= meta.version %>.min.js'
 			}
 		},
+		uglify:{
+			mangle:{
+				except:["instance", "injector"]
+			}
+		},
 		watch:{
 			scripts:{
 				files:[
