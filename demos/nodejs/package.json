@@ -6,7 +6,7 @@
   "repository": "",
   "author": "",
   "dependencies": {
-	  "soma-template": ">=0.1.4",
+	  "soma-template": ">=0.1.6",
 	  "express": "3.x",
 	  "jsdom": "*"
   }
