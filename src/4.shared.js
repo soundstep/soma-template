@@ -120,12 +120,17 @@ function getNodeFromElement(element, scope, isRepeaterDescendant) {
 			if (name === settings.attributes.skip) {
 				node.skip = (value === "" || value === "true");
 			}
+			if (name === settings.attributes.html) {
+				node.html = (value === "" || value === "true");
+			}
 			if (name === settings.attributes.repeat && !isRepeaterDescendant) {
 				node.repeater = value;
 			}
 			if (
 				hasInterpolation(name + ':' + value) ||
 					name === settings.attributes.repeat ||
+					name === settings.attributes.skip ||
+					name === settings.attributes.html ||
 					name === settings.attributes.show ||
 					name === settings.attributes.hide ||
 					name === settings.attributes.href ||
@@ -273,8 +278,12 @@ function cloneRepeaterNode(element, node) {
 	if (node.attributes) {
 		var attrs = [];
 		for (var i = 0, l = node.attributes.length; i < l; i++) {
+			newNode.renderAsHtml = node.renderAsHtml;
 			if (node.attributes[i].name === settings.attributes.skip) {
 				newNode.skip = (node.attributes[i].value === "" || node.attributes[i].value === "true");
+			}
+			if (node.attributes[i].name === settings.attributes.html) {
+				newNode.html = (node.attributes[i].value === "" || node.attributes[i].value === "true");
 			}
 			if (node.attributes[i].name !== attributes.repeat) {
 				var attribute = new Attribute(node.attributes[i].name, node.attributes[i].value, newNode);
@@ -297,7 +306,7 @@ function createRepeaterChild(node, count, data, indexVar, indexVarValue, previou
 		// can't recreate the node with a cloned element on IE7
 		// be cause the attributes are not specified annymore (attribute.specified)
 		//var newNode = getNodeFromElement(newElement, node.scope._createChild(), true);
-		var newNode = cloneRepeaterNode(newElement, node)
+		var newNode = cloneRepeaterNode(newElement, node);
 		newNode.isRepeaterChild = true;
 		newNode.parent = node.parent;
 		newNode.template = node.template;

@@ -175,6 +175,14 @@
 			value = value.replace(/\n/gm, '<br\>');
 			value = value.replace(/\t/gm, ' ');
 		}
+		if (value.toString().indexOf('<') !== -1) {
+			value = value.toString();
+			value = value.replace(/</gm, '&lt;');
+		}
+		if (value.toString().indexOf('>') !== -1) {
+			value = value.toString();
+			value = value.replace(/>/gm, '&gt;');
+		}
 		return value;
 	}
 
