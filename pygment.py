@@ -2,9 +2,13 @@ from pygments import highlight
 from pygments.lexers import HtmlDjangoLexer
 from pygments.formatters import HtmlFormatter
 
-code = """  <script>
-soma.template.settings.events['custom-click'] = 'click';
-soma.template.settings.events['custom-mouseover'] = 'mouseover';
+code = """<div id="target">
+  <div data-html>{{firstLine}}{{secondLine}}</div>
+</div>
+<script>
+  template.scope.firstLine = 'first line<br/>';
+  template.scope.secondLine = 'second line';
+  template.render();
 </script>
 """
 
