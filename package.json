@@ -1,6 +1,6 @@
 {
 	"name":"soma-template",
-	"version":"0.1.6",
+	"version":"0.1.7",
 	"author":"Romuald Quantin <romu@soundstep.com> (http://www.soundstep.com)",
 	"description":"Seamless DOM-based templates.",
 	"homepage": "http://soundstep.github.com/soma-template/",
