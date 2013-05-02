@@ -1,6 +1,6 @@
 {
 	"name":"soma-template",
-	"version":"0.1.7",
+	"version":"0.1.8",
 	"author":"Romuald Quantin <romu@soundstep.com> (http://www.soundstep.com)",
 	"description":"Seamless DOM-based templates.",
 	"homepage": "http://soundstep.github.com/soma-template/",
@@ -8,6 +8,12 @@
 	"repository": {
 		"type": "git",
 		"url": "http://github.com/soundstep/soma-template.git"
+	},
+	"devDependencies": {
+		"grunt": ">=0.4.x",
+		"grunt-contrib-watch": "*",
+		"grunt-contrib-concat": "*",
+		"grunt-contrib-uglify": "*"
 	},
 	"main": "build/soma-template.js"
 }

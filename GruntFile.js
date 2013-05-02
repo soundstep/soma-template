@@ -1,9 +1,11 @@
 module.exports = function(grunt) {
 
-	grunt.loadNpmTasks('grunt-shell');
+	grunt.loadNpmTasks('grunt-contrib-watch');
+	grunt.loadNpmTasks('grunt-contrib-concat');
+	grunt.loadNpmTasks('grunt-contrib-uglify');
 
 	grunt.initConfig({
-		pkg:'<json:package.json>',
+		pkg: grunt.file.readJSON('package.json'),
 		meta:{
 			version:'<%=pkg.version%>',
 			banner:'/*! soma-template - v<%= meta.version %> - Romuald Quantin - ' +
@@ -33,15 +35,17 @@ module.exports = function(grunt) {
 				dest: 'build/soma-template.js'
 			}
 		},
-		min:{
-			dest:{
-				src:['<banner:meta.banner>', 'build/soma-template.js'],
-				dest:'build/soma-template-v<%= meta.version %>.min.js'
-			}
-		},
-		uglify:{
-			mangle:{
-				except:["instance", "injector"]
+		uglify: {
+			options: {
+				banner: '/*\n<%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>\nhttp://soundstep.github.com/soma-template/\nhttp://www.soundstep.com\nMIT licence <%= grunt.template.today("yyyy")%>\n*/\n',
+				mangle:{
+					except:['instance', 'injector']
+				}
+			},
+			my_target: {
+				files: {
+					'build/soma-template-v<%= meta.version %>.min.js': ['<%= concat.dist.dest %>']
+				}
 			}
 		},
 		watch:{
@@ -50,10 +54,10 @@ module.exports = function(grunt) {
 					'src/*.js',
 					'grunt.js'
 				],
-				tasks:'concat min'
+				tasks: ['concat', 'uglify']
 			}
 		}
 	});
 
-	grunt.registerTask('default', 'concat min');
+	grunt.registerTask('default', ['concat', 'uglify']);
 }

@@ -3,7 +3,7 @@
 	'use strict';
 
 soma.template = soma.template || {};
-soma.template.version = "0.1.7";
+soma.template.version = "0.1.8";
 
 var errors = soma.template.errors = {
 	TEMPLATE_STRING_NO_ELEMENT: "Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create('string', element)",
@@ -1318,7 +1318,7 @@ tokens.end(tokenEnd);
 
 soma.plugins = soma.plugins || {};
 
-function TemplatePlugin(instance, injector) {
+var TemplatePlugin = function(instance, injector) {
 	instance.constructor.prototype.createTemplate = function(cl, domElement) {
 		if (!cl || typeof cl !== "function") {
 			throw new Error("Error creating a template, the first parameter must be a function.");
@@ -1331,7 +1331,7 @@ function TemplatePlugin(instance, injector) {
 				}
 			}
 			cl.prototype.render = template.render.bind(template);
-			var childInjector = this.injector.createChild();
+			var childInjector = injector.createChild();
 			childInjector.mapValue("template", template);
 			childInjector.mapValue("scope", template.scope);
 			childInjector.mapValue("element", template.element);
@@ -1346,6 +1346,8 @@ function TemplatePlugin(instance, injector) {
 if (soma.plugins && soma.plugins.add) {
 	soma.plugins.add(TemplatePlugin);
 }
+
+soma.template.Plugin = TemplatePlugin;
 
 // exports
 soma.template.create = createTemplate;
