@@ -47,4 +47,5 @@ phing
 .idea*
 user.properties*
 node_modules
+components
 
