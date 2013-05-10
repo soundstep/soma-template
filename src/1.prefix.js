@@ -1,3 +1,3 @@
-;(function (soma, undefined) {
+(function (soma) {
 
 	'use strict';
