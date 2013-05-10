@@ -1,10 +1,9 @@
-(function () {
+(function (soma) {
 
 	'use strict';
 
-	var soma = soma || {};
 	soma.template = soma.template || {};
-	soma.template.version = '0.1.9';
+	soma.template.version = '0.1.10';
 
 	soma.template.errors = {
 		TEMPLATE_STRING_NO_ELEMENT: 'Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create(\'string\', element)',
@@ -1494,8 +1493,5 @@
 	if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
 		module.exports = soma;
 	}
-	else {
-		window.soma = soma;
-	}
 
-})();
+})(this['soma'] = this['soma'] || {});

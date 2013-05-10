@@ -122,6 +122,3 @@
 	if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
 		module.exports = soma;
 	}
-	else {
-		window.soma = soma;
-	}
