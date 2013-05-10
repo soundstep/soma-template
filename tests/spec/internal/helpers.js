@@ -74,12 +74,6 @@ describe("internal - helpers", function () {
 		expect(isExpression()).toBeFalsy();
 	});
 
-	it("is node", function () {
-		expect(isNode(new Node())).toBeTruthy();
-		expect(isNode({})).toBeFalsy();
-		expect(isNode()).toBeFalsy();
-	});
-
 	it("is expression function", function () {
 		expect(isExpFunction('func()')).toBeTruthy();
 		expect(isExpFunction('func(p)')).toBeTruthy();
