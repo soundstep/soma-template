@@ -114,13 +114,13 @@
 
 	// register for AMD module
 	if (typeof define === 'function' && typeof define.amd !== 'undefined') {
-		define('soma-template', soma);
+		define('soma-template', soma.template);
 	}
 
 	// export for node.js
 	if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
-		module.exports = soma;
+		module.exports = soma.template;
 	}
 	if (typeof exports !== 'undefined') {
-		exports = soma;
+		exports = soma.template;
 	}
