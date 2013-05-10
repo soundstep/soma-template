@@ -3,7 +3,7 @@
 	'use strict';
 
 	soma.template = soma.template || {};
-	soma.template.version = '0.1.12';
+	soma.template.version = '0.1.13';
 
 	soma.template.errors = {
 		TEMPLATE_STRING_NO_ELEMENT: 'Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create(\'string\', element)',
@@ -1490,15 +1490,15 @@
 
 	// register for AMD module
 	if (typeof define === 'function' && typeof define.amd !== 'undefined') {
-		define('soma-template', soma);
+		define('soma-template', soma.template);
 	}
 
 	// export for node.js
 	if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
-		module.exports = soma;
+		module.exports = soma.template;
 	}
 	if (typeof exports !== 'undefined') {
-		exports = soma;
+		exports = soma.template;
 	}
 
 })(this['soma'] = this['soma'] || {});
