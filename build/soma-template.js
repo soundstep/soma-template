@@ -3,7 +3,7 @@
 	'use strict';
 
 	soma.template = soma.template || {};
-	soma.template.version = '0.1.13';
+	soma.template.version = '0.1.14';
 
 	soma.template.errors = {
 		TEMPLATE_STRING_NO_ELEMENT: 'Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create(\'string\', element)',
@@ -974,11 +974,11 @@
 			}
 			// hide
 			if (this.name === attributes.hide) {
-				element.style.display = isAttributeDefined(this.value) ? 'none' : 'block';
+				element.style.display = isAttributeDefined(this.value) ? 'none' : '';
 			}
 			// show
 			if (this.name === attributes.show) {
-				element.style.display = isAttributeDefined(this.value) ? 'block' : 'none';
+				element.style.display = isAttributeDefined(this.value) ? '' : 'none';
 			}
 			// checked
 			if (this.name === attributes.checked) {
@@ -1008,6 +1008,7 @@
 			}
 		}
 	};
+
 	var Interpolation = function(value, node, attribute) {
 		this.value = node && !isTextNode(node.element) ? trim(value) : value;
 		this.node = node;

@@ -1,6 +1,6 @@
 {
 	"name": "soma-template",
-	"version": "0.1.13",
+	"version": "0.1.14",
 	"main": "./build/soma-template.js",
 	"dependencies": {}
 }

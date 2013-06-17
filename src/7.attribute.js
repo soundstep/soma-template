@@ -94,11 +94,11 @@
 			}
 			// hide
 			if (this.name === attributes.hide) {
-				element.style.display = isAttributeDefined(this.value) ? 'none' : 'block';
+				element.style.display = isAttributeDefined(this.value) ? 'none' : '';
 			}
 			// show
 			if (this.name === attributes.show) {
-				element.style.display = isAttributeDefined(this.value) ? 'block' : 'none';
+				element.style.display = isAttributeDefined(this.value) ? '' : 'none';
 			}
 			// checked
 			if (this.name === attributes.checked) {
