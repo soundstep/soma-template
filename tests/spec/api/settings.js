@@ -111,7 +111,7 @@ describe("api - settings", function () {
 		settings.attributes.show = 'custom-show';
 		var t1 = createTemplateWithContent('<span custom-show="true"></span>');
 		t1.render();
-		expect(t1.element.firstChild.style.display).toEqual('block');
+		expect(t1.element.firstChild.style.display).toEqual('');
 		settings.attributes.show = 'data-show';
 	});
 

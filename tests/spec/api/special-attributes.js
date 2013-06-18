@@ -66,14 +66,14 @@ describe("api - special attributes", function () {
 		ct.innerHTML = '<div data-show></span>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.style.display).toEqual('block');
+		expect(ct.firstChild.style.display).toEqual('');
 	});
 
 	it("data-show true", function () {
 		ct.innerHTML = '<div data-show="true"></span>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.style.display).toEqual('block');
+		expect(ct.firstChild.style.display).toEqual('');
 	});
 
 	it("data-show false", function () {
@@ -101,7 +101,7 @@ describe("api - special attributes", function () {
 		ct.innerHTML = '<div data-hide="false"></span>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.style.display).toEqual('block');
+		expect(ct.firstChild.style.display).toEqual('');
 	});
 
 	it("data-checked no value", function () {
