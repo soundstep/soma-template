@@ -3,7 +3,7 @@
 	'use strict';
 
 	soma.template = soma.template || {};
-	soma.template.version = '0.1.14';
+	soma.template.version = '0.2.0';
 
 	soma.template.errors = {
 		TEMPLATE_STRING_NO_ELEMENT: 'Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create(\'string\', element)',
@@ -119,8 +119,17 @@
 	function isDefined(value) {
 		return value !== null && value !== undefined;
 	}
-	function isAttributeDefined(value) {
-		return (value === '' || value === true || value === 'true' || !isDefined(value));
+	function normalizeBoolean(value) {
+		if (!isDefined(value)) {
+			return false;
+		}
+		if (value === 'true' || value === '1' || value === true || value === 1) {
+			return true;
+		}
+		if (value === 'false' || value === '0' || value === false || value === 0 || (isString(value) && hasInterpolation(value))) {
+			return false;
+		}
+		return !!value;
 	}
 	function isExpression(value) {
 		return value && isFunction(value.toString) && value.toString() === '[object Expression]';
@@ -409,10 +418,10 @@
 				name = attr.name;
 				value = attr.value;
 				if (name === settings.attributes.skip) {
-					node.skip = (value === '' || value === 'true');
+					node.skip = normalizeBoolean(value);
 				}
 				if (name === settings.attributes.html) {
-					node.html = (value === '' || value === 'true');
+					node.html = normalizeBoolean(value);
 				}
 				if (name === settings.attributes.repeat && !isRepeaterDescendant) {
 					node.repeater = value;
@@ -593,10 +602,10 @@
 			for (var i = 0, l = node.attributes.length; i < l; i++) {
 				newNode.renderAsHtml = node.renderAsHtml;
 				if (node.attributes[i].name === settings.attributes.skip) {
-					newNode.skip = (node.attributes[i].value === '' || node.attributes[i].value === 'true');
+					newNode.skip = normalizeBoolean(node.attributes[i].value);
 				}
 				if (node.attributes[i].name === settings.attributes.html) {
-					newNode.html = (node.attributes[i].value === '' || node.attributes[i].value === 'true');
+					newNode.html = normalizeBoolean(node.attributes[i].value);
 				}
 				if (node.attributes[i].name !== attributes.repeat) {
 					var attribute = new Attribute(node.attributes[i].name, node.attributes[i].value, newNode);
@@ -921,9 +930,13 @@
 					element.setAttribute(name, value);
 				}
 			}
+			// boolean attribute
+			function renderBooleanAttribute(name, value) {
+				element.setAttribute(name, value);
+			}
 			// special attribute
 			function renderSpecialAttribute(value, attrName) {
-				if (isAttributeDefined(value)) {
+				if (normalizeBoolean(value)) {
 					element.setAttribute(attrName, attrName);
 				}
 				else {
@@ -974,37 +987,46 @@
 			}
 			// hide
 			if (this.name === attributes.hide) {
-				element.style.display = isAttributeDefined(this.value) ? 'none' : '';
+				var bool = normalizeBoolean(this.value);
+				renderAttribute(this.name, bool);
+				element.style.display = bool ? 'none' : '';
 			}
 			// show
 			if (this.name === attributes.show) {
-				element.style.display = isAttributeDefined(this.value) ? '' : 'none';
+				var bool = normalizeBoolean(this.value);
+				renderAttribute(this.name, bool);
+				element.style.display = bool ? '' : 'none';
 			}
 			// checked
 			if (this.name === attributes.checked) {
 				renderSpecialAttribute(this.value, 'checked');
-				element.checked = isAttributeDefined(this.value) ? true : false;
+				renderAttribute(this.name, normalizeBoolean(this.value) ? true : false);
 			}
 			// disabled
 			if (this.name === attributes.disabled) {
 				renderSpecialAttribute(this.value, 'disabled');
+				renderAttribute(this.name, normalizeBoolean(this.value) ? true : false);
 			}
 			// multiple
 			if (this.name === attributes.multiple) {
 				renderSpecialAttribute(this.value, 'multiple');
+				renderAttribute(this.name, normalizeBoolean(this.value) ? true : false);
 			}
 			// readonly
 			if (this.name === attributes.readonly) {
+				var bool = normalizeBoolean(this.value);
 				if (ie === 7) {
-					element.readOnly = isAttributeDefined(this.value) ? true : false;
+					element.readOnly = bool ? true : false;
 				}
 				else {
 					renderSpecialAttribute(this.value, 'readonly');
 				}
+				renderAttribute(this.name, bool ? true : false);
 			}
 			// selected
 			if (this.name === attributes.selected) {
 				renderSpecialAttribute(this.value, 'selected');
+				renderAttribute(this.name, normalizeBoolean(this.value) ? true : false);
 			}
 		}
 	};

@@ -41,9 +41,13 @@
 					element.setAttribute(name, value);
 				}
 			}
+			// boolean attribute
+			function renderBooleanAttribute(name, value) {
+				element.setAttribute(name, value);
+			}
 			// special attribute
 			function renderSpecialAttribute(value, attrName) {
-				if (isAttributeDefined(value)) {
+				if (normalizeBoolean(value)) {
 					element.setAttribute(attrName, attrName);
 				}
 				else {
@@ -94,37 +98,46 @@
 			}
 			// hide
 			if (this.name === attributes.hide) {
-				element.style.display = isAttributeDefined(this.value) ? 'none' : '';
+				var bool = normalizeBoolean(this.value);
+				renderAttribute(this.name, bool);
+				element.style.display = bool ? 'none' : '';
 			}
 			// show
 			if (this.name === attributes.show) {
-				element.style.display = isAttributeDefined(this.value) ? '' : 'none';
+				var bool = normalizeBoolean(this.value);
+				renderAttribute(this.name, bool);
+				element.style.display = bool ? '' : 'none';
 			}
 			// checked
 			if (this.name === attributes.checked) {
 				renderSpecialAttribute(this.value, 'checked');
-				element.checked = isAttributeDefined(this.value) ? true : false;
+				renderAttribute(this.name, normalizeBoolean(this.value) ? true : false);
 			}
 			// disabled
 			if (this.name === attributes.disabled) {
 				renderSpecialAttribute(this.value, 'disabled');
+				renderAttribute(this.name, normalizeBoolean(this.value) ? true : false);
 			}
 			// multiple
 			if (this.name === attributes.multiple) {
 				renderSpecialAttribute(this.value, 'multiple');
+				renderAttribute(this.name, normalizeBoolean(this.value) ? true : false);
 			}
 			// readonly
 			if (this.name === attributes.readonly) {
+				var bool = normalizeBoolean(this.value);
 				if (ie === 7) {
-					element.readOnly = isAttributeDefined(this.value) ? true : false;
+					element.readOnly = bool ? true : false;
 				}
 				else {
 					renderSpecialAttribute(this.value, 'readonly');
 				}
+				renderAttribute(this.name, bool ? true : false);
 			}
 			// selected
 			if (this.name === attributes.selected) {
 				renderSpecialAttribute(this.value, 'selected');
+				renderAttribute(this.name, normalizeBoolean(this.value) ? true : false);
 			}
 		}
 	};

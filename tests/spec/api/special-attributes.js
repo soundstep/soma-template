@@ -11,6 +11,7 @@ describe("api - special attributes", function () {
 	});
 
 	it("data-skip no value", function () {
+		// no value is false
 		ct.innerHTML = '{{name}}<span data-skip>{{age}}</span>{{weight}}';
 		tpl.compile();
 		tpl.scope.name = 'john';
@@ -18,11 +19,25 @@ describe("api - special attributes", function () {
 		tpl.scope.weight = 70;
 		tpl.render();
 		expect(ct.childNodes[0].nodeValue).toEqual('john');
-		expect(ct.childNodes[1].innerHTML).toEqual('{{age}}');
+		expect(ct.childNodes[1].innerHTML).toEqual('21');
+		expect(ct.childNodes[2].nodeValue).toEqual('70');
+	});
+
+	it("data-skip empty string", function () {
+		// empty string is false
+		ct.innerHTML = '{{name}}<span data-skip="">{{age}}</span>{{weight}}';
+		tpl.compile();
+		tpl.scope.name = 'john';
+		tpl.scope.age = 21;
+		tpl.scope.weight = 70;
+		tpl.render();
+		expect(ct.childNodes[0].nodeValue).toEqual('john');
+		expect(ct.childNodes[1].innerHTML).toEqual('21');
 		expect(ct.childNodes[2].nodeValue).toEqual('70');
 	});
 
 	it("data-skip true", function () {
+		// true is true
 		ct.innerHTML = '{{name}}<span data-skip="true">{{age}}</span>{{weight}}';
 		tpl.compile();
 		tpl.scope.name = 'john';
@@ -34,8 +49,35 @@ describe("api - special attributes", function () {
 		expect(ct.childNodes[2].nodeValue).toEqual('70');
 	});
 
+	it("data-skip true number", function () {
+		// 1 is true
+		ct.innerHTML = '{{name}}<span data-skip="1">{{age}}</span>{{weight}}';
+		tpl.compile();
+		tpl.scope.name = 'john';
+		tpl.scope.age = 21;
+		tpl.scope.weight = 70;
+		tpl.render();
+		expect(ct.childNodes[0].nodeValue).toEqual('john');
+		expect(ct.childNodes[1].innerHTML).toEqual('{{age}}');
+		expect(ct.childNodes[2].nodeValue).toEqual('70');
+	});
+
 	it("data-skip false", function () {
+		// false is false
 		ct.innerHTML = '{{name}}<span data-skip="false">{{age}}</span>{{weight}}';
+		tpl.compile();
+		tpl.scope.name = 'john';
+		tpl.scope.age = 21;
+		tpl.scope.weight = 70;
+		tpl.render();
+		expect(ct.childNodes[0].nodeValue).toEqual('john');
+		expect(ct.childNodes[1].innerHTML).toEqual('21');
+		expect(ct.childNodes[2].nodeValue).toEqual('70');
+	});
+
+	it("data-skip false number", function () {
+		// 0 is false
+		ct.innerHTML = '{{name}}<span data-skip="0">{{age}}</span>{{weight}}';
 		tpl.compile();
 		tpl.scope.name = 'john';
 		tpl.scope.age = 21;
@@ -63,201 +105,863 @@ describe("api - special attributes", function () {
 	});
 
 	it("data-show no value", function () {
+		// no value is false
 		ct.innerHTML = '<div data-show></span>';
 		tpl.compile();
 		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-show')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-show')).toEqual('false');
+		expect(ct.firstChild.style.display).toEqual('none');
+	});
+
+	it("data-show with value", function () {
+		// value is true
+		ct.innerHTML = '<div data-show="{{myValue}}"></span>';
+		tpl.compile();
+		tpl.scope.myValue = {};
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-show')).toBeTruthy();
+		else expect(ct.firstChild.getAttribute('data-show')).toEqual('true');
 		expect(ct.firstChild.style.display).toEqual('');
 	});
 
+	it("data-show with null value", function () {
+		// null is false
+		ct.innerHTML = '<div data-show="{{myValue}}"></span>';
+		tpl.compile();
+		tpl.scope.myValue = null;
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-show')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-show')).toEqual('false');
+		expect(ct.firstChild.style.display).toEqual('none');
+	});
+
+	it("data-show with undefined value", function () {
+		// undefined is false
+		ct.innerHTML = '<div data-show="{{myValue}}"></span>';
+		tpl.compile();
+		tpl.scope.myValue = undefined;
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-show')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-show')).toEqual('false');
+		expect(ct.firstChild.style.display).toEqual('none');
+	});
+
+	it("data-show empty string", function () {
+		// empty string is false
+		ct.innerHTML = '<div data-show=""></span>';
+		tpl.compile();
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-show')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-show')).toEqual('false');
+		expect(ct.firstChild.style.display).toEqual('none');
+	});
+
 	it("data-show true", function () {
+		// true is true
 		ct.innerHTML = '<div data-show="true"></span>';
 		tpl.compile();
 		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-show')).toBeTruthy();
+		else expect(ct.firstChild.getAttribute('data-show')).toEqual('true');
+		expect(ct.firstChild.style.display).toEqual('');
+	});
+
+	it("data-show true number", function () {
+		// 1 is true
+		ct.innerHTML = '<div data-show="1"></span>';
+		tpl.compile();
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-show')).toBeTruthy();
+		else expect(ct.firstChild.getAttribute('data-show')).toEqual('true');
 		expect(ct.firstChild.style.display).toEqual('');
 	});
 
 	it("data-show false", function () {
+		// false is false
 		ct.innerHTML = '<div data-show="false"></span>';
 		tpl.compile();
 		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-show')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-show')).toEqual('false');
+		expect(ct.firstChild.style.display).toEqual('none');
+	});
+
+	it("data-show false number", function () {
+		// 0 is false
+		ct.innerHTML = '<div data-show="0"></span>';
+		tpl.compile();
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-show')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-show')).toEqual('false');
 		expect(ct.firstChild.style.display).toEqual('none');
 	});
 
 	it("data-hide no value", function () {
+		// no value is false
 		ct.innerHTML = '<div data-hide></span>';
 		tpl.compile();
 		tpl.render();
-		expect(ct.firstChild.style.display).toEqual('none');
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-hide')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-hide')).toEqual('false');
+		expect(ct.firstChild.style.display).toEqual('');
+	});
+
+	it("data-hide with value", function () {
+		// value is true
+		ct.innerHTML = '<div data-hide="{{myValue}}"></span>';
+		tpl.compile();
+		tpl.scope.myValue = [];
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-hide')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-hide')).toEqual('false');
+		expect(ct.firstChild.style.display).toEqual('');
+	});
+
+	it("data-hide with null value", function () {
+		// null is false
+		ct.innerHTML = '<div data-hide="{{myValue}}"></span>';
+		tpl.compile();
+		tpl.scope.myValue = null;
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-hide')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-hide')).toEqual('false');
+		expect(ct.firstChild.style.display).toEqual('');
+	});
+
+	it("data-hide with undefined value", function () {
+		// undefined is false
+		ct.innerHTML = '<div data-hide="{{myValue}}"></span>';
+		tpl.compile();
+		tpl.scope.myValue = undefined;
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-hide')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-hide')).toEqual('false');
+		expect(ct.firstChild.style.display).toEqual('');
+	});
+
+	it("data-hide empty string", function () {
+		// empty string is false
+		ct.innerHTML = '<div data-hide=""></span>';
+		tpl.compile();
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-hide')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-hide')).toEqual('false');
+		expect(ct.firstChild.style.display).toEqual('');
 	});
 
 	it("data-hide true", function () {
+		// true is true
 		ct.innerHTML = '<div data-hide="true"></span>';
 		tpl.compile();
 		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-hide')).toBeTruthy();
+		else expect(ct.firstChild.getAttribute('data-hide')).toEqual('true');
+		expect(ct.firstChild.style.display).toEqual('none');
+	});
+
+	it("data-hide true number", function () {
+		// 1 is true
+		ct.innerHTML = '<div data-hide="1"></span>';
+		tpl.compile();
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-hide')).toBeTruthy();
+		else expect(ct.firstChild.getAttribute('data-hide')).toEqual('true');
 		expect(ct.firstChild.style.display).toEqual('none');
 	});
 
 	it("data-hide false", function () {
+		// false is false
 		ct.innerHTML = '<div data-hide="false"></span>';
 		tpl.compile();
 		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-hide')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-hide')).toEqual('false');
+		expect(ct.firstChild.style.display).toEqual('');
+	});
+
+	it("data-hide false number", function () {
+		// 0 is false
+		ct.innerHTML = '<div data-hide="0"></span>';
+		tpl.compile();
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-hide')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-hide')).toEqual('false');
 		expect(ct.firstChild.style.display).toEqual('');
 	});
 
 	it("data-checked no value", function () {
+		// no value is false
 		ct.innerHTML = '<input type="checkbox" data-checked/>';
 		tpl.compile();
 		tpl.render();
 		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-checked')).toBeFalsy();
+			expect(ct.firstChild.getAttribute('checked')).toBeFalsy();
+		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('data-checked')).toEqual('false');
+			expect(ct.firstChild.getAttribute('checked')).toEqual('');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('data-checked')).toEqual('false');
+			expect(ct.firstChild.getAttribute('checked')).toBeNull();
+		}
+	});
+
+	it("data-checked with value", function () {
+		// value is true
+		ct.innerHTML = '<input type="checkbox" data-checked="{{myValue}}"/>';
+		tpl.compile();
+		tpl.scope.myValue = {};
+		tpl.render();
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-checked')).toBeTruthy();
 			expect(ct.firstChild.getAttribute('checked')).toBeTruthy();
 		}
 		else {
+			expect(ct.firstChild.getAttribute('data-checked')).toEqual('true');
 			expect(ct.firstChild.getAttribute('checked')).toEqual('checked');
 		}
 	});
 
+	it("data-checked with null value", function () {
+		// null is false
+		ct.innerHTML = '<input type="checkbox" data-checked="{{myValue}}"/>';
+		tpl.compile();
+		tpl.scope.myValue = null;
+		tpl.render();
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-checked')).toBeFalsy();
+			expect(ct.firstChild.getAttribute('checked')).toBeFalsy();
+		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('data-checked')).toEqual('false');
+			expect(ct.firstChild.getAttribute('checked')).toEqual('');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('data-checked')).toEqual('false');
+			expect(ct.firstChild.getAttribute('checked')).toBeNull();
+		}
+	});
+
+	it("data-checked with undefined value", function () {
+		// undefined is false
+		ct.innerHTML = '<input type="checkbox" data-checked="{{myValue}}"/>';
+		tpl.compile();
+		tpl.scope.myValue = undefined;
+		tpl.render();
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-checked')).toBeFalsy();
+			expect(ct.firstChild.getAttribute('checked')).toBeFalsy();
+		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('data-checked')).toEqual('false');
+			expect(ct.firstChild.getAttribute('checked')).toEqual('');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('data-checked')).toEqual('false');
+			expect(ct.firstChild.getAttribute('checked')).toBeNull();
+		}
+	});
+
+	it("data-checked empty string", function () {
+		// empty string is false
+		ct.innerHTML = '<input type="checkbox" data-checked=""/>';
+		tpl.compile();
+		tpl.render();
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-checked')).toBeFalsy();
+			expect(ct.firstChild.getAttribute('checked')).toBeFalsy();
+		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('data-checked')).toEqual('false');
+			expect(ct.firstChild.getAttribute('checked')).toEqual('');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('data-checked')).toEqual('false');
+			expect(ct.firstChild.getAttribute('checked')).toBeNull();
+		}
+	});
+
 	it("data-checked true", function () {
+		// true is true
 		ct.innerHTML = '<input type="checkbox" data-checked="true"/>';
 		tpl.compile();
 		tpl.render();
 		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-checked')).toBeTruthy();
 			expect(ct.firstChild.getAttribute('checked')).toBeTruthy();
 		}
 		else {
+			expect(ct.firstChild.getAttribute('data-checked')).toEqual('true');
+			expect(ct.firstChild.getAttribute('checked')).toEqual('checked');
+		}
+	});
+
+	it("data-checked true number", function () {
+		// 1 is true
+		ct.innerHTML = '<input type="checkbox" data-checked="1"/>';
+		tpl.compile();
+		tpl.render();
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-checked')).toBeTruthy();
+			expect(ct.firstChild.getAttribute('checked')).toBeTruthy();
+		}
+		else {
+			expect(ct.firstChild.getAttribute('data-checked')).toEqual('true');
 			expect(ct.firstChild.getAttribute('checked')).toEqual('checked');
 		}
 	});
 
 	it("data-checked false", function () {
+		// false is false
 		ct.innerHTML = '<input type="checkbox" data-checked="false"/>';
 		tpl.compile();
 		tpl.render();
-		if (ct.canHaveChildren) {
-			// IE
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-checked')).toBeFalsy();
 			expect(ct.firstChild.getAttribute('checked')).toBeFalsy();
 		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('data-checked')).toEqual('false');
+			expect(ct.firstChild.getAttribute('checked')).toEqual('');
+		}
 		else {
+			expect(ct.firstChild.getAttribute('data-checked')).toEqual('false');
+			expect(ct.firstChild.getAttribute('checked')).toBeNull();
+		}
+	});
+
+	it("data-checked false number", function () {
+		// 0 is false
+		ct.innerHTML = '<input type="checkbox" data-checked="0"/>';
+		tpl.compile();
+		tpl.render();
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-checked')).toBeFalsy();
+			expect(ct.firstChild.getAttribute('checked')).toBeFalsy();
+		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('data-checked')).toEqual('false');
+			expect(ct.firstChild.getAttribute('checked')).toEqual('');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('data-checked')).toEqual('false');
 			expect(ct.firstChild.getAttribute('checked')).toBeNull();
 		}
 	});
 
 	it("data-disabled no value", function () {
+		// no value is false
 		ct.innerHTML = '<input type="checkbox" data-disabled/>';
 		tpl.compile();
 		tpl.render();
-		if (ct.canHaveChildren) {
-			// IE
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-disabled')).toBeFalsy();
+			expect(ct.firstChild.getAttribute('disabled')).toBeFalsy();
+		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('data-disabled')).toEqual('false');
+			expect(ct.firstChild.getAttribute('disabled')).toEqual('');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('data-disabled')).toEqual('false');
+			expect(ct.firstChild.getAttribute('disabled')).toBeNull();
+		}
+	});
+
+	it("data-disabled with value", function () {
+		// value is true
+		ct.innerHTML = '<input type="checkbox" data-disabled="{{myValue}}"/>';
+		tpl.compile();
+		tpl.scope.myValue = {};
+		tpl.render();
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-disabled')).toBeTruthy();
 			expect(ct.firstChild.getAttribute('disabled')).toBeTruthy();
 		}
 		else {
+			expect(ct.firstChild.getAttribute('data-disabled')).toEqual('true');
 			expect(ct.firstChild.getAttribute('disabled')).toEqual('disabled');
 		}
 	});
 
+	it("data-disabled with null value", function () {
+		// null is false
+		ct.innerHTML = '<input type="checkbox" data-disabled="{{myValue}}"/>';
+		tpl.compile();
+		tpl.scope.myValue = null;
+		tpl.render();
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-disabled')).toBeFalsy();
+			expect(ct.firstChild.getAttribute('disabled')).toBeFalsy();
+		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('data-disabled')).toEqual('false');
+			expect(ct.firstChild.getAttribute('disabled')).toEqual('');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('data-disabled')).toEqual('false');
+			expect(ct.firstChild.getAttribute('disabled')).toBeNull();
+		}
+	});
+
+	it("data-disabled with undefined value", function () {
+		// undefined is false
+		ct.innerHTML = '<input type="checkbox" data-disabled="{{myValue}}"/>';
+		tpl.compile();
+		tpl.scope.myValue = undefined;
+		tpl.render();
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-disabled')).toBeFalsy();
+			expect(ct.firstChild.getAttribute('disabled')).toBeFalsy();
+		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('data-disabled')).toEqual('false');
+			expect(ct.firstChild.getAttribute('disabled')).toEqual('');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('data-disabled')).toEqual('false');
+			expect(ct.firstChild.getAttribute('disabled')).toBeNull();
+		}
+	});
+
+	it("data-disabled empty string", function () {
+		// empty string is false
+		ct.innerHTML = '<input type="checkbox" data-disabled=""/>';
+		tpl.compile();
+		tpl.render();
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-disabled')).toBeFalsy();
+			expect(ct.firstChild.getAttribute('disabled')).toBeFalsy();
+		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('data-disabled')).toEqual('false');
+			expect(ct.firstChild.getAttribute('disabled')).toEqual('');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('data-disabled')).toEqual('false');
+			expect(ct.firstChild.getAttribute('disabled')).toBeNull();
+		}
+	});
+
 	it("data-disabled true", function () {
+		// true is true
 		ct.innerHTML = '<input type="checkbox" data-disabled="true"/>';
 		tpl.compile();
 		tpl.render();
-		if (ct.canHaveChildren) {
-			// IE
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-disabled')).toBeTruthy();
 			expect(ct.firstChild.getAttribute('disabled')).toBeTruthy();
 		}
 		else {
+			expect(ct.firstChild.getAttribute('data-disabled')).toEqual('true');
+			expect(ct.firstChild.getAttribute('disabled')).toEqual('disabled');
+		}
+	});
+
+	it("data-disabled true number", function () {
+		// true is true
+		ct.innerHTML = '<input type="checkbox" data-disabled="1"/>';
+		tpl.compile();
+		tpl.render();
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-disabled')).toBeTruthy();
+			expect(ct.firstChild.getAttribute('disabled')).toBeTruthy();
+		}
+		else {
+			expect(ct.firstChild.getAttribute('data-disabled')).toEqual('true');
 			expect(ct.firstChild.getAttribute('disabled')).toEqual('disabled');
 		}
 	});
 
 	it("data-disabled false", function () {
+		// false is false
 		ct.innerHTML = '<input type="checkbox" data-disabled="false"/>';
 		tpl.compile();
 		tpl.render();
-		if (ct.canHaveChildren) {
-			// IE
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-disabled')).toBeFalsy();
 			expect(ct.firstChild.getAttribute('disabled')).toBeFalsy();
 		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('data-disabled')).toEqual('false');
+			expect(ct.firstChild.getAttribute('disabled')).toEqual('');
+		}
 		else {
+			expect(ct.firstChild.getAttribute('data-disabled')).toEqual('false');
+			expect(ct.firstChild.getAttribute('disabled')).toBeNull();
+		}
+	});
+
+	it("data-disabled false number", function () {
+		// 0 is false
+		ct.innerHTML = '<input type="checkbox" data-disabled="0"/>';
+		tpl.compile();
+		tpl.render();
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-disabled')).toBeFalsy();
+			expect(ct.firstChild.getAttribute('disabled')).toBeFalsy();
+		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('data-disabled')).toEqual('false');
+			expect(ct.firstChild.getAttribute('disabled')).toEqual('');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('data-disabled')).toEqual('false');
 			expect(ct.firstChild.getAttribute('disabled')).toBeNull();
 		}
 	});
 
 	it("data-multiple no value", function () {
+		// no value is false
 		ct.innerHTML = '<input type="checkbox" data-multiple/>';
 		tpl.compile();
 		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-multiple')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-multiple')).toEqual('false');
+		expect(ct.firstChild.getAttribute('multiple')).toBeNull();
+	});
+
+	it("data-multiple with value", function () {
+		// value is true
+		ct.innerHTML = '<input type="checkbox" data-multiple="{{myValue}}"/>';
+		tpl.compile();
+		tpl.scope.myValue = {};
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-multiple')).toBeTruthy();
+		else expect(ct.firstChild.getAttribute('data-multiple')).toEqual('true');
 		expect(ct.firstChild.getAttribute('multiple')).toEqual('multiple');
 	});
 
+	it("data-multiple with null value", function () {
+		// null is false
+		ct.innerHTML = '<input type="checkbox" data-multiple="{{myValue}}"/>';
+		tpl.compile();
+		tpl.scope.myValue = null;
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-multiple')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-multiple')).toEqual('false');
+		expect(ct.firstChild.getAttribute('multiple')).toBeNull();
+	});
+
+	it("data-multiple with undefined value", function () {
+		// undefined is false
+		ct.innerHTML = '<input type="checkbox" data-multiple="{{myValue}}"/>';
+		tpl.compile();
+		tpl.scope.myValue = undefined;
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-multiple')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-multiple')).toEqual('false');
+		expect(ct.firstChild.getAttribute('multiple')).toBeNull();
+	});
+
+	it("data-multiple empty string", function () {
+		// empty string is false
+		ct.innerHTML = '<input type="checkbox" data-multiple=""/>';
+		tpl.compile();
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-multiple')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-multiple')).toEqual('false');
+		expect(ct.firstChild.getAttribute('multiple')).toBeNull();
+	});
+
 	it("data-multiple true", function () {
+		// true is true
 		ct.innerHTML = '<input type="checkbox" data-multiple="true"/>';
 		tpl.compile();
 		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-multiple')).toBeTruthy();
+		else expect(ct.firstChild.getAttribute('data-multiple')).toEqual('true');
+		expect(ct.firstChild.getAttribute('multiple')).toEqual('multiple');
+	});
+
+	it("data-multiple true number", function () {
+		// 1 is true
+		ct.innerHTML = '<input type="checkbox" data-multiple="1"/>';
+		tpl.compile();
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-multiple')).toBeTruthy();
+		else expect(ct.firstChild.getAttribute('data-multiple')).toEqual('true');
 		expect(ct.firstChild.getAttribute('multiple')).toEqual('multiple');
 	});
 
 	it("data-multiple false", function () {
+		// false is false
 		ct.innerHTML = '<input type="checkbox" data-multiple="false"/>';
 		tpl.compile();
 		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-multiple')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-multiple')).toEqual('false');
+		expect(ct.firstChild.getAttribute('multiple')).toBeNull();
+	});
+
+	it("data-multiple false number", function () {
+		// 0 is false
+		ct.innerHTML = '<input type="checkbox" data-multiple="0"/>';
+		tpl.compile();
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-multiple')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-multiple')).toEqual('false');
 		expect(ct.firstChild.getAttribute('multiple')).toBeNull();
 	});
 
 	it("data-readonly no value", function () {
+		// no value is false
 		ct.innerHTML = '<input type="checkbox" data-readonly/>';
 		tpl.compile();
 		tpl.render();
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-readonly')).toBeFalsy();
+			expect(ct.firstChild.getAttribute('readonly')).toBeFalsy();
+		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('data-readonly')).toEqual('false');
+			expect(ct.firstChild.getAttribute('readonly')).toEqual('');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('data-readonly')).toEqual('false');
+			expect(ct.firstChild.getAttribute('readonly')).toBeNull();
+		}
+	});
+
+	it("data-readonly with value", function () {
+		// value is true
+		ct.innerHTML = '<input type="checkbox" data-readonly="{{myValue}}"/>';
+		tpl.compile();
+		tpl.scope.myValue = {};
+		tpl.render();
 		if (ct.canHaveChildren) {
 			// IE
+			expect(ct.firstChild.getAttribute('data-readonly')).toBeTruthy();
 			expect(ct.firstChild.getAttribute('readonly')).toBeTruthy();
 		}
 		else {
+			expect(ct.firstChild.getAttribute('data-readonly')).toEqual('true');
 			expect(ct.firstChild.getAttribute('readonly')).toEqual('readonly');
 		}
 	});
 
+	it("data-readonly with null value", function () {
+		// null is false
+		ct.innerHTML = '<input type="checkbox" data-readonly="{{myValue}}"/>';
+		tpl.compile();
+		tpl.scope.myValue = null;
+		tpl.render();
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-readonly')).toBeFalsy();
+			expect(ct.firstChild.getAttribute('readonly')).toBeFalsy();
+		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('data-readonly')).toEqual('false');
+			expect(ct.firstChild.getAttribute('readonly')).toEqual('');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('data-readonly')).toEqual('false');
+			expect(ct.firstChild.getAttribute('readonly')).toBeNull();
+		}
+	});
+
+	it("data-readonly with undefined value", function () {
+		// undefined is false
+		ct.innerHTML = '<input type="checkbox" data-readonly="{{myValue}}"/>';
+		tpl.compile();
+		tpl.scope.myValue = undefined;
+		tpl.render();
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-readonly')).toBeFalsy();
+			expect(ct.firstChild.getAttribute('readonly')).toBeFalsy();
+		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('data-readonly')).toEqual('false');
+			expect(ct.firstChild.getAttribute('readonly')).toEqual('');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('data-readonly')).toEqual('false');
+			expect(ct.firstChild.getAttribute('readonly')).toBeNull();
+		}
+	});
+
+	it("data-readonly empty string", function () {
+		// empty string is false
+		ct.innerHTML = '<input type="checkbox" data-readonly=""/>';
+		tpl.compile();
+		tpl.render();
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-readonly')).toBeFalsy();
+			expect(ct.firstChild.getAttribute('readonly')).toBeFalsy();
+		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('data-readonly')).toEqual('false');
+			expect(ct.firstChild.getAttribute('readonly')).toEqual('');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('data-readonly')).toEqual('false');
+			expect(ct.firstChild.getAttribute('readonly')).toBeNull();
+		}
+	});
+
 	it("data-readonly true", function () {
+		// true is true
 		ct.innerHTML = '<input type="checkbox" data-readonly="true"/>';
 		tpl.compile();
 		tpl.render();
 		if (ct.canHaveChildren) {
 			// IE
+			expect(ct.firstChild.getAttribute('data-readonly')).toBeTruthy();
 			expect(ct.firstChild.getAttribute('readonly')).toBeTruthy();
 		}
 		else {
+			expect(ct.firstChild.getAttribute('data-readonly')).toEqual('true');
+			expect(ct.firstChild.getAttribute('readonly')).toEqual('readonly');
+		}
+	});
+
+	it("data-readonly true number", function () {
+		// 1 is true
+		ct.innerHTML = '<input type="checkbox" data-readonly="1"/>';
+		tpl.compile();
+		tpl.render();
+		if (ct.canHaveChildren) {
+			// IE
+			expect(ct.firstChild.getAttribute('data-readonly')).toBeTruthy();
+			expect(ct.firstChild.getAttribute('readonly')).toBeTruthy();
+		}
+		else {
+			expect(ct.firstChild.getAttribute('data-readonly')).toEqual('true');
 			expect(ct.firstChild.getAttribute('readonly')).toEqual('readonly');
 		}
 	});
 
 	it("data-readonly false", function () {
+		// false is false
 		ct.innerHTML = '<input type="checkbox" data-readonly="false"/>';
 		tpl.compile();
 		tpl.render();
-		if (ct.canHaveChildren) {
-			// IE
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-readonly')).toBeFalsy();
 			expect(ct.firstChild.getAttribute('readonly')).toBeFalsy();
 		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('data-readonly')).toEqual('false');
+			expect(ct.firstChild.getAttribute('readonly')).toEqual('');
+		}
 		else {
+			expect(ct.firstChild.getAttribute('data-readonly')).toEqual('false');
+			expect(ct.firstChild.getAttribute('readonly')).toBeNull();
+		}
+	});
+
+	it("data-readonly false number", function () {
+		// 0 is false
+		ct.innerHTML = '<input type="checkbox" data-readonly="0"/>';
+		tpl.compile();
+		tpl.render();
+		if (ie === 7) {
+			expect(ct.firstChild.getAttribute('data-readonly')).toBeFalsy();
+			expect(ct.firstChild.getAttribute('readonly')).toBeFalsy();
+		}
+		else if (ie === 8) {
+			expect(ct.firstChild.getAttribute('data-readonly')).toEqual('false');
+			expect(ct.firstChild.getAttribute('readonly')).toEqual('');
+		}
+		else {
+			expect(ct.firstChild.getAttribute('data-readonly')).toEqual('false');
 			expect(ct.firstChild.getAttribute('readonly')).toBeNull();
 		}
 	});
 
 	it("data-selected no value", function () {
+		// no value is false
 		ct.innerHTML = '<input type="checkbox" data-selected/>';
 		tpl.compile();
 		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-selected')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-selected')).toEqual('false');
+		expect(ct.firstChild.getAttribute('selected')).toBeNull();
+	});
+
+	it("data-selected with value", function () {
+		// value is true
+		ct.innerHTML = '<input type="checkbox" data-selected="{{myValue}}"/>';
+		tpl.compile();
+		tpl.scope.myValue = {};
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-selected')).toBeTruthy();
+		else expect(ct.firstChild.getAttribute('data-selected')).toEqual('true');
 		expect(ct.firstChild.getAttribute('selected')).toEqual('selected');
 	});
 
+	it("data-selected with null value", function () {
+		// null is false
+		ct.innerHTML = '<input type="checkbox" data-selected="{{myValue}}"/>';
+		tpl.compile();
+		tpl.scope.myValue = null;
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-selected')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-selected')).toEqual('false');
+		expect(ct.firstChild.getAttribute('selected')).toBeNull();
+	});
+
+	it("data-selected with undefined value", function () {
+		// undefined is false
+		ct.innerHTML = '<input type="checkbox" data-selected="{{myValue}}"/>';
+		tpl.compile();
+		tpl.scope.myValue = undefined;
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-selected')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-selected')).toEqual('false');
+		expect(ct.firstChild.getAttribute('selected')).toBeNull();
+	});
+
+	it("data-selected empty string", function () {
+		// empty string is false
+		ct.innerHTML = '<input type="checkbox" data-selected/>';
+		tpl.compile();
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-selected')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-selected')).toEqual('false');
+		expect(ct.firstChild.getAttribute('selected')).toBeNull();
+	});
+
 	it("data-selected true", function () {
+		// true is true
 		ct.innerHTML = '<input type="checkbox" data-selected="true"/>';
 		tpl.compile();
 		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-selected')).toBeTruthy();
+		else expect(ct.firstChild.getAttribute('data-selected')).toEqual('true');
+		expect(ct.firstChild.getAttribute('selected')).toEqual('selected');
+	});
+
+	it("data-selected true number", function () {
+		// 1 is true
+		ct.innerHTML = '<input type="checkbox" data-selected="1"/>';
+		tpl.compile();
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-selected')).toBeTruthy();
+		else expect(ct.firstChild.getAttribute('data-selected')).toEqual('true');
 		expect(ct.firstChild.getAttribute('selected')).toEqual('selected');
 	});
 
 	it("data-selected false", function () {
+		// false is false
 		ct.innerHTML = '<input type="checkbox" data-selected="false"/>';
 		tpl.compile();
 		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-selected')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-selected')).toEqual('false');
+		expect(ct.firstChild.getAttribute('selected')).toBeNull();
+	});
+
+	it("data-selected false number", function () {
+		// 0 is false
+		ct.innerHTML = '<input type="checkbox" data-selected="0"/>';
+		tpl.compile();
+		tpl.render();
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-selected')).toBeFalsy();
+		else expect(ct.firstChild.getAttribute('data-selected')).toEqual('false');
 		expect(ct.firstChild.getAttribute('selected')).toBeNull();
 	});
 
@@ -470,15 +1174,26 @@ describe("api - special attributes", function () {
 
 	});
 
-	it("data-html", function () {
+	it("data-html no value", function () {
+		// no value is false
 		ct.innerHTML = "<p data-html>{{myHtml}}</p>";
 		tpl.compile();
 		tpl.scope.myHtml = 'first<br>second';
 		tpl.render();
-		expect(ct.firstChild.innerHTML.toLowerCase()).toEqual('first<br>second');
+		expect(ct.firstChild.innerHTML.toLowerCase()).toEqual('first&lt;br&gt;second');
+	});
+
+	it("data-html empty string", function () {
+		// empty string is false
+		ct.innerHTML = '<p data-html="">{{myHtml}}</p>';
+		tpl.compile();
+		tpl.scope.myHtml = 'first<br>second';
+		tpl.render();
+		expect(ct.firstChild.innerHTML.toLowerCase()).toEqual('first&lt;br&gt;second');
 	});
 
 	it("data-html true", function () {
+		// true is true
 		ct.innerHTML = '<p data-html="true">{{myHtml}}</p>';
 		tpl.compile();
 		tpl.scope.myHtml = 'first<br>second';
@@ -486,7 +1201,17 @@ describe("api - special attributes", function () {
 		expect(ct.firstChild.innerHTML.toLowerCase()).toEqual('first<br>second');
 	});
 
+	it("data-html true number", function () {
+		// 1 is true
+		ct.innerHTML = '<p data-html="1">{{myHtml}}</p>';
+		tpl.compile();
+		tpl.scope.myHtml = 'first<br>second';
+		tpl.render();
+		expect(ct.firstChild.innerHTML.toLowerCase()).toEqual('first<br>second');
+	});
+
 	it("data-html false", function () {
+		// false is false
 		ct.innerHTML = '<p data-html="false">{{myHtml}}</p>';
 		tpl.compile();
 		tpl.scope.myHtml = 'first<br>second';
@@ -494,8 +1219,17 @@ describe("api - special attributes", function () {
 		expect(ct.firstChild.innerHTML.toLowerCase()).toEqual('first&lt;br&gt;second');
 	});
 
+	it("data-html false number", function () {
+		// 0 is false
+		ct.innerHTML = '<p data-html="0">{{myHtml}}</p>';
+		tpl.compile();
+		tpl.scope.myHtml = 'first<br>second';
+		tpl.render();
+		expect(ct.firstChild.innerHTML.toLowerCase()).toEqual('first&lt;br&gt;second');
+	});
+
 	it("data-html with data-repeat", function () {
-		ct.innerHTML = '<div data-repeat="item in items" data-html>{{item}}</div>';
+		ct.innerHTML = '<div data-repeat="item in items" data-html="true">{{item}}</div>';
 		tpl.compile();
 		tpl.scope.items = [
 			'first<br>one',
@@ -509,7 +1243,7 @@ describe("api - special attributes", function () {
 	});
 
 	it("data-html with data-repeat deep", function () {
-		ct.innerHTML = '<div data-repeat="item in items"><p data-html>{{item}}</p></div>';
+		ct.innerHTML = '<div data-repeat="item in items"><p data-html="true">{{item}}</p></div>';
 		tpl.compile();
 		tpl.scope.items = [
 			'first<br>one',

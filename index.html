@@ -803,7 +803,7 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 		<p>Most of the the time, when a text node is rendered, the DOM API property used is <code>element.nodeValue</code>. Sometimes it is useful to render HTML node. For example the data might be already formatted with HTML nodes inside it (<code>&lt;p&gt;paragraph&lt;/p&gt;</code>).</p>
 		<p>The DOM API property used to render HTML nodes is <code>element.innerHTML</code>. The special attribute <code>data-html</code> can be applied on the parent of the text node to render the HTML nodes.</p>
 		<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;div</span> <span class="na">data-html</span><span class="nt">&gt;</span><span class="cp">{{</span><span class="nv">firstLine</span><span class="cp">}}{{</span><span class="nv">secondLine</span><span class="cp">}}</span><span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">data-html=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span><span class="cp">{{</span><span class="nv">firstLine</span><span class="cp">}}{{</span><span class="nv">secondLine</span><span class="cp">}}</span><span class="nt">&lt;/div&gt;</span>
 <span class="nt">&lt;/div&gt;</span>
 <span class="nt">&lt;script&gt;</span>
   <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">firstLine</span> <span class="o">=</span> <span class="s1">&#39;first line&lt;br/&gt;&#39;</span><span class="p">;</span>

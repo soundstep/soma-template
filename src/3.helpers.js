@@ -34,8 +34,17 @@
 	function isDefined(value) {
 		return value !== null && value !== undefined;
 	}
-	function isAttributeDefined(value) {
-		return (value === '' || value === true || value === 'true' || !isDefined(value));
+	function normalizeBoolean(value) {
+		if (!isDefined(value)) {
+			return false;
+		}
+		if (value === 'true' || value === '1' || value === true || value === 1) {
+			return true;
+		}
+		if (value === 'false' || value === '0' || value === false || value === 0 || (isString(value) && hasInterpolation(value))) {
+			return false;
+		}
+		return !!value;
 	}
 	function isExpression(value) {
 		return value && isFunction(value.toString) && value.toString() === '[object Expression]';
