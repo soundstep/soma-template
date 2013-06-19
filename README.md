@@ -5,7 +5,7 @@
 Boolean attribute values are now normalized and need to be specified.
 
 ```html
-<div data-show/> is now the same as <div data-show="false/>
+<div data-show/> is now the same as <div data-show="false"/>
 ```
 
 ## More info
