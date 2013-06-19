@@ -53,6 +53,13 @@
 	}
 
 	function getValue(scope, pattern, pathString, params, getFunction, getParams, paramsFound) {
+		console.log('--------------------------------------------------');
+		console.log('pattern', pattern);
+		console.log('pathString', pathString);
+		console.log('params', params);
+		console.log('getFunction', getFunction);
+		console.log('getParams', getParams);
+		console.log('paramsFound', paramsFound);
 		// string
 		if (regex.string.test(pattern)) {
 			return trimQuotes(pattern);

@@ -75,8 +75,9 @@
 		escape: /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,
 		trim: /^[\s+]+|[\s+]+$/g,
 		repeat: /(.*)\s+in\s+(.*)/,
-		func: /(.*)\((.*)\)/,
+		func: /(.*?)\((.*)\)/,
 		params: /,\s+|,|\s+,\s+/,
+		//params: /\s*(?:[^,("]*\((?:(?>[^()]+)|(?R))*\)|[^",(]+|"(?>\\.|[^"])*")\s*/,
 		quote: /\"|\'/g,
 		content: /[^.|^\s]/gm,
 		depth: /..\//g,
@@ -331,6 +332,13 @@
 	}
 
 	function getValue(scope, pattern, pathString, params, getFunction, getParams, paramsFound) {
+		console.log('--------------------------------------------------');
+		console.log('pattern', pattern);
+		console.log('pathString', pathString);
+		console.log('params', params);
+		console.log('getFunction', getFunction);
+		console.log('getParams', getParams);
+		console.log('paramsFound', paramsFound);
 		// string
 		if (regex.string.test(pattern)) {
 			return trimQuotes(pattern);

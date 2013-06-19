@@ -270,4 +270,71 @@ describe("api - expression", function () {
 		expect(ct.childNodes[2].innerHTML).toEqual('parent name');
 	});
 
+	it("function param function", function () {
+		//ct.innerHTML = '{{name(\'21\')}}';
+		ct.innerHTML = '{{name(age())}}';
+		tpl.compile();
+		tpl.scope.age = function() {
+			return 21;
+		};
+		tpl.scope.name = function(age) {
+			return "john" + " " + age;
+		};
+		tpl.render();
+		console.log(ct.innerHTML);
+		expect(ct.innerHTML).toEqual('john 21');
+	});
+
+	it("function param double function", function () {
+		ct.innerHTML = '{{name(age(), str())}}';
+		tpl.compile();
+		tpl.scope.age = function() {
+			return 21;
+		};
+		tpl.scope.str = function() {
+			return 'year old';
+		};
+		tpl.scope.name = function(age, str) {
+			return "john" + " " + age + " " + "years old";
+		};
+		tpl.render();
+		console.log(ct.innerHTML);
+		expect(ct.innerHTML).toEqual('john 21 years old');
+	});
+
+	it("function param function with params", function () {
+		ct.innerHTML = '{{name(age("21"))}}';
+		tpl.compile();
+		tpl.scope.age = function(age) {
+			return parseInt(age) + 2;
+		};
+		tpl.scope.name = function(age) {
+			return "john" + " " + age;
+		};
+		tpl.render();
+		console.log(ct.innerHTML);
+		expect(ct.innerHTML).toEqual('john 23');
+	});
+
+	it("function param function with double params", function () {
+		//ct.innerHTML = '{{name(age("21", "2"), "years old")}}';
+		ct.innerHTML = '{{name(age("21", "2"), "years old")}}';
+		tpl.compile();
+		tpl.scope.age = function(age, add) {
+			console.log(age, add);
+			return parseInt(age) + parseInt(add);
+		};
+		tpl.scope.age2 = function(age) {
+			console.log(age);
+			return parseInt(age);
+		};
+		tpl.scope.name = function(age, str) {
+			console.log(age, str);
+			return "john" + " " + age + " " + str;
+		};
+		tpl.render();
+		console.log(ct.innerHTML);
+		expect(ct.innerHTML).toEqual('john 23 years old');
+	});
+
 });
