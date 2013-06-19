@@ -58,14 +58,19 @@ describe("internal - helpers", function () {
 		expect(isDefined()).toBeFalsy();
 	});
 
-	it("is attribute defined", function () {
-		expect(isAttributeDefined('')).toBeTruthy();
-		expect(isAttributeDefined(true)).toBeTruthy();
-		expect(isAttributeDefined('true')).toBeTruthy();
-		expect(isAttributeDefined(false)).toBeFalsy();
-		expect(isAttributeDefined('false')).toBeFalsy();
-		expect(isAttributeDefined(undefined)).toBeTruthy();
-		expect(isAttributeDefined(null)).toBeTruthy();
+	it("normalize boolean", function () {
+		expect(normalizeBoolean(true)).toBeTruthy();
+		expect(normalizeBoolean('true')).toBeTruthy();
+		expect(normalizeBoolean('1')).toBeTruthy();
+		expect(normalizeBoolean(1)).toBeTruthy();
+		expect(normalizeBoolean('')).toBeFalsy();
+		expect(normalizeBoolean(false)).toBeFalsy();
+		expect(normalizeBoolean('false')).toBeFalsy();
+		expect(normalizeBoolean('0')).toBeFalsy();
+		expect(normalizeBoolean(0)).toBeFalsy();
+		expect(normalizeBoolean(undefined)).toBeFalsy();
+		expect(normalizeBoolean(null)).toBeFalsy();
+		expect(normalizeBoolean({})).toBeTruthy();
 	});
 
 	it("is expression", function () {

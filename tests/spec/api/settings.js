@@ -133,7 +133,7 @@ describe("api - settings", function () {
 
 	it("change checked", function () {
 		settings.attributes.checked = 'custom-checked';
-		var t1 = createTemplateWithContent('<input custom-checked>');
+		var t1 = createTemplateWithContent('<input custom-checked="true">');
 		t1.render();
 		if (ct.canHaveChildren) {
 			expect(t1.element.firstChild.getAttribute('checked')).toBeTruthy();
@@ -146,7 +146,7 @@ describe("api - settings", function () {
 
 	it("change disabled", function () {
 		settings.attributes.disabled = 'custom-disabled';
-		var t1 = createTemplateWithContent('<span custom-disabled></span>');
+		var t1 = createTemplateWithContent('<span custom-disabled="true"></span>');
 		t1.render();
 		if (ct.canHaveChildren) {
 			expect(t1.element.firstChild.getAttribute('disabled')).toBeTruthy();
@@ -159,7 +159,7 @@ describe("api - settings", function () {
 
 	it("change multiple", function () {
 		settings.attributes.multiple = 'custom-multiple';
-		var t1 = createTemplateWithContent('<span custom-multiple></span>');
+		var t1 = createTemplateWithContent('<span custom-multiple="true"></span>');
 		t1.render();
 		expect(t1.element.firstChild.getAttribute('multiple')).toEqual('multiple');
 		settings.attributes.multiple = 'data-multiple';
@@ -167,7 +167,7 @@ describe("api - settings", function () {
 
 	it("change readonly", function () {
 		settings.attributes.readonly = 'custom-readonly';
-		var t1 = createTemplateWithContent('<span custom-readonly></span>');
+		var t1 = createTemplateWithContent('<span custom-readonly="true"></span>');
 		t1.render();
 		if (ct.canHaveChildren) {
 			expect(t1.element.firstChild.getAttribute('readonly')).toBeTruthy();
@@ -180,7 +180,7 @@ describe("api - settings", function () {
 
 	it("change selected", function () {
 		settings.attributes.selected = 'custom-selected';
-		var t1 = createTemplateWithContent('<span custom-selected></span>');
+		var t1 = createTemplateWithContent('<span custom-selected="true"></span>');
 		t1.render();
 		expect(t1.element.firstChild.getAttribute('selected')).toEqual('selected');
 		settings.attributes.selected = 'data-selected';
