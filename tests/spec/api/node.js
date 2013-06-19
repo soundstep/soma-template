@@ -95,7 +95,7 @@ describe("api - node", function () {
 	});
 
 	it("skip", function () {
-		ct.innerHTML = '<div data-skip></div>';
+		ct.innerHTML = '<div data-skip="true"></div>';
 		tpl.compile();
 		expect(tpl.node.skip).toBeFalsy();
 		expect(tpl.node.children.length).toEqual(0);

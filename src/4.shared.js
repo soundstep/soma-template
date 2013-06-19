@@ -140,10 +140,10 @@
 				name = attr.name;
 				value = attr.value;
 				if (name === settings.attributes.skip) {
-					node.skip = (value === '' || value === 'true');
+					node.skip = normalizeBoolean(value);
 				}
 				if (name === settings.attributes.html) {
-					node.html = (value === '' || value === 'true');
+					node.html = normalizeBoolean(value);
 				}
 				if (name === settings.attributes.repeat && !isRepeaterDescendant) {
 					node.repeater = value;
@@ -324,10 +324,10 @@
 			for (var i = 0, l = node.attributes.length; i < l; i++) {
 				newNode.renderAsHtml = node.renderAsHtml;
 				if (node.attributes[i].name === settings.attributes.skip) {
-					newNode.skip = (node.attributes[i].value === '' || node.attributes[i].value === 'true');
+					newNode.skip = normalizeBoolean(node.attributes[i].value);
 				}
 				if (node.attributes[i].name === settings.attributes.html) {
-					newNode.html = (node.attributes[i].value === '' || node.attributes[i].value === 'true');
+					newNode.html = normalizeBoolean(node.attributes[i].value);
 				}
 				if (node.attributes[i].name !== attributes.repeat) {
 					var attribute = new Attribute(node.attributes[i].name, node.attributes[i].value, newNode);
