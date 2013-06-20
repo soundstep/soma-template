@@ -140,7 +140,7 @@
 			var handler = function(event) {
 				var exp = new Expression(pattern, this.node);
 				var func = exp.getValue(scope, true);
-				var params = exp.getValue(scope, false, true);
+				var params = exp.getValue(scope, false, true) || [];
 				params.unshift(event);
 				if (func) {
 					func.apply(null, params);

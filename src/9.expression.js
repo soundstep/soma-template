@@ -10,6 +10,7 @@
 		this.node = node;
 		this.attribute = attribute;
 		this.value = this.isString ? this.pattern : undefined;
+		console.log('this.isString', this.isString);
 		if (this.isString) {
 			this.isFunction = false;
 			this.depth = null;
@@ -20,7 +21,13 @@
 			this.isFunction = isExpFunction(this.pattern);
 			this.depth = getScopeDepth(this.pattern);
 			this.path = getExpressionPath(this.pattern);
-			console.log('-----------------send string to getParamsFromString', getParamsFromString(this.pattern.match(regex.func)[2]));
+
+			console.log('this.isFunction', this.isFunction);
+			if (this.isFunction) {
+				console.log('pattern', this.pattern.match(regex.func)[2]);
+				console.log('getParamsFromString(this.pattern.match(regex.func)', getParamsFromString(this.pattern.match(regex.func)[2]));
+			}
+
 			this.params = !this.isFunction ? null : getParamsFromString(this.pattern.match(regex.func)[2]);
 			console.log('this.params', this.params);
 		}
@@ -53,7 +60,6 @@
 			}
 		},
 		getValue: function(scope, getFunction, getParams) {
-			return 'zero';
 			return getValue(scope, this.pattern, this.path, this.params, getFunction, getParams);
 		}
 	};
