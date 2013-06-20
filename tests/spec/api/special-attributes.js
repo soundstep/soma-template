@@ -211,11 +211,11 @@ describe("api - special attributes", function () {
 		// value is true
 		ct.innerHTML = '<div data-hide="{{myValue}}"></span>';
 		tpl.compile();
-		tpl.scope.myValue = [];
+		tpl.scope.myValue = {};
 		tpl.render();
-		if (ie === 7) expect(ct.firstChild.getAttribute('data-hide')).toBeFalsy();
-		else expect(ct.firstChild.getAttribute('data-hide')).toEqual('false');
-		expect(ct.firstChild.style.display).toEqual('');
+		if (ie === 7) expect(ct.firstChild.getAttribute('data-hide')).toBeTruthy();
+		else expect(ct.firstChild.getAttribute('data-hide')).toEqual('true');
+		expect(ct.firstChild.style.display).toEqual('none');
 	});
 
 	it("data-hide with null value", function () {
