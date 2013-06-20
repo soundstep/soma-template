@@ -3,6 +3,9 @@
 			return;
 		}
 		this.pattern = pattern;
+
+		console.log('PATTERN', this.pattern);
+
 		this.isString = regex.string.test(pattern);
 		this.node = node;
 		this.attribute = attribute;
@@ -17,7 +20,9 @@
 			this.isFunction = isExpFunction(this.pattern);
 			this.depth = getScopeDepth(this.pattern);
 			this.path = getExpressionPath(this.pattern);
+			console.log('-----------------send string to getParamsFromString', getParamsFromString(this.pattern.match(regex.func)[2]));
 			this.params = !this.isFunction ? null : getParamsFromString(this.pattern.match(regex.func)[2]);
+			console.log('this.params', this.params);
 		}
 	};
 	Expression.prototype = {
@@ -48,6 +53,7 @@
 			}
 		},
 		getValue: function(scope, getFunction, getParams) {
+			return 'zero';
 			return getValue(scope, this.pattern, this.path, this.params, getFunction, getParams);
 		}
 	};

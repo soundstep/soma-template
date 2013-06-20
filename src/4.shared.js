@@ -126,7 +126,9 @@
 	}
 
 	function getParamsFromString(value) {
-		return trimArray(value.split(regex.params));
+		console.log('getParamsFromString', value.match(regex.params));
+		return value.match(regex.params);
+		//return trimArray(value.split(regex.params));
 	}
 
 	function getScopeDepth(value) {

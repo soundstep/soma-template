@@ -76,8 +76,8 @@
 		trim: /^[\s+]+|[\s+]+$/g,
 		repeat: /(.*)\s+in\s+(.*)/,
 		func: /(.*?)\((.*)\)/,
-		params: /,\s+|,|\s+,\s+/,
-		//params: /\s*(?:[^,("]*\((?:(?>[^()]+)|(?R))*\)|[^",(]+|"(?>\\.|[^"])*")\s*/,
+		//params: /,\s+|,|\s+,\s+/,
+		params: /(\w+\(.*?\)|\w+)/g,
 		quote: /\"|\'/g,
 		content: /[^.|^\s]/gm,
 		depth: /..\//g,
@@ -405,7 +405,9 @@
 	}
 
 	function getParamsFromString(value) {
-		return trimArray(value.split(regex.params));
+		console.log('getParamsFromString', value.match(regex.params));
+		return value.match(regex.params);
+		//return trimArray(value.split(regex.params));
 	}
 
 	function getScopeDepth(value) {
@@ -1108,6 +1110,9 @@
 			return;
 		}
 		this.pattern = pattern;
+
+		console.log('PATTERN', this.pattern);
+
 		this.isString = regex.string.test(pattern);
 		this.node = node;
 		this.attribute = attribute;
@@ -1122,7 +1127,9 @@
 			this.isFunction = isExpFunction(this.pattern);
 			this.depth = getScopeDepth(this.pattern);
 			this.path = getExpressionPath(this.pattern);
+			console.log('-----------------send string to getParamsFromString', getParamsFromString(this.pattern.match(regex.func)[2]));
 			this.params = !this.isFunction ? null : getParamsFromString(this.pattern.match(regex.func)[2]);
+			console.log('this.params', this.params);
 		}
 	};
 	Expression.prototype = {
@@ -1153,6 +1160,7 @@
 			}
 		},
 		getValue: function(scope, getFunction, getParams) {
+			return 'zero';
 			return getValue(scope, this.pattern, this.path, this.params, getFunction, getParams);
 		}
 	};
