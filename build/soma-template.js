@@ -77,7 +77,7 @@
 		repeat: /(.*)\s+in\s+(.*)/,
 		func: /(.*?)\((.*)\)/,
 		//params: /,\s+|,|\s+,\s+/,
-		params: /([a-zA-Z0-9$\[\]._-]+\(.*?\)|'[^'\\]*(?:\\.[^'\\]*)*'|"[^"\\]*(?:\\.[^"\\]*)*"|[a-zA-Z0-9$\[\]._-]+)/g,
+		params: /([\/a-zA-Z0-9$\[\]._-]+\(.*?\)|'[^'\\]*(?:\\.[^'\\]*)*'|"[^"\\]*(?:\\.[^"\\]*)*"|[\/a-zA-Z0-9$\[\]._-]+)/g,
 		quote: /\"|\'/g,
 		content: /[^.|^\s]/gm,
 		depth: /..\//g,
@@ -332,13 +332,6 @@
 	}
 
 	function getValue(scope, pattern, pathString, params, getFunction, getParams, paramsFound) {
-		console.log('--------------------------------------------------');
-		console.log('pattern', pattern);
-		console.log('pathString', pathString);
-		console.log('params', params);
-		console.log('getFunction', getFunction);
-		console.log('getParams', getParams);
-		console.log('paramsFound', paramsFound);
 		// string
 		if (regex.string.test(pattern)) {
 			return trimQuotes(pattern);
@@ -405,9 +398,7 @@
 	}
 
 	function getParamsFromString(value) {
-		console.log('getParamsFromString', value.match(regex.params));
 		return value.match(regex.params);
-		//return trimArray(value.split(regex.params));
 	}
 
 	function getScopeDepth(value) {
@@ -1110,14 +1101,10 @@
 			return;
 		}
 		this.pattern = pattern;
-
-		console.log('PATTERN', this.pattern);
-
 		this.isString = regex.string.test(pattern);
 		this.node = node;
 		this.attribute = attribute;
 		this.value = this.isString ? this.pattern : undefined;
-		console.log('this.isString', this.isString);
 		if (this.isString) {
 			this.isFunction = false;
 			this.depth = null;
@@ -1128,15 +1115,7 @@
 			this.isFunction = isExpFunction(this.pattern);
 			this.depth = getScopeDepth(this.pattern);
 			this.path = getExpressionPath(this.pattern);
-
-			console.log('this.isFunction', this.isFunction);
-			if (this.isFunction) {
-				console.log('pattern', this.pattern.match(regex.func)[2]);
-				console.log('getParamsFromString(this.pattern.match(regex.func)', getParamsFromString(this.pattern.match(regex.func)[2]));
-			}
-
 			this.params = !this.isFunction ? null : getParamsFromString(this.pattern.match(regex.func)[2]);
-			console.log('this.params', this.params);
 		}
 	};
 	Expression.prototype = {
