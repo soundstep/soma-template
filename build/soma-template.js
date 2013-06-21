@@ -3,7 +3,7 @@
 	'use strict';
 
 	soma.template = soma.template || {};
-	soma.template.version = '0.2.0';
+	soma.template.version = '0.2.1';
 
 	soma.template.errors = {
 		TEMPLATE_STRING_NO_ELEMENT: 'Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create(\'string\', element)',
@@ -914,6 +914,9 @@
 			this.previousName = null;
 		},
 		update: function() {
+			if (this.node.repeater) {
+				return;
+			}
 			this.interpolationName.update();
 			this.interpolationValue.update();
 		},

@@ -270,4 +270,21 @@ describe("api - expression", function () {
 		expect(ct.childNodes[2].innerHTML).toEqual('parent name');
 	});
 
+	it("expression not evaluated with undefined on repeater", function () {
+		var count = 0;
+		ct.innerHTML = '<div data-repeat="item in items" class="{{func(item.name)}}"></div>';
+		tpl.compile();
+		tpl.scope.items = [
+			{name: 'child1'},
+			{name: 'child2'},
+			{name: 'child3'}
+		];
+		tpl.scope.func = function(name) {
+			count++;
+			return name;
+		};
+		tpl.render();
+		expect(count).toEqual(3);
+	});
+
 });

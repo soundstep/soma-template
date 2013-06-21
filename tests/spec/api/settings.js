@@ -82,7 +82,7 @@ describe("api - settings", function () {
 
 	it("change skip", function () {
 		settings.attributes.skip = 'custom-skip';
-		var t1 = createTemplateWithContent('<span custom-skip>{{name}}</span>');
+		var t1 = createTemplateWithContent('<span custom-skip="true">{{name}}</span>');
 		t1.scope.name = 'john';
 		t1.render();
 		expect(t1.element.firstChild.innerHTML).toEqual('{{name}}');

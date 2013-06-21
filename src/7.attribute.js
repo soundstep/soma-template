@@ -25,6 +25,9 @@
 			this.previousName = null;
 		},
 		update: function() {
+			if (this.node.repeater) {
+				return;
+			}
 			this.interpolationName.update();
 			this.interpolationValue.update();
 		},
