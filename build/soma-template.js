@@ -3,7 +3,7 @@
 	'use strict';
 
 	soma.template = soma.template || {};
-	soma.template.version = '0.2.0';
+	soma.template.version = '0.2.2';
 
 	soma.template.errors = {
 		TEMPLATE_STRING_NO_ELEMENT: 'Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create(\'string\', element)',
@@ -414,7 +414,7 @@
 		var eventsArray = [];
 		for (var attr, name, value, attrs = element.attributes, j = 0, jj = attrs && attrs.length; j < jj; j++) {
 			attr = attrs[j];
-			if (attr.specified) {
+			if (attr.specified || attr.name === 'value') {
 				name = attr.name;
 				value = attr.value;
 				if (name === settings.attributes.skip) {
@@ -914,6 +914,9 @@
 			this.previousName = null;
 		},
 		update: function() {
+			if (this.node.repeater) {
+				return;
+			}
 			this.interpolationName.update();
 			this.interpolationValue.update();
 		},
@@ -922,8 +925,11 @@
 				return;
 			}
 			// normal attribute
-			function renderAttribute(name, value) {
-				if (ie === 7 && name === 'class') {
+			function renderAttribute(name, value, node) {
+				if (name === 'value' && node.element[value] !== undefined) {
+					element.value = value;
+				}
+				else if (ie === 7 && name === 'class') {
 					element.className = value;
 				}
 				else {
@@ -978,7 +984,7 @@
 							}
 						}
 					}
-					renderAttribute(this.name, this.value, this.previousName);
+					renderAttribute(this.name, this.value, this.node);
 				}
 			}
 			// cloak
@@ -988,29 +994,29 @@
 			// hide
 			if (this.name === attributes.hide) {
 				var bool = normalizeBoolean(this.value);
-				renderAttribute(this.name, bool);
+				renderAttribute(this.name, bool, this.node);
 				element.style.display = bool ? 'none' : '';
 			}
 			// show
 			if (this.name === attributes.show) {
 				var bool = normalizeBoolean(this.value);
-				renderAttribute(this.name, bool);
+				renderAttribute(this.name, bool, this.node);
 				element.style.display = bool ? '' : 'none';
 			}
 			// checked
 			if (this.name === attributes.checked) {
 				renderSpecialAttribute(this.value, 'checked');
-				renderAttribute(this.name, normalizeBoolean(this.value) ? true : false);
+				renderAttribute(this.name, normalizeBoolean(this.value) ? true : false, this.node);
 			}
 			// disabled
 			if (this.name === attributes.disabled) {
 				renderSpecialAttribute(this.value, 'disabled');
-				renderAttribute(this.name, normalizeBoolean(this.value) ? true : false);
+				renderAttribute(this.name, normalizeBoolean(this.value) ? true : false, this.node);
 			}
 			// multiple
 			if (this.name === attributes.multiple) {
 				renderSpecialAttribute(this.value, 'multiple');
-				renderAttribute(this.name, normalizeBoolean(this.value) ? true : false);
+				renderAttribute(this.name, normalizeBoolean(this.value) ? true : false, this.node);
 			}
 			// readonly
 			if (this.name === attributes.readonly) {
@@ -1021,12 +1027,12 @@
 				else {
 					renderSpecialAttribute(this.value, 'readonly');
 				}
-				renderAttribute(this.name, bool ? true : false);
+				renderAttribute(this.name, bool ? true : false, this.node);
 			}
 			// selected
 			if (this.name === attributes.selected) {
 				renderSpecialAttribute(this.value, 'selected');
-				renderAttribute(this.name, normalizeBoolean(this.value) ? true : false);
+				renderAttribute(this.name, normalizeBoolean(this.value) ? true : false, this.node);
 			}
 		}
 	};

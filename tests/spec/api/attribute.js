@@ -82,6 +82,17 @@ describe("api - attribute", function () {
 		}
 	});
 
+	it("special rendering attribute value", function () {
+		ct.innerHTML = '<input type="text" name="name" class="{{gna}}" my-stuff="{{stuff}}" value="{{name}}">';
+		tpl.compile();
+		tpl.scope.name = 'john';
+		tpl.render();
+		expect(ct.firstChild.value).toEqual('john');
+		tpl.scope.name = '';
+		tpl.render();
+		expect(ct.firstChild.value).toEqual('');
+	});
+
 	it("dispose", function () {
 		ct.innerHTML = '<div {{name}}="{{value}}"></div>';
 		tpl.compile();
