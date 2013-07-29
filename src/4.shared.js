@@ -136,7 +136,7 @@
 		var eventsArray = [];
 		for (var attr, name, value, attrs = element.attributes, j = 0, jj = attrs && attrs.length; j < jj; j++) {
 			attr = attrs[j];
-			if (attr.specified) {
+			if (attr.specified || attr.name === 'value') {
 				name = attr.name;
 				value = attr.value;
 				if (name === settings.attributes.skip) {
