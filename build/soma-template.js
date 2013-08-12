@@ -3,7 +3,7 @@
 	'use strict';
 
 	soma.template = soma.template || {};
-	soma.template.version = '0.2.2';
+	soma.template.version = '0.2.3';
 
 	soma.template.errors = {
 		TEMPLATE_STRING_NO_ELEMENT: 'Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create(\'string\', element)',
@@ -926,7 +926,7 @@
 			}
 			// normal attribute
 			function renderAttribute(name, value, node) {
-				if (name === 'value' && node.element[value] !== undefined) {
+				if (name === 'value' && node.element['value'] !== undefined) {
 					element.value = value;
 				}
 				else if (ie === 7 && name === 'class') {

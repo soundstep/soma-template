@@ -37,7 +37,7 @@
 			}
 			// normal attribute
 			function renderAttribute(name, value, node) {
-				if (name === 'value' && node.element[value] !== undefined) {
+				if (name === 'value' && node.element['value'] !== undefined) {
 					element.value = value;
 				}
 				else if (ie === 7 && name === 'class') {
