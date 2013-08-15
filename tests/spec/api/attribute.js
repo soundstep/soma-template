@@ -83,12 +83,16 @@ describe("api - attribute", function () {
 	});
 
 	it("special rendering attribute value", function () {
-		ct.innerHTML = '<input type="text" name="name" class="{{gna}}" my-stuff="{{stuff}}" value="{{name}}">';
+		ct.innerHTML = '<input type="text" value="{{nickname}}">';
 		tpl.compile();
-		tpl.scope.name = 'john';
+		tpl.scope.nickname = 'john';
 		tpl.render();
 		expect(ct.firstChild.value).toEqual('john');
-		tpl.scope.name = '';
+		ct.firstChild.value = 'fred';
+		tpl.scope.nickname = 'alf';
+		tpl.render();
+		expect(ct.firstChild.value).toEqual('alf');
+		tpl.scope.nickname = '';
 		tpl.render();
 		expect(ct.firstChild.value).toEqual('');
 	});
