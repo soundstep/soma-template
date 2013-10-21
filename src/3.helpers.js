@@ -111,7 +111,7 @@
 	}
 	function removeClass(elm, className) {
 		var rmc;
-		if (document.documentElement.classList) {
+		if (typeof document === 'object' && document.documentElement.classList) {
 			rmc = function (elm, className) {
 				elm.classList.remove(className);
 			};

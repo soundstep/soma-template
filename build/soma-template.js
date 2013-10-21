@@ -3,7 +3,7 @@
 	'use strict';
 
 	soma.template = soma.template || {};
-	soma.template.version = '0.2.3';
+	soma.template.version = '0.2.4';
 
 	soma.template.errors = {
 		TEMPLATE_STRING_NO_ELEMENT: 'Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create(\'string\', element)',
@@ -196,7 +196,7 @@
 	}
 	function removeClass(elm, className) {
 		var rmc;
-		if (document.documentElement.classList) {
+		if (typeof document === 'object' && document.documentElement.classList) {
 			rmc = function (elm, className) {
 				elm.classList.remove(className);
 			};
