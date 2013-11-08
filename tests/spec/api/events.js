@@ -14,8 +14,8 @@ describe("api - events", function () {
 		ct.innerHTML = '<button id="bt1" data-click="clickHandler()">click</button><button id="bt2" data-mouseover="overHandler()">over</button>';
 		tpl.compile();
 		tpl.render();
-		tpl.scope.clickHandler = function(){};
-		tpl.scope.overHandler = function(){};
+		tpl.scope.clickHandler = function(){alert(1)};
+		tpl.scope.overHandler = function(){alert(2)};
 		spyOn(tpl.scope, 'clickHandler');
 		spyOn(tpl.scope, 'overHandler');
 		simulate(document.getElementById('bt1'), 'click');
@@ -212,7 +212,7 @@ describe("api - events", function () {
 		ct.innerHTML = '<ul><li data-repeat="item in items" id="li{{$index}}" data-click="clickHandler($index, item)">{{$index}}</li></ul>';
 		tpl.compile();
 		tpl.scope.items = ['A', 'B', 'C'];
-		tpl.scope.clickHandler = function(event, index) {alert(index)}
+		tpl.scope.clickHandler = function(event, index) {alert(index)};
 		tpl.render();
 		spyOn(tpl.scope, 'clickHandler');
 		simulate(document.getElementById('li0'), 'click');

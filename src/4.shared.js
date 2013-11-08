@@ -128,52 +128,57 @@
 		return !matches ? 0 : matches.length;
 	}
 
-	function getNodeFromElement(element, scope, isRepeaterDescendant) {
+	function addAttribute(node, name, value) {
+		node.attributes = node.attributes || [];
+		if (name === settings.attributes.skip) {
+			node.skip = normalizeBoolean(value);
+		}
+		if (name === settings.attributes.html) {
+			node.html = normalizeBoolean(value);
+		}
+		if (name === settings.attributes.repeat && !node.isRepeaterDescendant) {
+			node.repeater = value;
+		}
+		if (
+			hasInterpolation(name + ':' + value) ||
+				name === settings.attributes.repeat ||
+				name === settings.attributes.skip ||
+				name === settings.attributes.html ||
+				name === settings.attributes.show ||
+				name === settings.attributes.hide ||
+				name === settings.attributes.href ||
+				name === settings.attributes.checked ||
+				name === settings.attributes.disabled ||
+				name === settings.attributes.multiple ||
+				name === settings.attributes.readonly ||
+				name === settings.attributes.selected ||
+				value.indexOf(settings.attributes.cloak) !== -1
+			) {
+			node.attributes.push(new Attribute(name, value, node));
+		}
+		if (events[name]) {
+			node.attributes.push(new Attribute(name, value, node));
+		}
+	}
+
+	function getNodeFromElement(element, scope) {
 		var node = new Node(element, scope);
 		node.previousSibling = element.previousSibling;
 		node.nextSibling = element.nextSibling;
-		var attributes = [];
 		var eventsArray = [];
-		for (var attr, name, value, attrs = element.attributes, j = 0, jj = attrs && attrs.length; j < jj; j++) {
+		for (var attr, attrs = element.attributes, j = 0, jj = attrs && attrs.length; j < jj; j++) {
 			attr = attrs[j];
 			if (attr.specified || attr.name === 'value') {
-				name = attr.name;
-				value = attr.value;
-				if (name === settings.attributes.skip) {
-					node.skip = normalizeBoolean(value);
-				}
-				if (name === settings.attributes.html) {
-					node.html = normalizeBoolean(value);
-				}
-				if (name === settings.attributes.repeat && !isRepeaterDescendant) {
-					node.repeater = value;
-				}
-				if (
-					hasInterpolation(name + ':' + value) ||
-						name === settings.attributes.repeat ||
-						name === settings.attributes.skip ||
-						name === settings.attributes.html ||
-						name === settings.attributes.show ||
-						name === settings.attributes.hide ||
-						name === settings.attributes.href ||
-						name === settings.attributes.checked ||
-						name === settings.attributes.disabled ||
-						name === settings.attributes.multiple ||
-						name === settings.attributes.readonly ||
-						name === settings.attributes.selected ||
-						value.indexOf(settings.attributes.cloak) !== -1
-					) {
-					attributes.push(new Attribute(name, value, node));
-				}
-				if (events[name] && !isRepeaterDescendant) {
-					eventsArray.push({name:events[name], value:value});
-					attributes.push(new Attribute(name, value, node));
+				addAttribute(node, attr.name, attr.value);
+				if (events[attr.name]) {
+					if (events[attr.name] && !node.isRepeaterChild) {
+						eventsArray.push({name:events[attr.name], value:attr.value});
+					}
 				}
 			}
 		}
-		node.attributes = attributes;
-		for (var i = 0, l = eventsArray.length; i < l; i++) {
-			node.addEvent(eventsArray[i].name, eventsArray[i].value);
+		for (var a=0, b=eventsArray.length; a<b; a++) {
+			node.addEvent(eventsArray[a].name, eventsArray[a].value);
 		}
 		return node;
 	}
@@ -214,14 +219,14 @@
 		// get node
 		var node;
 		if (!nodeTarget) {
-			node = getNodeFromElement(element, parent ? parent.scope : new Scope(helpersScopeObject)._createChild(), parent && (parent.repeater || parent.isRepeaterDescendant) );
+			node = getNodeFromElement(element, parent ? parent.scope : new Scope(helpersScopeObject)._createChild());
 		}
 		else {
 			node = nodeTarget;
 			node.parent = parent;
 		}
-		if (parent && (parent.repeater || parent.isRepeaterDescendant)) {
-			node.isRepeaterDescendant = true;
+		if (parent && (parent.repeater || parent.isRepeaterChild)) {
+			node.isRepeaterChild = true;
 		}
 		node.template = template;
 		// children
@@ -317,63 +322,86 @@
 		}
 	}
 
-	function cloneRepeaterNode(element, node) {
-		var newNode = new Node(element, node.scope._createChild());
+	function compileClone(node, newNode) {
+		if (!isElementValid(newNode.element)) {
+			return;
+		}
+		// create attribute
 		if (node.attributes) {
-			var attrs = [];
-			for (var i = 0, l = node.attributes.length; i < l; i++) {
-				newNode.renderAsHtml = node.renderAsHtml;
-				if (node.attributes[i].name === settings.attributes.skip) {
-					newNode.skip = normalizeBoolean(node.attributes[i].value);
-				}
-				if (node.attributes[i].name === settings.attributes.html) {
-					newNode.html = normalizeBoolean(node.attributes[i].value);
-				}
-				if (node.attributes[i].name !== attributes.repeat) {
-					var attribute = new Attribute(node.attributes[i].name, node.attributes[i].value, newNode);
-					attrs.push(attribute);
-				}
-				if (events[node.attributes[i].name]) {
-					newNode.addEvent(events[node.attributes[i].name], node.attributes[i].value);
+			for (var i= 0, l=node.attributes.length; i<l; i++) {
+				var attr = node.attributes[i];
+				addAttribute(newNode, attr.name, attr.value);
+				if (events[attr.name]) {
+					newNode.addEvent(events[attr.name], attr.value);
 				}
 			}
-			newNode.attributes = attrs;
 		}
+		// children
+		var child = node.element.firstChild;
+		var newChild = newNode.element.firstChild;
+		// loop
+		while (child, newChild) {
+			var childNode = node.getNode(child);
+			var newChildNode = new Node(newChild, newNode.scope);
+			newNode.children.push(newChildNode);
+			newChildNode.parent = newNode;
+			newChildNode.template = newNode.template;
+			newChildNode.isRepeaterChild = true;
+			var compiledNode = compileClone(childNode, newChildNode);
+			if (compiledNode) {
+				compiledNode.parent = newChildNode;
+				compiledNode.template = newChildNode.template;
+				newChildNode.children.push(compiledNode);
+			}
+			child = child.nextSibling;
+			newChild = newChild.nextSibling;
+		}
+		return newChildNode;
+	}
+
+	function cloneRepeaterNode(element, node) {
+		var newNode = new Node(element, node.scope._createChild());
+		newNode.template = node.template;
+		newNode.parent = node;
+		newNode.isRepeaterChild = true;
+		newNode.isRepeaterDescendant = true;
+		compileClone(node, newNode);
 		return newNode;
+	}
+
+	function appendRepeaterElement(previousElement, node, newElement) {
+		if (!previousElement) {
+			if (node.element.previousSibling) {
+				insertAfter(node.element.previousSibling, newElement);
+			}
+			else if (node.element.nextSibling) {
+				insertBefore(node.element.nextSibling, newElement);
+			}
+			else {
+				node.parent.element.appendChild(newElement);
+			}
+		}
+		else {
+			insertAfter(previousElement, newElement);
+		}
 	}
 
 	function createRepeaterChild(node, count, data, indexVar, indexVarValue, previousElement) {
 		var existingChild = node.childrenRepeater[count];
 		if (!existingChild) {
-			// no existing node
 			var newElement = node.element.cloneNode(true);
+			// need to append the cloned element to the DOM
+			// before changing attributes or IE will crash
+			appendRepeaterElement(previousElement, node, newElement);
 			// can't recreate the node with a cloned element on IE7
-			// be cause the attributes are not specified annymore (attribute.specified)
+			// be cause the attributes are not specified anymore (attribute.specified)
 			//var newNode = getNodeFromElement(newElement, node.scope._createChild(), true);
 			var newNode = cloneRepeaterNode(newElement, node);
-			newNode.isRepeaterChild = true;
-			newNode.parent = node.parent;
-			newNode.template = node.template;
 			node.childrenRepeater[count] = newNode;
 			updateScopeWithRepeaterData(node.repeater, newNode.scope, data);
 			newNode.scope[indexVar] = indexVarValue;
-			compile(node.template, newElement, node.parent, newNode);
 			newNode.update();
 			newNode.render();
-			if (!previousElement) {
-				if (node.previousSibling) {
-					insertAfter(node.previousSibling, newElement);
-				}
-				else if (node.nextSibling) {
-					insertBefore(node.nextSibling, newElement);
-				}
-				else {
-					node.parent.element.appendChild(newElement);
-				}
-			}
-			else {
-				insertAfter(previousElement, newElement);
-			}
 			return newElement;
 		}
 		else {

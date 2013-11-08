@@ -65,11 +65,16 @@
 			this.eventHandlers = null;
 		},
 		getNode: function(element) {
+//			console.log('SEARCH IN ', this.element);
+//			console.log('SEARCH FOR ', element);
+//			console.log('IS REPEATER ', this.repeater);
 			var node;
+//			console.log('>> this.childrenRepeater', this.childrenRepeater);
+//			console.log('>> this.children', this.children);
 			if (element === this.element) {
 				return this;
 			}
-			else if (this.childrenRepeater.length > 0) {
+			if (this.childrenRepeater.length > 0) {
 				for (var k = 0, kl = this.childrenRepeater.length; k < kl; k++) {
 					node = this.childrenRepeater[k].getNode(element);
 					if (node) {
@@ -77,12 +82,10 @@
 					}
 				}
 			}
-			else {
-				for (var i = 0, l = this.children.length; i < l; i++) {
-					node = this.children[i].getNode(element);
-					if (node) {
-						return node;
-					}
+			for (var i = 0, l = this.children.length; i < l; i++) {
+				node = this.children[i].getNode(element);
+				if (node) {
+					return node;
 				}
 			}
 			return null;

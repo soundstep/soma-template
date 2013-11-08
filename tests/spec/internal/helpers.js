@@ -213,14 +213,14 @@ describe("internal - helpers", function () {
 	});
 
 	it("create hash map", function() {
-		var map = new HashMap();
+		var map = new HashMap('test-id');
 		expect(map).toBeDefined();
 		expect(map).not.toBeNull();
 		expect(map.getData()).toEqual({});
 	});
 
 	it("hash map put, get and remove", function() {
-		var map = new HashMap();
+		var map = new HashMap('test-id');
 		// number
 		map.put(1, 'string');
 		expect(map.get(1)).toBeDefined();
@@ -256,7 +256,7 @@ describe("internal - helpers", function () {
 	});
 
 	it("hash dispose", function() {
-		var map = new HashMap();
+		var map = new HashMap('test-id');
 		var obj = {};
 		var arr = [];
 		map.put(1, 'string');
@@ -273,8 +273,8 @@ describe("internal - helpers", function () {
 	});
 
 	it("hash data", function() {
-		var map = new HashMap();
-		var obj = {};
+		var map = new HashMap('test-id');
+		var obj = {blah:1};
 		var arr = [];
 		map.put(1, 'string');
 		map.put('str', 'string');
@@ -294,7 +294,7 @@ describe("internal - helpers", function () {
 	});
 
 	it("hash data", function() {
-		var map = new HashMap();
+		var map = new HashMap('test-id');
 		var obj = {};
 		var arr = [];
 		map.put(1, 'string');

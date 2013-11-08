@@ -1,7 +1,7 @@
-	var templates = new HashMap();
+	var templates = new HashMap('st');
 
 	var Template = function(element) {
-		this.watchers = new HashMap();
+		this.watchers = new HashMap('stw');
 		this.node = null;
 		this.scope = null;
 		this.compile(element);
