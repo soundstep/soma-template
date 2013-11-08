@@ -58,26 +58,25 @@ describe("internal - helpers", function () {
 		expect(isDefined()).toBeFalsy();
 	});
 
-	it("is attribute defined", function () {
-		expect(isAttributeDefined('')).toBeTruthy();
-		expect(isAttributeDefined(true)).toBeTruthy();
-		expect(isAttributeDefined('true')).toBeTruthy();
-		expect(isAttributeDefined(false)).toBeFalsy();
-		expect(isAttributeDefined('false')).toBeFalsy();
-		expect(isAttributeDefined(undefined)).toBeTruthy();
-		expect(isAttributeDefined(null)).toBeTruthy();
+	it("normalize boolean", function () {
+		expect(normalizeBoolean(true)).toBeTruthy();
+		expect(normalizeBoolean('true')).toBeTruthy();
+		expect(normalizeBoolean('1')).toBeTruthy();
+		expect(normalizeBoolean(1)).toBeTruthy();
+		expect(normalizeBoolean('')).toBeFalsy();
+		expect(normalizeBoolean(false)).toBeFalsy();
+		expect(normalizeBoolean('false')).toBeFalsy();
+		expect(normalizeBoolean('0')).toBeFalsy();
+		expect(normalizeBoolean(0)).toBeFalsy();
+		expect(normalizeBoolean(undefined)).toBeFalsy();
+		expect(normalizeBoolean(null)).toBeFalsy();
+		expect(normalizeBoolean({})).toBeTruthy();
 	});
 
 	it("is expression", function () {
 		expect(isExpression(new Expression())).toBeTruthy();
 		expect(isExpression({})).toBeFalsy();
 		expect(isExpression()).toBeFalsy();
-	});
-
-	it("is node", function () {
-		expect(isNode(new Node())).toBeTruthy();
-		expect(isNode({})).toBeFalsy();
-		expect(isNode()).toBeFalsy();
 	});
 
 	it("is expression function", function () {
@@ -214,14 +213,14 @@ describe("internal - helpers", function () {
 	});
 
 	it("create hash map", function() {
-		var map = new HashMap();
+		var map = new HashMap('test-id');
 		expect(map).toBeDefined();
 		expect(map).not.toBeNull();
 		expect(map.getData()).toEqual({});
 	});
 
 	it("hash map put, get and remove", function() {
-		var map = new HashMap();
+		var map = new HashMap('test-id');
 		// number
 		map.put(1, 'string');
 		expect(map.get(1)).toBeDefined();
@@ -257,7 +256,7 @@ describe("internal - helpers", function () {
 	});
 
 	it("hash dispose", function() {
-		var map = new HashMap();
+		var map = new HashMap('test-id');
 		var obj = {};
 		var arr = [];
 		map.put(1, 'string');
@@ -274,8 +273,8 @@ describe("internal - helpers", function () {
 	});
 
 	it("hash data", function() {
-		var map = new HashMap();
-		var obj = {};
+		var map = new HashMap('test-id');
+		var obj = {blah:1};
 		var arr = [];
 		map.put(1, 'string');
 		map.put('str', 'string');
@@ -295,7 +294,7 @@ describe("internal - helpers", function () {
 	});
 
 	it("hash data", function() {
-		var map = new HashMap();
+		var map = new HashMap('test-id');
 		var obj = {};
 		var arr = [];
 		map.put(1, 'string');

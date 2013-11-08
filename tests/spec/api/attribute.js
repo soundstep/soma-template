@@ -82,6 +82,21 @@ describe("api - attribute", function () {
 		}
 	});
 
+	it("special rendering attribute value", function () {
+		ct.innerHTML = '<input type="text" value="{{nickname}}">';
+		tpl.compile();
+		tpl.scope.nickname = 'john';
+		tpl.render();
+		expect(ct.firstChild.value).toEqual('john');
+		ct.firstChild.value = 'fred';
+		tpl.scope.nickname = 'alf';
+		tpl.render();
+		expect(ct.firstChild.value).toEqual('alf');
+		tpl.scope.nickname = '';
+		tpl.render();
+		expect(ct.firstChild.value).toEqual('');
+	});
+
 	it("dispose", function () {
 		ct.innerHTML = '<div {{name}}="{{value}}"></div>';
 		tpl.compile();

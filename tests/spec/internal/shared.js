@@ -646,7 +646,7 @@ describe("internal - shared", function () {
 		var node = getNodeFromElement(ct.firstChild);
 		expect(node).toEqual(jasmine.any(Node));
 		expect(node.element).toEqual(ct.firstChild);
-		expect(node.attributes.length).toEqual(0);
+		expect(node.attributes).toBeNull();
 		expect(node.value).toEqual('{{cl}}');
 	});
 
@@ -764,9 +764,6 @@ describe("internal - shared", function () {
 		expect(tpl.node.children[0].childrenRepeater[0].element.innerHTML).toEqual('0-1');
 		expect(tpl.node.children[0].childrenRepeater[1].element.innerHTML).toEqual('1-2');
 		expect(tpl.node.children[0].childrenRepeater[2].element.innerHTML).toEqual('2-3');
-		expect(tpl.node.children[0].childrenRepeater[0].parent).toEqual(tpl.node);
-		expect(tpl.node.children[0].childrenRepeater[1].parent).toEqual(tpl.node);
-		expect(tpl.node.children[0].childrenRepeater[2].parent).toEqual(tpl.node);
 	});
 
 	it("createRepeaterChild object", function() {
@@ -780,9 +777,6 @@ describe("internal - shared", function () {
 		expect(tpl.node.children[0].childrenRepeater[0].element.innerHTML).toEqual('item1-1');
 		expect(tpl.node.children[0].childrenRepeater[1].element.innerHTML).toEqual('item2-2');
 		expect(tpl.node.children[0].childrenRepeater[2].element.innerHTML).toEqual('item3-3');
-		expect(tpl.node.children[0].childrenRepeater[0].parent).toEqual(tpl.node);
-		expect(tpl.node.children[0].childrenRepeater[1].parent).toEqual(tpl.node);
-		expect(tpl.node.children[0].childrenRepeater[2].parent).toEqual(tpl.node);
 	});
 
 	it("getScopeDepth", function() {

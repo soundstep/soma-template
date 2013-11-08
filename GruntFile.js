@@ -3,7 +3,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-shell');
 
 	grunt.initConfig({
-		pkg:'<json:package.json>',
+		pkg: grunt.file.readJSON('package.json'),
 		shell: {
 			delete_build_folder: {
 				command: 'rm -r build/',
@@ -40,5 +40,5 @@ module.exports = function(grunt) {
 		}
 	});
 
-	grunt.registerTask('default', 'shell');
+	grunt.registerTask('default', ['shell']);
 }
