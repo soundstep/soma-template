@@ -3,7 +3,7 @@ var people = template.scope.people = JSON.parse( localStorage.getItem('soma-temp
 template.render();
 
 template.scope.add = function(event) {
-	if (event.keyCode && event.keyCode !== 13) {
+	if (event.type === 'keypress' && event.which !== 13) {
 		return;
 	}
 	people.push({
@@ -13,13 +13,13 @@ template.scope.add = function(event) {
 	template.render();
 	save();
 }
-template.scope.remove = function(person) {
-	people.splice(people.indexOf(person), 1);
+template.scope.remove = function(event, person) {
+	people.splice( people.indexOf(person), 1 );
 	template.render();
 	save();
 }
 template.scope.removeAll = function() {
-	people = template.scope.people = [];
+	template.scope.people = people = [];
 	template.render();
 	save();
 }
