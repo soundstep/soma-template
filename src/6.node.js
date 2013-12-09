@@ -126,7 +126,7 @@
 				this.children[i].invalidateData();
 			}
 		},
-		addEvent: function(type, pattern) {
+		addEvent: function(type, pattern, attr) {
 			if (this.repeater) {
 				return;
 			}
@@ -134,8 +134,9 @@
 				this.removeEvent(type);
 			}
 			var scope = this.scope;
+			var node = this;
 			var handler = function(event) {
-				var exp = new Expression(pattern, this.node);
+				var exp = new Expression(pattern, node, attr);
 				var func = exp.getValue(scope, true);
 				var params = exp.getValue(scope, false, true);
 				params.unshift(event);
