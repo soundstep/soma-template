@@ -3,7 +3,7 @@
 	'use strict';
 
 	soma.template = soma.template || {};
-	soma.template.version = '0.2.5';
+	soma.template.version = '0.2.6';
 
 	soma.template.errors = {
 		TEMPLATE_STRING_NO_ELEMENT: 'Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create(\'string\', element)',
@@ -55,7 +55,11 @@
 
 	var vars = settings.vars = {
 		index: '$index',
-		key: '$key'
+		key: '$key',
+		element: '$element',
+		parentElement: '$parentElement',
+		attribute: '$attribute',
+		scope: '$scope'
 	};
 
 	var events = settings.events = {};
@@ -324,12 +328,25 @@
 		return scopeTarget;
 	}
 
-	function getValueFromPattern(scope, pattern) {
+	function getValueFromPattern(scope, pattern, context) {
 		var exp = new Expression(pattern);
-		return getValue(scope, exp.pattern, exp.path, exp.params);
+		return getValue(scope, exp.pattern, exp.path, exp.params, undefined, undefined, undefined, context);
 	}
 
-	function getValue(scope, pattern, pathString, params, getFunction, getParams, paramsFound) {
+	function getValue(scope, pattern, pathString, params, getFunction, getParams, paramsFound, context) {
+		// context
+		if (pattern === vars.element) {
+			return context[vars.element];
+		}
+		if (pattern === vars.parentElement) {
+			return context[vars.parentElement];
+		}
+		if (pattern === vars.attribute) {
+			return context[vars.attribute];
+		}
+		if (pattern === vars.scope) {
+			return context[vars.scope];
+		}
 		// string
 		if (regex.string.test(pattern)) {
 			return trimQuotes(pattern);
@@ -338,7 +355,7 @@
 		var paramsValues = [];
 		if (!paramsFound && params) {
 			for (var j = 0, jl = params.length; j < jl; j++) {
-				paramsValues.push(getValueFromPattern(scope, params[j]));
+				paramsValues.push(getValueFromPattern(scope, params[j], context));
 			}
 		}
 		else {
@@ -617,7 +634,7 @@
 		var child = node.element.firstChild;
 		var newChild = newNode.element.firstChild;
 		// loop
-		while (child, newChild) {
+		while (child && newChild) {
 			var childNode = node.getNode(child);
 			var newChildNode = new Node(newChild, newNode.scope);
 			newNode.children.push(newChildNode);
@@ -765,7 +782,6 @@
 			this.element = null;
 			this.scope = null;
 			this.attributes = null;
-			this.attributesHashMap = null;
 			this.value = null;
 			this.interpolation = null;
 			this.repeater = null;
@@ -778,12 +794,7 @@
 			this.eventHandlers = null;
 		},
 		getNode: function(element) {
-//			console.log('SEARCH IN ', this.element);
-//			console.log('SEARCH FOR ', element);
-//			console.log('IS REPEATER ', this.repeater);
 			var node;
-//			console.log('>> this.childrenRepeater', this.childrenRepeater);
-//			console.log('>> this.children', this.children);
 			if (element === this.element) {
 				return this;
 			}
@@ -1181,7 +1192,20 @@
 			}
 		},
 		getValue: function(scope, getFunction, getParams) {
-			return getValue(scope, this.pattern, this.path, this.params, getFunction, getParams);
+			var node = this.node;
+			if (!node && this.attribute) {
+				node = this.attribute.node;
+			}
+			var context = {};
+			if (node) {
+				context[vars.element] = node.element;
+				if (node.element) {
+					context[vars.parentElement] = node.element.parentNode;
+				}
+			}
+			context[vars.attribute] = this.attribute;
+			context[vars.scope] = scope;
+			return getValue(scope, this.pattern, this.path, this.params, getFunction, getParams, undefined, context);
 		}
 	};
 

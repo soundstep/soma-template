@@ -1,5 +1,5 @@
 	soma.template = soma.template || {};
-	soma.template.version = '0.2.5';
+	soma.template.version = '0.2.6';
 
 	soma.template.errors = {
 		TEMPLATE_STRING_NO_ELEMENT: 'Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create(\'string\', element)',
@@ -51,7 +51,11 @@
 
 	var vars = settings.vars = {
 		index: '$index',
-		key: '$key'
+		key: '$key',
+		element: '$element',
+		parentElement: '$parentElement',
+		attribute: '$attribute',
+		scope: '$scope'
 	};
 
 	var events = settings.events = {};

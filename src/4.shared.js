@@ -47,12 +47,25 @@
 		return scopeTarget;
 	}
 
-	function getValueFromPattern(scope, pattern) {
+	function getValueFromPattern(scope, pattern, context) {
 		var exp = new Expression(pattern);
-		return getValue(scope, exp.pattern, exp.path, exp.params);
+		return getValue(scope, exp.pattern, exp.path, exp.params, undefined, undefined, undefined, context);
 	}
 
-	function getValue(scope, pattern, pathString, params, getFunction, getParams, paramsFound) {
+	function getValue(scope, pattern, pathString, params, getFunction, getParams, paramsFound, context) {
+		// context
+		if (pattern === vars.element) {
+			return context[vars.element];
+		}
+		if (pattern === vars.parentElement) {
+			return context[vars.parentElement];
+		}
+		if (pattern === vars.attribute) {
+			return context[vars.attribute];
+		}
+		if (pattern === vars.scope) {
+			return context[vars.scope];
+		}
 		// string
 		if (regex.string.test(pattern)) {
 			return trimQuotes(pattern);
@@ -61,7 +74,7 @@
 		var paramsValues = [];
 		if (!paramsFound && params) {
 			for (var j = 0, jl = params.length; j < jl; j++) {
-				paramsValues.push(getValueFromPattern(scope, params[j]));
+				paramsValues.push(getValueFromPattern(scope, params[j], context));
 			}
 		}
 		else {
@@ -340,7 +353,7 @@
 		var child = node.element.firstChild;
 		var newChild = newNode.element.firstChild;
 		// loop
-		while (child, newChild) {
+		while (child && newChild) {
 			var childNode = node.getNode(child);
 			var newChildNode = new Node(newChild, newNode.scope);
 			newNode.children.push(newChildNode);
