@@ -3,7 +3,7 @@
 	'use strict';
 
 	soma.template = soma.template || {};
-	soma.template.version = '0.2.6';
+	soma.template.version = '0.2.7';
 
 	soma.template.errors = {
 		TEMPLATE_STRING_NO_ELEMENT: 'Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create(\'string\', element)',
@@ -423,6 +423,7 @@
 	}
 
 	function addAttribute(node, name, value) {
+		var attr;
 		node.attributes = node.attributes || [];
 		if (name === settings.attributes.skip) {
 			node.skip = normalizeBoolean(value);
@@ -448,11 +449,14 @@
 				name === settings.attributes.selected ||
 				value.indexOf(settings.attributes.cloak) !== -1
 			) {
-			node.attributes.push(new Attribute(name, value, node));
+			attr = new Attribute(name, value, node);
+			node.attributes.push(attr);
 		}
 		if (events[name]) {
-			node.attributes.push(new Attribute(name, value, node));
+			attr = new Attribute(name, value, node);
+			node.attributes.push(attr);
 		}
+		return attr;
 	}
 
 	function getNodeFromElement(element, scope) {
@@ -463,16 +467,16 @@
 		for (var attr, attrs = element.attributes, j = 0, jj = attrs && attrs.length; j < jj; j++) {
 			attr = attrs[j];
 			if (attr.specified || attr.name === 'value') {
-				addAttribute(node, attr.name, attr.value);
+				var newAttr = addAttribute(node, attr.name, attr.value);
 				if (events[attr.name]) {
 					if (events[attr.name] && !node.isRepeaterChild) {
-						eventsArray.push({name:events[attr.name], value:attr.value});
+						eventsArray.push({name:events[attr.name], value:attr.value, attr: newAttr});
 					}
 				}
 			}
 		}
 		for (var a=0, b=eventsArray.length; a<b; a++) {
-			node.addEvent(eventsArray[a].name, eventsArray[a].value);
+			node.addEvent(eventsArray[a].name, eventsArray[a].value, eventsArray[a].attr);
 		}
 		return node;
 	}
@@ -624,9 +628,9 @@
 		if (node.attributes) {
 			for (var i= 0, l=node.attributes.length; i<l; i++) {
 				var attr = node.attributes[i];
-				addAttribute(newNode, attr.name, attr.value);
+				var newAttr = addAttribute(newNode, attr.name, attr.value);
 				if (events[attr.name]) {
-					newNode.addEvent(events[attr.name], attr.value);
+					newNode.addEvent(events[attr.name], attr.value, newAttr);
 				}
 			}
 		}
@@ -856,7 +860,7 @@
 				this.children[i].invalidateData();
 			}
 		},
-		addEvent: function(type, pattern) {
+		addEvent: function(type, pattern, attr) {
 			if (this.repeater) {
 				return;
 			}
@@ -864,8 +868,9 @@
 				this.removeEvent(type);
 			}
 			var scope = this.scope;
+			var node = this;
 			var handler = function(event) {
-				var exp = new Expression(pattern, this.node);
+				var exp = new Expression(pattern, node, attr);
 				var func = exp.getValue(scope, true);
 				var params = exp.getValue(scope, false, true);
 				params.unshift(event);

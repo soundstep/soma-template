@@ -117,9 +117,9 @@
                         <li><a href="#vars-element">$element</a></li>
                         <li><a href="#vars-parent-element">$parentElement</a></li>
                         <li><a href="#vars-scope">$scope</a></li>
-                        <li><a href="#attribute">$attribute</a></li>
-                        <li><a href="#index">$index</a></li>
-                        <li><a href="#key">$key</a></li>
+                        <li><a href="#vars-index">$index</a></li>
+                        <li><a href="#vars-key">$key</a></li>
+                        <li><a href="#vars-attribute">$attribute</a></li>
                     </ul>
                 </li>
 				<li><p><a href="#helpers">Helpers</a></p>
@@ -937,7 +937,7 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
     <section>
 
         <div class="title">
-            <h1>Special attributes</h1>
+            <h1>Special vars</h1>
             <a class="anchor" name="special-vars"></a>
         </div>
 
@@ -946,30 +946,114 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
         <div class="subtitle">
             <h3>$element</h3>
             <a class="anchor" name="vars-element"></a>
-            <p>The <code>$element</code> variable represents the current HTML Element where the interpolation occurs. The element can be an HTML node or a text node.</p>
-            <p>Usable everywhere.</p>
         </div>
+
+        <p>The <code>$element</code> variable represents the current HTML Element where the interpolation occurs. The element can be an HTML node or a text node.</p>
+        <p>Usable everywhere.</p>
+
+        <div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  The current node has a nodeType of <span class="cp">{{</span><span class="nv">getType</span><span class="o">(</span><span class="nv">$element</span><span class="o">)</span><span class="cp">}}</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">));</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">getType</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">element</span><span class="p">.</span><span class="nx">nodeType</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+        <p><a href="http://plnkr.co/edit/cGNVfvVj9drfRpO1Gidp?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+        <div class="back"><a href="#">top</a></div>
 
         <div class="subtitle">
             <h3>$parentElement</h3>
-            <a class="anchor" name="vars-element"></a>
-            <p>The <code>$parentElement</code> is a shortcut the parent of an HTML Element. This is useful when called from a text node to send directly the parent.</p>
-            <p>Usable everywhere.</p>
+            <a class="anchor" name="vars-parent-element"></a>
         </div>
+
+        <p>The <code>$parentElement</code> is a shortcut the parent of an HTML Element. This is useful when called from a text node to send directly the parent.</p>
+        <p>Usable everywhere.</p>
+        <div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  The parent node is a <span class="cp">{{</span><span class="nv">getName</span><span class="o">(</span><span class="nv">$parentElement</span><span class="o">)</span><span class="cp">}}</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">));</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">getName</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">element</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+        <p><a href="http://plnkr.co/edit/edaBEfEff33OwHnDVf2R?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+        <div class="back"><a href="#">top</a></div>
 
         <div class="subtitle">
             <h3>$scope</h3>
-            <a class="anchor" name="vars-element"></a>
-            <p>The <code>$scope</code> is the object containing the data that the template is rendered against.</p>
-            <p>Usable everywhere.</p>
+            <a class="anchor" name="vars-scope"></a>
         </div>
+        <p>The <code>$scope</code> is the object containing the data that the template is rendered against.</p>
+        <p>Usable everywhere.</p>
+
+        <div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  A complicated way to find a name: <span class="cp">{{</span><span class="nv">getName</span><span class="o">(</span><span class="nv">$scope</span><span class="o">)</span><span class="cp">}}</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">));</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;John&#39;</span><span class="p">;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">getName</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">sc</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+  <span class="p">};</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+        <p><a href="http://plnkr.co/edit/1i6i8zazTwMdGTxqKzCE?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+        <div class="back"><a href="#">top</a></div>
 
         <div class="subtitle">
-            <h3>$attribute (only in HTML attributes)</h3>
-            <a class="anchor" name="vars-element"></a>
-            <p>The <code>$attribute</code> is the template function instance that represents the HTML node attribute.</p>
-            <p>Usable only in attribute interpolation.</p>
+            <h3>$index</h3>
+            <a class="anchor" name="vars-index"></a>
         </div>
+
+        <p>The <code>$index</code> is the index value of an array repeater item.</p>
+        <p>Usable only in data repeater nodes.</p>
+
+        <div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;p</span> <span class="na">data-repeat=</span><span class="s">&quot;item in items&quot;</span><span class="nt">&gt;</span>This index is: <span class="cp">{{</span><span class="nv">$index</span><span class="cp">}}</span><span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">));</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+        <p><a href="http://plnkr.co/edit/qYWFkYf478sJ4afnzztX?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+        <div class="back"><a href="#">top</a></div>
+
+        <div class="subtitle">
+            <h3>$key</h3>
+            <a class="anchor" name="vars-key"></a>
+        </div>
+
+        <p>The <code>$key</code> is the key of an object repeater item.</p>
+        <p>Usable only in data repeater nodes.</p>
+
+        <div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;p</span> <span class="na">data-repeat=</span><span class="s">&quot;item in items&quot;</span><span class="nt">&gt;</span>This key is: <span class="cp">{{</span><span class="nv">$key</span><span class="cp">}}</span><span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">soma</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">));</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;firstname&#39;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s1">&#39;surname&#39;</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s1">&#39;age&#39;</span><span class="o">:</span> <span class="mi">3</span><span class="p">,</span>
+  <span class="p">};</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+        <p><a href="http://plnkr.co/edit/tRxdZh7mFNuArDcCz2iZ?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+        <div class="back"><a href="#">top</a></div>
+
+        <div class="subtitle">
+            <h3>$attribute</h3>
+            <a class="anchor" name="vars-attribute"></a>
+        </div>
+
+        <p>The <code>$attribute</code> is the template function instance that represents the HTML node attribute.</p>
+        <p>Usable only in attribute interpolation.</p>
 
     </section>
 

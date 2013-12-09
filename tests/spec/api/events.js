@@ -369,4 +369,168 @@ describe("api - events", function () {
 		document.body.removeChild(div);
 	});
 
+	it("$element received", function () {
+		ct.innerHTML = '<button id="bt1" data-click="clickHandler($element)">click</button><button id="bt2" data-mouseover="overHandler($element)">over</button>';
+		tpl.compile();
+		tpl.render();
+		tpl.scope.clickHandler = function(event, element){ };
+		tpl.scope.overHandler = function(event, element){ };
+		spyOn(tpl.scope, 'clickHandler');
+		spyOn(tpl.scope, 'overHandler');
+		simulate(document.getElementById('bt1'), 'click');
+		simulate(document.getElementById('bt2'), 'mouseover');
+		expect(tpl.scope.clickHandler).toHaveBeenCalled();
+		expect(tpl.scope.clickHandler.mostRecentCall.args[0].type).toEqual('click');
+		expect(tpl.scope.clickHandler.mostRecentCall.args[1]).toEqual(ct.childNodes[0]);
+		expect(tpl.scope.overHandler).toHaveBeenCalled();
+		expect(tpl.scope.overHandler.mostRecentCall.args[0].type).toEqual('mouseover');
+		expect(tpl.scope.overHandler.mostRecentCall.args[1]).toEqual(ct.childNodes[1]);
+	});
+
+	it("$element in repeater received", function () {
+		ct.innerHTML = '<ul><li data-repeat="item in items" id="li{{$index}}" data-click="clickHandler($index, $element)">button</li></ul>';
+		tpl.compile();
+		tpl.scope.items = ['A', 'B', 'C'];
+		tpl.scope.clickHandler = function(event, element) {alert(element)};
+		tpl.render();
+		spyOn(tpl.scope, 'clickHandler');
+		simulate(document.getElementById('li0'), 'click');
+		simulate(document.getElementById('li1'), 'click');
+		simulate(document.getElementById('li2'), 'click');
+		expect(tpl.scope.clickHandler).toHaveBeenCalled();
+		expect(tpl.scope.clickHandler.callCount).toEqual(3);
+		expect(tpl.scope.clickHandler.argsForCall[0][0].type).toEqual('click');
+		expect(tpl.scope.clickHandler.argsForCall[0][1]).toEqual(0);
+		expect(tpl.scope.clickHandler.argsForCall[0][2]).toEqual(ct.firstChild.childNodes[0]);
+		expect(tpl.scope.clickHandler.argsForCall[1][0].type).toEqual('click');
+		expect(tpl.scope.clickHandler.argsForCall[1][1]).toEqual(1);
+		expect(tpl.scope.clickHandler.argsForCall[1][2]).toEqual(ct.firstChild.childNodes[1]);
+		expect(tpl.scope.clickHandler.argsForCall[2][0].type).toEqual('click');
+		expect(tpl.scope.clickHandler.argsForCall[2][1]).toEqual(2);
+		expect(tpl.scope.clickHandler.argsForCall[2][2]).toEqual(ct.firstChild.childNodes[2]);
+	});
+
+	it("$parentElement received", function () {
+		ct.innerHTML = '<button id="bt1" data-click="clickHandler($parentElement)">click</button><button id="bt2" data-mouseover="overHandler($parentElement)">over</button>';
+		tpl.compile();
+		tpl.render();
+		tpl.scope.clickHandler = function(event, element){ };
+		tpl.scope.overHandler = function(event, element){ };
+		spyOn(tpl.scope, 'clickHandler');
+		spyOn(tpl.scope, 'overHandler');
+		simulate(document.getElementById('bt1'), 'click');
+		simulate(document.getElementById('bt2'), 'mouseover');
+		expect(tpl.scope.clickHandler).toHaveBeenCalled();
+		expect(tpl.scope.clickHandler.mostRecentCall.args[0].type).toEqual('click');
+		expect(tpl.scope.clickHandler.mostRecentCall.args[1]).toEqual(ct);
+		expect(tpl.scope.overHandler).toHaveBeenCalled();
+		expect(tpl.scope.overHandler.mostRecentCall.args[0].type).toEqual('mouseover');
+		expect(tpl.scope.overHandler.mostRecentCall.args[1]).toEqual(ct);
+	});
+
+	it("$parentElement in repeater received", function () {
+		ct.innerHTML = '<ul><li data-repeat="item in items" id="li{{$index}}" data-click="clickHandler($index, $parentElement)">button</li></ul>';
+		tpl.compile();
+		tpl.scope.items = ['A', 'B', 'C'];
+		tpl.scope.clickHandler = function(event, $parentElement) {alert($parentElement)};
+		tpl.render();
+		spyOn(tpl.scope, 'clickHandler');
+		simulate(document.getElementById('li0'), 'click');
+		simulate(document.getElementById('li1'), 'click');
+		simulate(document.getElementById('li2'), 'click');
+		expect(tpl.scope.clickHandler).toHaveBeenCalled();
+		expect(tpl.scope.clickHandler.callCount).toEqual(3);
+		expect(tpl.scope.clickHandler.argsForCall[0][0].type).toEqual('click');
+		expect(tpl.scope.clickHandler.argsForCall[0][1]).toEqual(0);
+		expect(tpl.scope.clickHandler.argsForCall[0][2]).toEqual(ct.firstChild);
+		expect(tpl.scope.clickHandler.argsForCall[1][0].type).toEqual('click');
+		expect(tpl.scope.clickHandler.argsForCall[1][1]).toEqual(1);
+		expect(tpl.scope.clickHandler.argsForCall[1][2]).toEqual(ct.firstChild);
+		expect(tpl.scope.clickHandler.argsForCall[2][0].type).toEqual('click');
+		expect(tpl.scope.clickHandler.argsForCall[2][1]).toEqual(2);
+		expect(tpl.scope.clickHandler.argsForCall[2][2]).toEqual(ct.firstChild);
+	});
+
+	it("$scope received", function () {
+		ct.innerHTML = '<button id="bt1" data-click="clickHandler($scope)">click</button><button id="bt2" data-mouseover="overHandler($scope)">over</button>';
+		tpl.compile();
+		tpl.render();
+		tpl.scope.clickHandler = function(event, element){ };
+		tpl.scope.overHandler = function(event, element){ };
+		spyOn(tpl.scope, 'clickHandler');
+		spyOn(tpl.scope, 'overHandler');
+		simulate(document.getElementById('bt1'), 'click');
+		simulate(document.getElementById('bt2'), 'mouseover');
+		expect(tpl.scope.clickHandler).toHaveBeenCalled();
+		expect(tpl.scope.clickHandler.mostRecentCall.args[0].type).toEqual('click');
+		expect(tpl.scope.clickHandler.mostRecentCall.args[1]).toEqual(tpl.scope);
+		expect(tpl.scope.overHandler).toHaveBeenCalled();
+		expect(tpl.scope.overHandler.mostRecentCall.args[0].type).toEqual('mouseover');
+		expect(tpl.scope.overHandler.mostRecentCall.args[1]).toEqual(tpl.scope);
+	});
+
+	it("$scope in repeater received", function () {
+		ct.innerHTML = '<ul><li data-repeat="item in items" id="li{{$index}}" data-click="clickHandler($index, $scope)">button</li></ul>';
+		tpl.compile();
+		tpl.scope.items = ['A', 'B', 'C'];
+		tpl.scope.clickHandler = function(event, $scope) {alert($scope)};
+		tpl.render();
+		spyOn(tpl.scope, 'clickHandler');
+		simulate(document.getElementById('li0'), 'click');
+		simulate(document.getElementById('li1'), 'click');
+		simulate(document.getElementById('li2'), 'click');
+		expect(tpl.scope.clickHandler).toHaveBeenCalled();
+		expect(tpl.scope.clickHandler.callCount).toEqual(3);
+		expect(tpl.scope.clickHandler.argsForCall[0][0].type).toEqual('click');
+		expect(tpl.scope.clickHandler.argsForCall[0][1]).toEqual(0);
+		expect(tpl.scope.clickHandler.argsForCall[0][2].item).toEqual(tpl.scope.items[0]);
+		expect(tpl.scope.clickHandler.argsForCall[1][0].type).toEqual('click');
+		expect(tpl.scope.clickHandler.argsForCall[1][1]).toEqual(1);
+		expect(tpl.scope.clickHandler.argsForCall[1][2].item).toEqual(tpl.scope.items[1]);
+		expect(tpl.scope.clickHandler.argsForCall[2][0].type).toEqual('click');
+		expect(tpl.scope.clickHandler.argsForCall[2][1]).toEqual(2);
+		expect(tpl.scope.clickHandler.argsForCall[2][2].item).toEqual(tpl.scope.items[2]);
+	});
+
+	it("$attribute received", function () {
+		ct.innerHTML = '<button id="bt1" data-click="clickHandler($attribute)">click</button><button id="bt2" data-mouseover="overHandler($attribute)">over</button>';
+		tpl.compile();
+		tpl.render();
+		tpl.scope.clickHandler = function(event, attribute){ };
+		tpl.scope.overHandler = function(event, attribute){ };
+		spyOn(tpl.scope, 'clickHandler');
+		spyOn(tpl.scope, 'overHandler');
+		simulate(document.getElementById('bt1'), 'click');
+		simulate(document.getElementById('bt2'), 'mouseover');
+		expect(tpl.scope.clickHandler).toHaveBeenCalled();
+		expect(tpl.scope.clickHandler.mostRecentCall.args[0].type).toEqual('click');
+		expect(tpl.scope.clickHandler.mostRecentCall.args[1].name).toEqual('data-click');
+		expect(tpl.scope.overHandler).toHaveBeenCalled();
+		expect(tpl.scope.overHandler.mostRecentCall.args[0].type).toEqual('mouseover');
+		expect(tpl.scope.overHandler.mostRecentCall.args[1].name).toEqual('data-mouseover');
+	});
+
+	it("$attribute in repeater received", function () {
+		ct.innerHTML = '<ul><li data-repeat="item in items" id="li{{$index}}" data-click="clickHandler($index, $attribute)">button</li></ul>';
+		tpl.compile();
+		tpl.scope.items = ['A', 'B', 'C'];
+		tpl.scope.clickHandler = function(event, $scope) {alert($scope)};
+		tpl.render();
+		spyOn(tpl.scope, 'clickHandler');
+		simulate(document.getElementById('li0'), 'click');
+		simulate(document.getElementById('li1'), 'click');
+		simulate(document.getElementById('li2'), 'click');
+		expect(tpl.scope.clickHandler).toHaveBeenCalled();
+		expect(tpl.scope.clickHandler.callCount).toEqual(3);
+		expect(tpl.scope.clickHandler.argsForCall[0][0].type).toEqual('click');
+		expect(tpl.scope.clickHandler.argsForCall[0][1]).toEqual(0);
+		expect(tpl.scope.clickHandler.argsForCall[0][2].name).toEqual('data-click');
+		expect(tpl.scope.clickHandler.argsForCall[1][0].type).toEqual('click');
+		expect(tpl.scope.clickHandler.argsForCall[1][1]).toEqual(1);
+		expect(tpl.scope.clickHandler.argsForCall[1][2].name).toEqual('data-click');
+		expect(tpl.scope.clickHandler.argsForCall[2][0].type).toEqual('click');
+		expect(tpl.scope.clickHandler.argsForCall[2][1]).toEqual(2);
+		expect(tpl.scope.clickHandler.argsForCall[2][2].name).toEqual('data-click');
+	});
+
 });

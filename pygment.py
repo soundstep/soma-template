@@ -3,11 +3,15 @@ from pygments.lexers import HtmlDjangoLexer
 from pygments.formatters import HtmlFormatter
 
 code = """<div id="target">
-  <div data-html>{{firstLine}}{{secondLine}}</div>
+  <p data-repeat="item in items">This key is: {{$key}}</p>
 </div>
 <script>
-  template.scope.firstLine = 'first line<br/>';
-  template.scope.secondLine = 'second line';
+  var template = soma.template.create(document.getElementById('target'));
+  template.scope.items = {
+    'firstname': 1,
+    'surname': 2,
+    'age': 3,
+  };
   template.render();
 </script>
 """
