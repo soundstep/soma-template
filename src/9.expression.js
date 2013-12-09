@@ -48,6 +48,19 @@
 			}
 		},
 		getValue: function(scope, getFunction, getParams) {
-			return getValue(scope, this.pattern, this.path, this.params, getFunction, getParams);
+			var node = this.node;
+			if (!node && this.attribute) {
+				node = this.attribute.node;
+			}
+			var context = {};
+			if (node) {
+				context[vars.element] = node.element;
+				if (node.element) {
+					context[vars.parentElement] = node.element.parentNode;
+				}
+			}
+			context[vars.attribute] = this.attribute;
+			context[vars.scope] = scope;
+			return getValue(scope, this.pattern, this.path, this.params, getFunction, getParams, undefined, context);
 		}
 	};

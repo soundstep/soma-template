@@ -287,4 +287,197 @@ describe("api - expression", function () {
 		expect(count).toEqual(3);
 	});
 
+	it("function param $element", function () {
+		var storeClass = [];
+		var storeElement = [];
+		ct.innerHTML = '<div class="{{testClass($element)}}">{{testElement($element)}}</div><div class="{{testClass($element)}}">{{testElement($element)}}</div>';
+		tpl.compile();
+		tpl.scope.testClass = function(element) {
+			storeClass.push(element);
+			return '';
+		};
+		tpl.scope.testElement = function(element) {
+			storeElement.push(element);
+			return '';
+		};
+		tpl.render();
+		expect(storeClass[0]).toEqual(ct.childNodes[0]);
+		expect(storeClass[1]).toEqual(ct.childNodes[1]);
+		expect(storeElement[0]).toEqual(ct.childNodes[0].firstChild);
+		expect(storeElement[1]).toEqual(ct.childNodes[1].firstChild);
+	});
+
+	it("function param $element in repeater", function () {
+		var storeClass = [];
+		var storeElement = [];
+		ct.innerHTML = '<div data-repeat="item in items" class="{{testClass($element)}}">{{testElement($element)}}</div>';
+		tpl.compile();
+		tpl.scope.items = [
+			{name: 'child1'},
+			{name: 'child2'},
+			{name: 'child3'}
+		];
+		tpl.scope.testClass = function(element) {
+			storeClass.push(element);
+			return '';
+		};
+		tpl.scope.testElement = function(element) {
+			storeElement.push(element);
+			return '';
+		};
+		tpl.render();
+		expect(storeClass[0]).toEqual(ct.childNodes[0]);
+		expect(storeClass[1]).toEqual(ct.childNodes[1]);
+		expect(storeClass[2]).toEqual(ct.childNodes[2]);
+		expect(storeElement[0]).toEqual(ct.childNodes[0].firstChild);
+		expect(storeElement[1]).toEqual(ct.childNodes[1].firstChild);
+		expect(storeElement[2]).toEqual(ct.childNodes[2].firstChild);
+	});
+
+	it("function param $parentElement", function () {
+		var storeClass = [];
+		var storeElement = [];
+		ct.innerHTML = '<div class="{{testClass($parentElement)}}">{{testElement($parentElement)}}</div><div class="{{testClass($parentElement)}}">{{testElement($parentElement)}}</div>';
+		tpl.compile();
+		tpl.scope.testClass = function(parentElement) {
+			storeClass.push(parentElement);
+			return '';
+		};
+		tpl.scope.testElement = function(parentElement) {
+			storeElement.push(parentElement);
+			return '';
+		};
+		tpl.render();
+		expect(storeClass[0]).toEqual(ct);
+		expect(storeClass[1]).toEqual(ct);
+		expect(storeElement[0]).toEqual(ct.childNodes[0]);
+		expect(storeElement[1]).toEqual(ct.childNodes[1]);
+	});
+
+	it("function param $parentElement in repeater", function () {
+		var storeClass = [];
+		var storeElement = [];
+		ct.innerHTML = '<div data-repeat="item in items" class="{{testClass($parentElement)}}">{{testElement($parentElement)}}</div>';
+		tpl.compile();
+		tpl.scope.items = [
+			{name: 'child1'},
+			{name: 'child2'},
+			{name: 'child3'}
+		];
+		tpl.scope.testClass = function(parentElement) {
+			storeClass.push(parentElement);
+			return '';
+		};
+		tpl.scope.testElement = function(parentElement) {
+			storeElement.push(parentElement);
+			return '';
+		};
+		tpl.render();
+		expect(storeClass[0]).toEqual(ct);
+		expect(storeClass[1]).toEqual(ct);
+		expect(storeClass[2]).toEqual(ct);
+		expect(storeElement[0]).toEqual(ct.childNodes[0]);
+		expect(storeElement[1]).toEqual(ct.childNodes[1]);
+		expect(storeElement[2]).toEqual(ct.childNodes[2]);
+	});
+
+	it("function param $attribute", function () {
+		var storeClass = [];
+		var storeElement = [];
+		ct.innerHTML = '<div class="{{testClass($attribute)}}">{{testElement($attribute)}}</div><div class="{{testClass($attribute)}}">{{testElement($attribute)}}</div>';
+		tpl.compile();
+		tpl.scope.testClass = function(attr) {
+			storeClass.push(attr);
+			return '';
+		};
+		tpl.scope.testElement = function(attr) {
+			storeElement.push(attr);
+			return '';
+		};
+		tpl.render();
+		expect(storeClass[0].name).toEqual('class');
+		expect(storeClass[0].node.element).toEqual(ct.childNodes[0]);
+		expect(storeClass[1].name).toEqual('class');
+		expect(storeClass[1].node.element).toEqual(ct.childNodes[1]);
+		expect(storeElement[0]).toBeUndefined();
+		expect(storeElement[1]).toBeUndefined();
+	});
+
+	it("function param $attribute in repeater", function () {
+		var storeClass = [];
+		var storeElement = [];
+		ct.innerHTML = '<div data-repeat="item in items" class="{{testClass($attribute)}}">{{testElement($attribute)}}</div>';
+		tpl.compile();
+		tpl.scope.items = [
+			{name: 'child1'},
+			{name: 'child2'},
+			{name: 'child3'}
+		];
+		tpl.scope.testClass = function(attr) {
+			storeClass.push(attr);
+			return '';
+		};
+		tpl.scope.testElement = function(attr) {
+			storeElement.push(attr);
+			return '';
+		};
+		tpl.render();
+		expect(storeClass[0].name).toEqual('class');
+		expect(storeClass[0].node.element).toEqual(ct.childNodes[0]);
+		expect(storeClass[1].name).toEqual('class');
+		expect(storeClass[1].node.element).toEqual(ct.childNodes[1]);
+		expect(storeClass[2].name).toEqual('class');
+		expect(storeClass[2].node.element).toEqual(ct.childNodes[2]);
+		expect(storeElement[0]).toBeUndefined();
+		expect(storeElement[1]).toBeUndefined();
+		expect(storeElement[2]).toBeUndefined();
+	});
+
+	it("function param $scope", function () {
+		var storeClass = [];
+		var storeElement = [];
+		ct.innerHTML = '<div class="{{testClass($scope)}}">{{testElement($scope)}}</div><div class="{{testClass($scope)}}">{{testElement($scope)}}</div>';
+		tpl.compile();
+		tpl.scope.testClass = function(sc) {
+			storeClass.push(sc);
+			return '';
+		};
+		tpl.scope.testElement = function(sc) {
+			storeElement.push(sc);
+			return '';
+		};
+		tpl.render();
+		expect(storeClass[0]).toEqual(tpl.scope);
+		expect(storeClass[1]).toEqual(tpl.scope);
+		expect(storeElement[0]).toEqual(tpl.scope);
+		expect(storeElement[1]).toEqual(tpl.scope);
+	});
+
+	it("function param $scope in repeater", function () {
+		var storeClass = [];
+		var storeElement = [];
+		ct.innerHTML = '<div data-repeat="item in items" class="{{testClass($scope)}}">{{testElement($scope)}}</div>';
+		tpl.compile();
+		tpl.scope.items = [
+			{name: 'child1'},
+			{name: 'child2'},
+			{name: 'child3'}
+		];
+		tpl.scope.testClass = function(sc) {
+			storeClass.push(sc);
+			return '';
+		};
+		tpl.scope.testElement = function(sc) {
+			storeElement.push(sc);
+			return '';
+		};
+		tpl.render();
+		expect(storeClass[0].item).toEqual(tpl.scope.items[0]);
+		expect(storeClass[1].item).toEqual(tpl.scope.items[1]);
+		expect(storeClass[2].item).toEqual(tpl.scope.items[2]);
+		expect(storeElement[0].item).toEqual(tpl.scope.items[0]);
+		expect(storeElement[1].item).toEqual(tpl.scope.items[1]);
+		expect(storeElement[2].item).toEqual(tpl.scope.items[2]);
+	});
+
 });

@@ -52,7 +52,6 @@
 			this.element = null;
 			this.scope = null;
 			this.attributes = null;
-			this.attributesHashMap = null;
 			this.value = null;
 			this.interpolation = null;
 			this.repeater = null;
@@ -65,12 +64,7 @@
 			this.eventHandlers = null;
 		},
 		getNode: function(element) {
-//			console.log('SEARCH IN ', this.element);
-//			console.log('SEARCH FOR ', element);
-//			console.log('IS REPEATER ', this.repeater);
 			var node;
-//			console.log('>> this.childrenRepeater', this.childrenRepeater);
-//			console.log('>> this.children', this.children);
 			if (element === this.element) {
 				return this;
 			}
