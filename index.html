@@ -97,21 +97,31 @@
 						<li><a href="#add-and-remove-events-without-template">Add and remove events without template</a></li>
 					</ul>
 				</li>
-				<li><p><a href="#special-attributes">Special attributes</a></p>
-					<ul class="hidden">
-						<li><a href="#data-template">data-template</a></li>
-						<li><a href="#data-cloak">data-cloak</a></li>
-						<li><a href="#data-skip">data-skip</a></li>
-						<li><a href="#data-html">data-html</a></li>
-						<li><a href="#data-src">data-src</a></li>
-						<li><a href="#data-href">data-href</a></li>
-						<li><a href="#data-show-and-data-hide">data-show / data-hide</a></li>
-						<li><a href="#data-checked">data-checked</a></li>
-						<li><a href="#data-disabled">data-disabled</a></li>
-						<li><a href="#data-multiple">data-multiple</a></li>
-						<li><a href="#data-readonly">data-readonly</a></li>
-					</ul>
-				</li>
+                <li><p><a href="#special-attributes">Special attributes</a></p>
+                    <ul class="hidden">
+                        <li><a href="#data-template">data-template</a></li>
+                        <li><a href="#data-cloak">data-cloak</a></li>
+                        <li><a href="#data-skip">data-skip</a></li>
+                        <li><a href="#data-html">data-html</a></li>
+                        <li><a href="#data-src">data-src</a></li>
+                        <li><a href="#data-href">data-href</a></li>
+                        <li><a href="#data-show-and-data-hide">data-show / data-hide</a></li>
+                        <li><a href="#data-checked">data-checked</a></li>
+                        <li><a href="#data-disabled">data-disabled</a></li>
+                        <li><a href="#data-multiple">data-multiple</a></li>
+                        <li><a href="#data-readonly">data-readonly</a></li>
+                    </ul>
+                </li>
+                <li><p><a href="#special-vars">Special vars</a></p>
+                    <ul class="hidden">
+                        <li><a href="#vars-element">$element</a></li>
+                        <li><a href="#vars-parent-element">$parentElement</a></li>
+                        <li><a href="#vars-scope">$scope</a></li>
+                        <li><a href="#attribute">$attribute</a></li>
+                        <li><a href="#index">$index</a></li>
+                        <li><a href="#key">$key</a></li>
+                    </ul>
+                </li>
 				<li><p><a href="#helpers">Helpers</a></p>
 					<ul class="hidden">
 						<li><a href="#add-helpers">Add helpers</a></li>
@@ -923,6 +933,45 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
 		<div class="back"><a href="#">top</a></div>
 
 	</section>
+
+    <section>
+
+        <div class="title">
+            <h1>Special attributes</h1>
+            <a class="anchor" name="special-vars"></a>
+        </div>
+
+        <p>Special variables set by the template engine can be used to access to specific parts of the context, such as the index of a repeater of the HTML Element itself. This is especially useful to send these values as parameter of a function.</p>
+
+        <div class="subtitle">
+            <h3>$element</h3>
+            <a class="anchor" name="vars-element"></a>
+            <p>The <code>$element</code> variable represents the current HTML Element where the interpolation occurs. The element can be an HTML node or a text node.</p>
+            <p>Usable everywhere.</p>
+        </div>
+
+        <div class="subtitle">
+            <h3>$parentElement</h3>
+            <a class="anchor" name="vars-element"></a>
+            <p>The <code>$parentElement</code> is a shortcut the parent of an HTML Element. This is useful when called from a text node to send directly the parent.</p>
+            <p>Usable everywhere.</p>
+        </div>
+
+        <div class="subtitle">
+            <h3>$scope</h3>
+            <a class="anchor" name="vars-element"></a>
+            <p>The <code>$scope</code> is the object containing the data that the template is rendered against.</p>
+            <p>Usable everywhere.</p>
+        </div>
+
+        <div class="subtitle">
+            <h3>$attribute (only in HTML attributes)</h3>
+            <a class="anchor" name="vars-element"></a>
+            <p>The <code>$attribute</code> is the template function instance that represents the HTML node attribute.</p>
+            <p>Usable only in attribute interpolation.</p>
+        </div>
+
+    </section>
 
 	<section>
 
