@@ -132,7 +132,8 @@
 	var template = soma.template.create(document.getElementById('ct'));
 	// without creating a template, you can also use:
 	// soma.template.parseEvents(document, objectThatContainsHandlers);
-	template.scope.handler = function() {
+	template.scope.handler = function(event) {
+        console.log('EVENT');
 		output.innerHTML = new Date().getTime() + ": " + "<strong>[" + event.type + "]</strong> <span class=grey>" + escapeHTML(getHTML(event.currentTarget, 1)) + '</span><br/>' + output.innerHTML;
 	}
 	template.scope.insertImage = function(event) {
