@@ -118,6 +118,7 @@
 			if (this.name === attributes.checked) {
 				renderSpecialAttribute(this.value, 'checked');
 				renderAttribute(this.name, normalizeBoolean(this.value) ? true : false, this.node);
+                element.checked = normalizeBoolean(this.value) ? true : false;
 			}
 			// disabled
 			if (this.name === attributes.disabled) {
