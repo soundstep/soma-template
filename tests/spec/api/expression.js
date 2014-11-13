@@ -48,6 +48,17 @@ describe("api - expression", function () {
 		expect(ct.innerHTML).toEqual('valid');
 	});
 
+	it("function param number", function () {
+		ct.innerHTML = '{{age(12)}}';
+		tpl.compile();
+		tpl.scope.age = function(a) {
+			expect(a).toEqual(12);
+			return a;
+		};
+		tpl.render();
+		expect(ct.innerHTML).toEqual('12');
+	});
+
 	it("function param var", function () {
 		ct.innerHTML = '{{name(n, a)}}';
 		tpl.compile();
