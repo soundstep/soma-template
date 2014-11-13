@@ -47,7 +47,7 @@
 		selected: 'data-selected',
 		template: 'data-template',
 		html: 'data-html',
-    'class': 'data-class'
+		'class': 'data-class'
 	};
 
 	var vars = settings.vars = {
