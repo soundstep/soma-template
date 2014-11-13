@@ -983,6 +983,25 @@ describe("api - special attributes", function () {
 		}
 	});
 
+	it("data-repeat numbers param", function () {
+		ct.innerHTML =
+			'<ul>' +
+				'<li data-repeat="item in access(0, items.length, -7)">' +
+					'{{item}}' +
+				'</li>' +
+			'</ul>';
+		tpl.compile();
+		tpl.scope.items = ['one', 'two', 'three'];
+		tpl.scope.access = function(a, b, c) {
+			expect(a).toEqual(0);
+			expect(b).toEqual(3);
+			expect(c).toEqual(-7);
+			return tpl.scope.items;
+		};
+		tpl.render();
+		console.log(ct.innerHTML);
+	});
+
 	it("data-repeat", function () {
 		ct.innerHTML =
 			'<ul>' +

@@ -70,6 +70,9 @@
 		if (regex.string.test(pattern)) {
 			return trimQuotes(pattern);
 		}
+		else if(!isNaN(pattern)) {
+			return +pattern;
+		}
 		// find params
 		var paramsValues = [];
 		if (!paramsFound && params) {
