@@ -114,6 +114,8 @@
 
 					if (valueResult) {
 						this.node.element.classList.add(prop);
+					} else {
+						removeClass(this.node.element, prop);
 					}
 				}
 			}
