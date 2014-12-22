@@ -164,6 +164,7 @@
 				name === settings.attributes.show ||
 				name === settings.attributes.hide ||
 				name === settings.attributes.href ||
+				name === settings.attributes.class ||
 				name === settings.attributes.checked ||
 				name === settings.attributes.disabled ||
 				name === settings.attributes.multiple ||

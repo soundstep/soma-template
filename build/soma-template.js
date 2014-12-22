@@ -3,7 +3,7 @@
 	'use strict';
 
 	soma.template = soma.template || {};
-	soma.template.version = '0.2.8';
+	soma.template.version = '0.3.0';
 
 	soma.template.errors = {
 		TEMPLATE_STRING_NO_ELEMENT: 'Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create(\'string\', element)',
@@ -37,20 +37,21 @@
 	};
 
 	var attributes = settings.attributes = {
-		skip: 'data-skip',
-		repeat: 'data-repeat',
-		src: 'data-src',
-		href: 'data-href',
-		show: 'data-show',
-		hide: 'data-hide',
-		cloak: 'data-cloak',
-		checked: 'data-checked',
-		disabled: 'data-disabled',
-		multiple: 'data-multiple',
-		readonly: 'data-readonly',
-		selected: 'data-selected',
-		template: 'data-template',
-		html: 'data-html'
+		'skip': 'data-skip',
+		'repeat': 'data-repeat',
+		'src': 'data-src',
+		'href': 'data-href',
+		'show': 'data-show',
+		'hide': 'data-hide',
+		'cloak': 'data-cloak',
+		'checked': 'data-checked',
+		'disabled': 'data-disabled',
+		'multiple': 'data-multiple',
+		'readonly': 'data-readonly',
+		'selected': 'data-selected',
+		'template': 'data-template',
+		'html': 'data-html',
+		'class': 'data-class'
 	};
 
 	var vars = settings.vars = {
@@ -445,6 +446,7 @@
 				name === settings.attributes.show ||
 				name === settings.attributes.hide ||
 				name === settings.attributes.href ||
+				name === settings.attributes.class ||
 				name === settings.attributes.checked ||
 				name === settings.attributes.disabled ||
 				name === settings.attributes.multiple ||
@@ -1036,6 +1038,32 @@
 					renderAttribute(this.name, this.value, this.node);
 				}
 			}
+
+			// class
+			if (this.name === attributes['class']) {
+				var classConfig;
+				try {
+					classConfig = JSON.parse(this.value);
+				} catch (ex) {
+					throw new Error("Error, the value of a data-class attribute must be a valid JSON: " + this.value);
+				}
+
+				console.log('classConfig', classConfig);
+
+				for (var prop in classConfig) {
+					var value = classConfig[prop],
+						valueResult = (value ? normalizeBoolean(value) : false);
+
+					if (valueResult) {
+						console.log('add prop', prop);
+						this.node.element.classList.add(prop);
+					} else {
+						console.log('remove prop', prop);
+						removeClass(this.node.element, prop);
+					}
+				}
+			}
+
 			// cloak
 			if (this.name === 'class' && this.value.indexOf(settings.attributes.cloak) !== -1) {
 				removeClass(this.node.element, settings.attributes.cloak);
@@ -1056,7 +1084,7 @@
 			if (this.name === attributes.checked) {
 				renderSpecialAttribute(this.value, 'checked');
 				renderAttribute(this.name, normalizeBoolean(this.value) ? true : false, this.node);
-                element.checked = normalizeBoolean(this.value) ? true : false;
+				element.checked = normalizeBoolean(this.value) ? true : false;
 			}
 			// disabled
 			if (this.name === attributes.disabled) {
