@@ -98,6 +98,28 @@
 					renderAttribute(this.name, this.value, this.node);
 				}
 			}
+
+			// quick 'n' dirty class
+			if (this.name === attributes['class']) {
+				var classConfig;
+				try {
+					classConfig = JSON.parse(this.value);
+				} catch (ex) {
+					throw new Error("Invalid attribute");
+				}
+
+				for (var prop in classConfig) {
+					var value = classConfig[prop]
+					, valueResult = (value ? normalizeBoolean(value) : false);
+
+					if (valueResult) {
+						this.node.element.classList.add(prop);
+					} else {
+						removeClass(this.node.element, prop);
+					}
+				}
+			}
+
 			// cloak
 			if (this.name === 'class' && this.value.indexOf(settings.attributes.cloak) !== -1) {
 				removeClass(this.node.element, settings.attributes.cloak);
@@ -118,7 +140,7 @@
 			if (this.name === attributes.checked) {
 				renderSpecialAttribute(this.value, 'checked');
 				renderAttribute(this.name, normalizeBoolean(this.value) ? true : false, this.node);
-                element.checked = normalizeBoolean(this.value) ? true : false;
+				element.checked = normalizeBoolean(this.value) ? true : false;
 			}
 			// disabled
 			if (this.name === attributes.disabled) {
