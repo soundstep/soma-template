@@ -106,6 +106,7 @@
                         <li><a href="#data-src">data-src</a></li>
                         <li><a href="#data-href">data-href</a></li>
                         <li><a href="#data-show-and-data-hide">data-show / data-hide</a></li>
+                        <li><a href="#data-class">data-class</a></li>
                         <li><a href="#data-checked">data-checked</a></li>
                         <li><a href="#data-disabled">data-disabled</a></li>
                         <li><a href="#data-multiple">data-multiple</a></li>
@@ -867,6 +868,26 @@ my age: <span class="nt">&lt;span</span> <span class="na">data-skip=</span><span
   <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
 <span class="nt">&lt;/script&gt;</span></pre></div>
 		<p><a href="http://plnkr.co/edit/5d9TQL?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
+		<div class="back"><a href="#">top</a></div>
+
+		<div class="subtitle">
+			<h3>Data class switch (data-class)</h3>
+			<a class="anchor" name="data-class"></a>
+		</div>
+		<p>A class can also be added or removed from a node element using the <code>data-class</code> special attribute. Interpolations with properties and functions can also be used.</p>
+		<div class="codehilite"><pre><span class="nt">&lt;style&gt;</span>
+  <span class="nc">.red</span> <span class="p">{</span>
+    <span class="k">color</span><span class="o">:</span> <span class="nb">red</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="nt">&lt;/style&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;target&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">data-class=</span><span class="s">&#39;{&quot;red&quot;: true}&#39;</span><span class="nt">&gt;</span>I am red!<span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">data-class=</span><span class="s">&#39;{&quot;red&quot;: false}&#39;</span><span class="nt">&gt;</span>I am not red...<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span></pre></div>
+		<p><a href="http://plnkr.co/edit/KwSqsLkVZHLWHwd17mTE?p=preview" class="button icon edit" target="_blank">try it yourself</a></p>
 		<div class="back"><a href="#">top</a></div>
 
 		<div class="subtitle">
