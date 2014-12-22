@@ -1,5 +1,5 @@
 	soma.template = soma.template || {};
-	soma.template.version = '0.2.8';
+	soma.template.version = '0.3.0';
 
 	soma.template.errors = {
 		TEMPLATE_STRING_NO_ELEMENT: 'Error in soma.template, a string template requirement a second parameter: an element target - soma.template.create(\'string\', element)',
@@ -33,20 +33,20 @@
 	};
 
 	var attributes = settings.attributes = {
-		skip: 'data-skip',
-		repeat: 'data-repeat',
-		src: 'data-src',
-		href: 'data-href',
-		show: 'data-show',
-		hide: 'data-hide',
-		cloak: 'data-cloak',
-		checked: 'data-checked',
-		disabled: 'data-disabled',
-		multiple: 'data-multiple',
-		readonly: 'data-readonly',
-		selected: 'data-selected',
-		template: 'data-template',
-		html: 'data-html',
+		'skip': 'data-skip',
+		'repeat': 'data-repeat',
+		'src': 'data-src',
+		'href': 'data-href',
+		'show': 'data-show',
+		'hide': 'data-hide',
+		'cloak': 'data-cloak',
+		'checked': 'data-checked',
+		'disabled': 'data-disabled',
+		'multiple': 'data-multiple',
+		'readonly': 'data-readonly',
+		'selected': 'data-selected',
+		'template': 'data-template',
+		'html': 'data-html',
 		'class': 'data-class'
 	};
 

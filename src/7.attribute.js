@@ -99,22 +99,26 @@
 				}
 			}
 
-			// quick 'n' dirty class
+			// class
 			if (this.name === attributes['class']) {
 				var classConfig;
 				try {
 					classConfig = JSON.parse(this.value);
 				} catch (ex) {
-					throw new Error("Invalid attribute");
+					throw new Error("Error, the value of a data-class attribute must be a valid JSON: " + this.value);
 				}
 
+				console.log('classConfig', classConfig);
+
 				for (var prop in classConfig) {
-					var value = classConfig[prop]
-					, valueResult = (value ? normalizeBoolean(value) : false);
+					var value = classConfig[prop],
+						valueResult = (value ? normalizeBoolean(value) : false);
 
 					if (valueResult) {
+						console.log('add prop', prop);
 						this.node.element.classList.add(prop);
 					} else {
+						console.log('remove prop', prop);
 						removeClass(this.node.element, prop);
 					}
 				}

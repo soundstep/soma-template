@@ -72,7 +72,7 @@ describe("api - attribute", function () {
 		else {
 			expect(ct.firstChild.getAttribute('class')).toEqual('bold');
 		}
-		tpl.scope.class1 = 'data-class';
+		tpl.scope.class1 = 'another';
 		tpl.render();
 		if (ie <= 8) {
 			expect(ct.firstChild.className).toEqual('');

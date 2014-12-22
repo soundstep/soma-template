@@ -1275,6 +1275,56 @@ describe("api - special attributes", function () {
 		expect(ct.childNodes[2].firstChild.innerHTML.toLowerCase()).toEqual(tpl.scope.items[2]);
 	});
 
+	it("data-class true", function () {
+		ct.innerHTML = "<div data-class='{\"myClass\": true}'></div>";
+		tpl.compile();
+		tpl.render();
+		expect(ct.firstChild.classList.contains('myClass')).toBeTruthy();
+	});
 
+	it("data-class false", function () {
+		ct.innerHTML = "<div data-class='{\"myClass\": false}' class='myClass'></div>";
+		tpl.compile();
+		tpl.render();
+		expect(ct.firstChild.classList.contains('myClass')).toBeFalsy();
+	});
+
+	it("data-class false with interpolation", function () {
+		ct.innerHTML = "<div data-class='{\"myClass\": {{aValue}}}' class='myClass'></div>";
+		tpl.compile();
+		tpl.scope.aValue = true;
+		tpl.render();
+		expect(ct.firstChild.classList.contains('myClass')).toBeTruthy();
+	});
+
+	it("data-class true with interpolation", function () {
+		ct.innerHTML = "<div data-class='{\"myClass\": {{aValue}}}' class='myClass'></div>";
+		tpl.compile();
+		tpl.scope.aValue = false;
+		tpl.render();
+		expect(ct.firstChild.classList.contains('myClass')).toBeFalsy();
+	});
+
+	it("data-class true with function interpolation", function () {
+		ct.innerHTML = "<div data-class='{\"myClass\": {{aFunction(aValue)}}}' class='myClass'></div>";
+		tpl.compile();
+		tpl.scope.aValue = true;
+		tpl.scope.aFunction = function(value) {
+			return value;
+		};
+		tpl.render();
+		expect(ct.firstChild.classList.contains('myClass')).toBeTruthy();
+	});
+
+	it("data-class false with function interpolation", function () {
+		ct.innerHTML = "<div data-class='{\"myClass\": {{aFunction(aValue)}}}' class='myClass'></div>";
+		tpl.compile();
+		tpl.scope.aValue = false;
+		tpl.scope.aFunction = function(value) {
+			return value;
+		};
+		tpl.render();
+		expect(ct.firstChild.classList.contains('myClass')).toBeFalsy();
+	});
 
 });
