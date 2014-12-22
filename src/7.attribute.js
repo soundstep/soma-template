@@ -98,6 +98,32 @@
 					renderAttribute(this.name, this.value, this.node);
 				}
 			}
+
+			// class
+			if (this.name === attributes['class']) {
+				var classConfig;
+				try {
+					classConfig = JSON.parse(this.value);
+				} catch (ex) {
+					throw new Error("Error, the value of a data-class attribute must be a valid JSON: " + this.value);
+				}
+
+				console.log('classConfig', classConfig);
+
+				for (var prop in classConfig) {
+					var value = classConfig[prop],
+						valueResult = (value ? normalizeBoolean(value) : false);
+
+					if (valueResult) {
+						console.log('add prop', prop);
+						this.node.element.classList.add(prop);
+					} else {
+						console.log('remove prop', prop);
+						removeClass(this.node.element, prop);
+					}
+				}
+			}
+
 			// cloak
 			if (this.name === 'class' && this.value.indexOf(settings.attributes.cloak) !== -1) {
 				removeClass(this.node.element, settings.attributes.cloak);
@@ -118,7 +144,7 @@
 			if (this.name === attributes.checked) {
 				renderSpecialAttribute(this.value, 'checked');
 				renderAttribute(this.name, normalizeBoolean(this.value) ? true : false, this.node);
-                element.checked = normalizeBoolean(this.value) ? true : false;
+				element.checked = normalizeBoolean(this.value) ? true : false;
 			}
 			// disabled
 			if (this.name === attributes.disabled) {

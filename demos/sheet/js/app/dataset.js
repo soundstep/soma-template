@@ -185,6 +185,10 @@
 			    { 'displayed': true },
 			    { 'displayed': false }
 		    ],
+		    'data-class': [
+                { 'beRed': true },
+                { 'beRed': false }
+		    ],
 		    'data-checked': [
 			    { 'checked': true },
 			    { 'checked': false }
