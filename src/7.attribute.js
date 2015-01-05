@@ -101,25 +101,23 @@
 
 			// class
 			if (this.name === attributes['class']) {
-				var classConfig;
+				// TODO: Refactor attributes, danger of variable naming colisions.
+				var classConfig, configProperty, propValue, activateClass; 
+
 				try {
 					classConfig = JSON.parse(this.value);
 				} catch (ex) {
 					throw new Error("Error, the value of a data-class attribute must be a valid JSON: " + this.value);
 				}
 
-				console.log('classConfig', classConfig);
-
-				for (var prop in classConfig) {
-					var value = classConfig[prop],
-						valueResult = (value ? normalizeBoolean(value) : false);
+				for (configProperty in classConfig) {
+					propValue = classConfig[configProperty];
+					activateClass = (propValue ? normalizeBoolean(propValue) : false);
 
 					if (valueResult) {
-						console.log('add prop', prop);
-						this.node.element.classList.add(prop);
+						this.node.element.classList.add(configProperty);
 					} else {
-						console.log('remove prop', prop);
-						removeClass(this.node.element, prop);
+						removeClass(this.node.element, configProperty);
 					}
 				}
 			}
