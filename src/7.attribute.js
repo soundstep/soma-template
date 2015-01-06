@@ -102,16 +102,17 @@
 			// class
 			if (this.name === attributes['class']) {
 				// TODO: Refactor attributes, danger of variable naming colisions.
-				var classConfig, configProperty, propValue, activateClass; 
+				var classConfig, configProperty, propValue, activateClass, valueResult;
 
 				try {
 					classConfig = JSON.parse(this.value);
 				} catch (ex) {
-					throw new Error("Error, the value of a data-class attribute must be a valid JSON: " + this.value);
+					throw new Error('Error, the value of a data-class attribute must be a valid JSON: ' + this.value);
 				}
 
 				for (configProperty in classConfig) {
 					propValue = classConfig[configProperty];
+					valueResult = propValue ? normalizeBoolean(propValue) : false;
 					activateClass = (propValue ? normalizeBoolean(propValue) : false);
 
 					if (valueResult) {
@@ -120,6 +121,7 @@
 						removeClass(this.node.element, configProperty);
 					}
 				}
+
 			}
 
 			// cloak
