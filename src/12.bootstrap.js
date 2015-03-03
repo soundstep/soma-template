@@ -13,12 +13,10 @@
 						var attrValue = child.getAttribute(attributes.template);
 						if (attrValue) {
 							var getFunction = new Function('return ' + attrValue + ';');
-							try {
-								var f = getFunction();
-								if (isFunction(f)) {
-									soma.template.bootstrap(attrValue, child, f);
-								}
-							} catch(err){}
+							var f = getFunction();
+							if (isFunction(f)) {
+								soma.template.bootstrap(attrValue, child, f);
+							}
 						}
 					}
 					child = child.nextSibling;
