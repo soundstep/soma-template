@@ -1,13 +1,3 @@
-## Change log
-
-* v0.2.0
-
-Boolean attribute values are now normalized and need to be specified.
-
-```html
-<div data-show/> is now the same as <div data-show="false"/>
-```
-
 ## More info
 
 Please visit the [soma-template](http://soundstep.github.com/soma-template/) site.
